@@ -22,18 +22,69 @@
                 批量操作
             </a>
         </div>
-        <div class="">
-
+        <div class="detail-contain">
+            <Table stripe  :columns="columns" :data="song">
+                <template slot-scope="{ row }" slot="name">
+                    <strong><a class="panel-word">{{ row.name }}</a></strong>
+                </template>
+                <template slot-scope="{ row }" slot="menuBar">
+                    <strong>
+                        <songPanel :songid="row.songid" class="panel"></songPanel>
+                    </strong>
+                </template>
+                <template slot-scope="{ row }" slot="singer">
+                    <strong><a class="panel-word">{{ row.singer }}</a></strong>
+                </template>
+                <template slot-scope="{ row }" slot="album">
+                    <strong><a class="panel-word">{{ row.album }}</a></strong>
+                </template>
+                <template slot-scope="{ row }" slot="length">
+                    <strong><span class="panel-word">{{ row.length }}</span></strong>
+                </template>
+            </Table>
         </div>
     </div>
 </template>
 
 <script>
+import songPanel from '../panel/songPanel'
 export default {
+    components: {
+        'songPanel': songPanel
+    },
     props:['song'],
     name: 'mylike-song',
+    mounted () {
+        
+    },
     data () {
+        return {
+            columns:[
+                {
+                    title: '歌名',
+                    width: 200,
+                    slot: 'name'
+                },
+                {
+                    title: ' ',
+                    width: 400,
+                    slot: 'menuBar',
+                },
+                {
+                    title: '歌手',
+                    slot: 'singer',
+                },
+                {
+                    title: '专辑',
+                    slot: 'album',
+                },
+                {
+                    title: '时长',
+                    slot: 'length',
+                }
+            ],
 
+        }
     },
     methods: {
 
@@ -79,5 +130,19 @@ export default {
     top: 3px;
     right: 3px;
 }
-
+.detail-contain {
+    float: left;
+    position: relative;
+    width: 100%;
+    min-width: 1200px;
+}
+.panel {
+    float: right;
+    margin-right: 50px;
+}
+.panel-word {
+    font-size: 14px;
+    font-family: 微软雅黑,sans-serif;
+    font-weight:500;
+}
 </style>

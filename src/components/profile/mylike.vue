@@ -22,9 +22,71 @@ export default {
     props: ['user', 'sMethod', 'slMethod', 'aMethod'],
     data () {
         return {
-            song: {
-
-            },
+            song: [
+                {
+                    songid: '10101',
+                    name: '七里香',
+                    singer: '纠结轮',
+                    album: '十一月的萧邦',
+                    length: '3:45'
+                },
+                {
+                    songid: '10101',
+                    name: '七里香',
+                    singer: '纠结轮',
+                    album: '十一月的萧邦',
+                    length: '3:45'
+                },
+                {
+                    songid: '10101',
+                    name: '七里香',
+                    singer: '纠结轮',
+                    album: '十一月的萧邦',
+                    length: '3:45'
+                },
+                {
+                    songid: '10101',
+                    name: '七里香',
+                    singer: '纠结轮',
+                    album: '十一月的萧邦',
+                    length: '3:45'
+                },
+                {
+                    songid: '10101',
+                    name: '七里香',
+                    singer: '纠结轮',
+                    album: '十一月的萧邦',
+                    length: '3:45'
+                },
+                {
+                    songid: '10101',
+                    name: '七里香',
+                    singer: '纠结轮',
+                    album: '十一月的萧邦',
+                    length: '3:45'
+                },
+                {
+                    songid: '10101',
+                    name: '七里香',
+                    singer: '纠结轮',
+                    album: '十一月的萧邦',
+                    length: '3:45'
+                },
+                {
+                    songid: '10101',
+                    name: '七里香',
+                    singer: '纠结轮',
+                    album: '十一月的萧邦',
+                    length: '3:45'
+                },
+                {
+                    songid: '10101',
+                    name: '七里香',
+                    singer: '纠结轮',
+                    album: '十一月的萧邦',
+                    length: '3:45'
+                }
+            ],
             songlist: {
 
             },

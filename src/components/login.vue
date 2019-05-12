@@ -60,7 +60,7 @@ export default{
 						let data = response.data
 						if(data.success) {
 							this.$Message.success('Success!')
-							this.$router.push('/inner/profile')
+							this.$router.push('/profile/' + this.formInline.user + '/mylike')
 						} else {
 							this.$Message.error('密码错误或用户不存在')
 						}
