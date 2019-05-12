@@ -22,32 +22,42 @@
                 批量操作
             </a>
         </div>
-        <div class="detail-contain">
-            <Table stripe  :columns="columns" :data="song">
-                <template slot-scope="{ row }" slot="name">
-                    <strong><a class="panel-word">{{ row.name }}</a></strong>
-                </template>
-                <template slot-scope="{ row }" slot="menuBar">
-                    <strong>
-                        <songPanel :songid="row.songid" class="panel"></songPanel>
-                    </strong>
-                </template>
-                <template slot-scope="{ row }" slot="singer">
-                    <strong><a class="panel-word">{{ row.singer }}</a></strong>
-                </template>
-                <template slot-scope="{ row }" slot="album">
-                    <strong><a class="panel-word">{{ row.album }}</a></strong>
-                </template>
-                <template slot-scope="{ row }" slot="length">
-                    <strong><span class="panel-word">{{ row.length }}</span></strong>
-                </template>
-            </Table>
-        </div>
+				<div class="detail-contain" >
+					<vue-lazy-component  :timeout="1500">
+					<Table stripe  :columns="columns" :data="song">
+							<template slot-scope="{ row }" slot="name">
+									<strong><a class="panel-word">{{ row.songname }}</a></strong>
+							</template>
+							<template slot-scope="{ row }" slot="menuBar">
+									<strong>
+											<songPanel :songid="row.songid" class="panel"></songPanel>
+									</strong>
+							</template>
+							<template slot-scope="{ row }" slot="singer">
+									<strong><a class="panel-word">{{ row.singer[0].singername }}</a></strong>
+							</template>
+							<template slot-scope="{ row }" slot="album">
+									<strong><a class="panel-word">{{ row.album.albumname }}</a></strong>
+							</template>
+							<template slot-scope="{ row }" slot="length">
+									<strong><span class="panel-word">{{ row.length }}</span></strong>
+							</template>
+						</Table>
+						<div class="demo-spin-col" slot="skeleton">
+							<Spin fix>
+									<Icon type="ios-loading" size=25 class="demo-spin-icon-load"></Icon>
+									<div>Loading</div>
+							</Spin>
+						</div>
+						</vue-lazy-component>
+        	</div>
     </div>
 </template>
 
 <script>
+import {AXIOS} from '@/http/http'
 import songPanel from '../panel/songPanel'
+import { setTimeout } from 'timers';
 export default {
     components: {
         'songPanel': songPanel
@@ -55,44 +65,121 @@ export default {
     props:['song'],
     name: 'mylike-song',
     mounted () {
-        
+			this.$Loading.start();
+			setTimeout(() => {
+				for(let i=0; i<this.song.length; i++){
+					this.buildAlbum(this.song[i].albumid, this.song[i])
+					this.buildSinger(this.song[i].songid, this.song[i])
+				}
+			}, 500)
+			setTimeout(() => {
+				this.$Loading.finish();
+			}, 1500)
     },
     data () {
-        return {
-            columns:[
-                {
-                    title: '歌名',
-                    width: 200,
-                    slot: 'name'
-                },
-                {
-                    title: ' ',
-                    width: 400,
-                    slot: 'menuBar',
-                },
-                {
-                    title: '歌手',
-                    slot: 'singer',
-                },
-                {
-                    title: '专辑',
-                    slot: 'album',
-                },
-                {
-                    title: '时长',
-                    slot: 'length',
-                }
-            ],
+			return {
+				albums: [
+					// "albumid": "1000000",
+					// "albumname": "十一月的萧邦",
+					// "singerid": "200000",
+					// "albumimage": null,
+					// "albumage": "00",
+					// "language": "中文",
+					// "company": "索尼音乐"
+				],
+				singers: [
+					// {
+					// 	"singerid": "200000",
+					// 	"singername": "周杰伦",
+					// 	"singerimage": null,
+					// 	"singersex": "男",
+					// 	"region": "中国台湾",
+					// 	"introduction": "中国台湾流行男歌手"
+ 				 	// }
+				],
 
-        }
+				columns:[
+					{
+						title: '歌名',
+						width: 200,
+						slot: 'name'
+					},
+					{
+						title: ' ',
+						width: 400,
+						slot: 'menuBar',
+					},
+					{
+						title: '歌手',
+						slot: 'singer',
+					},
+					{
+						title: '专辑',
+						slot: 'album',
+					},
+					{
+						title: '时长',
+						slot: 'length',
+					}
+				],
+
+			}
     },
     methods: {
-
+			buildAlbum(albumid, song) {
+				this.getAlbum(albumid, (json) => {
+					song.album = json
+				})
+			},
+			buildSinger(songid, song) {
+				this.getSinger(songid, (json) => {
+					song.singer = json
+				})
+			},
+			getAlbum(albumid, callback) {
+				AXIOS.get('/getAlbum?albumid=' + albumid)
+				.then(respond => {
+					callback(respond.data)
+				})
+				.catch(error => {
+					this.$Loading.error();
+					this.$Notice.error({
+							title: '获取专辑出错',
+							desc: error ? error : '未知错误'
+					})
+				})
+			},
+			getSinger(songid, callback) {
+				AXIOS.get('/getSingerBySong?songid=' + songid)
+				.then(respond => {
+					callback(respond.data)
+				})
+				.catch(error => {
+					this.$Loading.error();
+					this.$Notice.error({
+							title: '获取歌曲出错',
+							desc: error ? error : '未知错误'
+					})
+				})
+			}
     }
 }
 </script>
 
 <style scoped>
+.demo-spin-icon-load{
+	animation: ani-demo-spin 1s linear infinite;
+}
+@keyframes ani-demo-spin {
+		from { transform: rotate(0deg);}
+		50%  { transform: rotate(180deg);}
+		to   { transform: rotate(360deg);}
+}
+.demo-spin-col{
+	height: 300px;
+	position: relative;
+	border: 1px solid #eee;
+}
 .mod_songlist_toolbar {
     float: left;
     margin-bottom: 20px;

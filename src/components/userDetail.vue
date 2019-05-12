@@ -7,24 +7,24 @@
                     onerror="this.src='//y.gtimg.cn/mediastyle/global/img/person_300.png?max_age=31536000';this.onerror=null;" alt="flowrain" class="profile-cover" >
                 </div>
                 <h1 class="profile__tit">
-				    <span class="profile-name" v-text="user.name + '  id: ' + user.userid">lemon  id:100001</span>
+				    <span class="profile-name" v-text="user.username + '  id: ' + user.userid"></span>
                     <a href="https://y.qq.com/portal/vipportal/index.html">
                         <img src="//y.gtimg.cn/music/icon/v1/mac/svip_g@2x.png?max_age=2592000" alt="user_cover" class="lv_icon">
                     </a>
 			    </h1>
-                <ul class="mod-user-statistic">
-                    <li class="user_statistic__item">
-                        <a href="javascript:;"  class="js_tab" data-tab="focus_singer" data-stat="y_new.profile.header.focus_click">
-                            <strong class="user_statistic__number js_num_follow">16</strong>
-                            <span class="user_statistic__tit">关注</span>
-                        </a>
-                    </li>
-                    <li class="user_statistic__item user_statistic__item--last">
-                        <a href="javascript:;"  class="js_tab" data-tab="fans" data-stat="y_new.profile.header.fans_click">
-                            <strong class="user_statistic__number js_num_fans">5</strong>
-                            <span class="user_statistic__tit">粉丝</span>
-                        </a>
-                    </li>
+					<ul class="mod-user-statistic">
+							<li class="user_statistic__item">
+									<a href="javascript:;"  class="js_tab" data-tab="focus_singer" data-stat="y_new.profile.header.focus_click">
+											<strong class="user_statistic__number js_num_follow">{{friends.length}}</strong>
+											<span class="user_statistic__tit">关注</span>
+									</a>
+							</li>
+							<li class="user_statistic__item user_statistic__item--last">
+									<a href="javascript:;"  class="js_tab" data-tab="fans" data-stat="y_new.profile.header.fans_click">
+											<strong class="user_statistic__number js_num_fans">{{fans.length + followSingers.length}}</strong>
+											<span class="user_statistic__tit">粉丝</span>
+									</a>
+							</li>
 			    </ul>
                 <Menu mode="horizontal" active-name="1" class="main-menu">
                     <MenuItem name="1">
@@ -50,22 +50,104 @@
 </template>
 
 <script>
+import {AXIOS} from '../http/http'
 export default {
     name: 'userDetail',
-    mounted () {
-        this.user.userid = this.$route.params.userid
-		console.log('id: ' + this.user.userid)
+    created () {
+			this.user.userid = this.$route.params.userid
+			this.getUser(this.user.userid)
+			this.getFans(this.user.userid)
+			this.getFriends(this.user.userid)
+			this.getFollowSinger(this.user.userid)
     },
     data () {
         return {
             user: {
-                userid: '',
-                username: '',
-            }
+                // "userid": "100001",
+								// "username": "lemon",
+								// "userpassword": "123",
+								// "userimage": null,
+								// "usersex": "1",
+								// "isvip": "0",
+								// "userbalance": 0,
+								// "isbanned": "0"
+						},
+						fans: [], //关注我人
+						friends: [
+							// like this:
+							// {
+							// "userid": "100000",
+							// "username": "tongji",
+							// "userpassword": "123",
+							// "userimage": null,
+							// "usersex": "1",
+							// "isvip": "0",
+							// "userbalance": 0,
+							// "isbanned": null
+							// }
+						], //我关注的人
+						followSingers: [
+							// like this
+							// 	{
+							// 	"singerid": "200000",
+							// 	"singername": "周杰伦",
+							// 	"singerimage": null,
+							// 	"singersex": "男",
+							// 	"region": "中国台湾",
+							// 	"introduction": "中国台湾流行男歌手"
+							// }
+						] //我关注的歌手
         }
     },
     methods: {
-
+			getUser(id) {
+				AXIOS.get('getUser?id=' + id)
+				.then(response => {
+					this.user = response.data
+				})
+				.catch(error => {
+					this.$Notice.error({
+							title: '获取个人信息出错',
+							desc: error ? error : '未知错误'
+					})
+				})
+			},
+			getFans(id) {
+				AXIOS.get('/getFans?id=' + id)
+				.then(response => {
+					this.fans = response.data
+				})
+				.catch(error => {
+					this.$Notice.error({
+							title: '获取粉丝信息出错',
+							desc: error ? error : '未知错误'
+					})
+				})
+			},
+			getFriends(id) {
+				AXIOS.get('/getFriends?id=' + id)
+				.then(response => {
+					this.friends = response.data
+				})
+				.catch(error => {
+					this.$Notice.error({
+							title: '获取好友信息出错',
+							desc: error ? error : '未知错误'
+					})
+				})
+			},
+			getFollowSinger(id) {
+				AXIOS.get('/getFollowSinger?id=' + id)
+				.then(response => {
+					this.followSingers = response.data
+				})
+				.catch(error => {
+					this.$Notice.error({
+							title: '获取关注歌手信息出错',
+							desc: error ? error : '未知错误'
+					})
+				})
+			}
     }
 }
 </script>
