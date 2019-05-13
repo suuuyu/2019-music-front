@@ -20,7 +20,7 @@
 									</a>
 							</li>
 							<li class="user_statistic__item user_statistic__item--last">
-									<a href="javascript:;"  class="js_tab">
+									<a href="javascript:;"  class="js_tab" @click="showFan">
 											<strong class="user_statistic__number js_num_fans">{{fans.length + followSingers.length}}</strong>
 											<span class="user_statistic__tit">粉丝</span>
 									</a>
@@ -101,7 +101,6 @@ export default {
     },
     methods: {
 			Menuselected(name) {
-				alert(name)
 				switch(name){
 					case '1':
 						this.$router.push('/profile/' + this.user.userid + '/mylike')
@@ -109,6 +108,9 @@ export default {
 			},
 			showFollow() {
 				this.$router.push('/profile/' + this.user.userid + '/follow')
+			},
+			showFan() {
+				this.$router.push('/profile/' + this.user.userid + '/friend')
 			},
 			getUser(id) {
 				AXIOS.get('getUser?id=' + id)

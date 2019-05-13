@@ -24,26 +24,26 @@ export default {
     name: 'mylike',
     props: ['user', 'sMethod', 'slMethod', 'aMethod'],
     data () {
-        return {
-						song: [],
-						sl: [],
-            songlist: {
-							createdsonglist:{
-								"songlistid": "3000001",
-								"songlistname": "我喜欢",
-								"songlistimage": null,
-								"isprivate": "0",
-								"userid": "100001",
-								"createtime": "2018-12-21T05:58:19.000+0000"
-							},
-								
-							keepedsonglist: [
-							]
-            },
-            albums: {
+			return {
+				song: [],
+				sl: [],
+				songlist: {
+					createdsonglist:{
+						"songlistid": "3000001",
+						"songlistname": "我喜欢",
+						"songlistimage": null,
+						"isprivate": "0",
+						"userid": "100001",
+						"createtime": "2018-12-21T05:58:19.000+0000"
+					},
+						
+					keepedsonglist: [
+					]
+				},
+				albums: {
 
-            }
-        }
+				}
+			}
 		},
 		mounted() {
 			console.log(this.user.userid)

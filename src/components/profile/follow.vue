@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Tabs value="name1" @on-click="handle">
-      <TabPane label="用户" name="user"><show-user :type='1'></show-user> </TabPane>
-      <TabPane label="歌手" name="singer" class="real-panel"></TabPane>
+    <Tabs value="user" @on-click="handle">
+      <TabPane label="用户" name="user"><show-user :type='1' :user='friends'></show-user> </TabPane>
+      <TabPane label="歌手" name="singer" class="real-panel"><show-user :type='2' :user='followSingers'></show-user></TabPane>
     </Tabs>
   </div>
 </template>
