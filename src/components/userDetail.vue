@@ -14,38 +14,39 @@
 			    </h1>
 					<ul class="mod-user-statistic">
 							<li class="user_statistic__item">
-									<a href="javascript:;"  class="js_tab" data-tab="focus_singer" data-stat="y_new.profile.header.focus_click">
+									<a href="javascript:;"  class="js_tab" @click="showFollow">
 											<strong class="user_statistic__number js_num_follow">{{friends.length}}</strong>
 											<span class="user_statistic__tit">关注</span>
 									</a>
 							</li>
 							<li class="user_statistic__item user_statistic__item--last">
-									<a href="javascript:;"  class="js_tab" data-tab="fans" data-stat="y_new.profile.header.fans_click">
+									<a href="javascript:;"  class="js_tab">
 											<strong class="user_statistic__number js_num_fans">{{fans.length + followSingers.length}}</strong>
 											<span class="user_statistic__tit">粉丝</span>
 									</a>
 							</li>
 			    </ul>
-                <Menu mode="horizontal" active-name="1" class="main-menu">
-                    <MenuItem name="1">
-                        <Icon type="ios-paper" />
-                        我喜欢
-                    </MenuItem>
-                    <MenuItem name="2">
-                        <Icon type="ios-people" />
-                        我的已购
-                    </MenuItem>
-                    <MenuItem name="3">
-                        <Icon type="ios-construct" />
-                        我创建的歌单
-                    </MenuItem>
-                </Menu>
-            </div>
-        </div>
-        <div class="body-contain">
-            <router-view :user="user"></router-view>
-        </div>
-    </div>
+					<Menu mode="horizontal" active-name="1" class="main-menu" @on-select="Menuselected">
+							<MenuItem name="1">
+									<Icon type="ios-paper" />
+									我喜欢
+							</MenuItem>
+							<MenuItem name="2">
+									<Icon type="ios-people" />
+									我的已购
+							</MenuItem>
+							<MenuItem name="3">
+									<Icon type="ios-construct" />
+									我创建的歌单
+							</MenuItem>
+					</Menu>
+					</div>
+			</div>
+		<div class="body-contain">
+				<router-view :user="user" :fans="fans" 
+				:friends="friends" :followSingers="followSingers"></router-view>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -99,6 +100,16 @@ export default {
         }
     },
     methods: {
+			Menuselected(name) {
+				alert(name)
+				switch(name){
+					case '1':
+						this.$router.push('/profile/' + this.user.userid + '/mylike')
+				}
+			},
+			showFollow() {
+				this.$router.push('/profile/' + this.user.userid + '/follow')
+			},
 			getUser(id) {
 				AXIOS.get('getUser?id=' + id)
 				.then(response => {
