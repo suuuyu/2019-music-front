@@ -5,6 +5,8 @@ import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import querystring from 'querystring'
 import VueLazyComponent from '@xunlei/vue-lazy-component'
+import $ from "jquery";
+
 Vue.use(VueLazyComponent)
 
 Vue.prototype.$qs = querystring
