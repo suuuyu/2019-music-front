@@ -1,8 +1,10 @@
 <template>
     <div>
-        <Tabs value="name1">
+        <Tabs value="name1" @on-click="handle">
             <TabPane label="歌曲" name="name1" class="real-panel"><Song :song=song></Song></TabPane>
-            <TabPane label="歌单" name="name2"><Songlist :songlist=songlist></Songlist></TabPane>
+            <TabPane label="歌单" name="name2">
+							<Songlist :songlist=sl></Songlist>
+						</TabPane>
             <TabPane label="专辑" name="name3"><Album :albums=albums></Album></TabPane>
         </Tabs>
     </div>
@@ -23,19 +25,20 @@ export default {
     props: ['user', 'sMethod', 'slMethod', 'aMethod'],
     data () {
         return {
-            song: [],
+						song: [],
+						sl: [],
             songlist: {
-							'createdsonglist':{
-								// "songlistid": "3000001",
-								// "songlistname": "我喜欢",
-								// "songlistimage": null,
-								// "isprivate": "0",
-								// "userid": "100001",
-								// "createtime": "2018-12-21T05:58:19.000+0000"
+							createdsonglist:{
+								"songlistid": "3000001",
+								"songlistname": "我喜欢",
+								"songlistimage": null,
+								"isprivate": "0",
+								"userid": "100001",
+								"createtime": "2018-12-21T05:58:19.000+0000"
 							},
-							'keepedsonglist': {
-
-							}
+								
+							keepedsonglist: [
+							]
             },
             albums: {
 
@@ -44,10 +47,14 @@ export default {
 		},
 		mounted() {
 			console.log(this.user.userid)
-			this.getSongList(this.user.userid)
 			this.getFavorite(this.user.userid)
 		},
     methods: {
+			handle(name) {
+				switch(name){
+					case 'name2':this.sl.length ===0 ? this.getSongList(this.user.userid): null
+				}
+			},
 			getFavorite(id) {
 				AXIOS.get('/getFavorite?id=' + id)
 				.then(respond => {
@@ -64,6 +71,8 @@ export default {
 				AXIOS.get('getSongList?id=' + id)
 				.then(respond => {
 					this.songlist = respond.data
+					this.sl = respond.data.keepedsonglist
+					console.log(this.sl)
 				})
 				.catch(error => {
 					this.$Notice.error({

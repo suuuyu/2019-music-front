@@ -45,7 +45,6 @@
         <div class="body-contain">
             <router-view :user="user"></router-view>
         </div>
-        <BackTop></BackTop>
     </div>
 </template>
 
