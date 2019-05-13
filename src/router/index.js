@@ -24,11 +24,11 @@ export default new Router({
       component: HelloWorld,
       children: [
         {
-          path: '/login',
+          path: 'login',
           component: login
         },
         {
-          path: '/register',
+          path: 'register',
           component: register
         }
       ]
@@ -54,15 +54,15 @@ export default new Router({
           component: userDetail,
           children: [
             {
-              path: '/profile/:userid/mylike',
+              path: 'mylike',
               component: mylike
             },
             {
-              path: '/profile/:userid/follow',
+              path: 'follow',
               component: follow
             },
             {
-              path: '/profile/:userid/friend',
+              path: 'friend',
               component: friend
             }
           ]
@@ -75,19 +75,19 @@ export default new Router({
       component: search,
       children: [
         {
-          path: '/search/Song',
+          path: 'Song',
           component:searchSong
         },
         {
-          path: '/search/SongList',
+          path: 'SongList',
           component:searchSongList
         },
         {
-          path: 'search/User',
+          path: 'User',
           component:searchUser
         },
         {
-          path: 'search/Album',
+          path: 'Album',
           component: searchAlbum
         }
       ]
