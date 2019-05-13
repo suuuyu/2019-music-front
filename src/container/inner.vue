@@ -1,15 +1,15 @@
 <template>
     <div>
         <router-view></router-view>
-        <panel></panel>
+        <menu-panel></menu-panel>
     </div>
 </template>
 
 <script>
-import panel from '../components/panel/navegatorPanel'
+import menuPanel from '../components/panel/navegatorPanel'
 export default {
     components: {
-        'panel': panel
+        'menu-panel': menuPanel
     },
 		name: 'inner',
 		data() {

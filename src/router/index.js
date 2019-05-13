@@ -8,10 +8,12 @@ import register from '../components/register'
 import songDetail from '../components/detail/songDetail'
 import mylike from '../components/profile/mylike'
 import search from '../container/search'
-import searchAlbum from '../components/searchAlbum'
-import searchSong from '../components/searchSong'
-import searchSongList from '../components/searchSongList'
-import searchUser from '../components/searchUser'
+import searchAlbum from '../components/search/searchAlbum'
+import searchSong from '../components/search/searchSong'
+import searchSongList from '../components/search/searchSongList'
+import searchUser from '../components/search/searchUser'
+import follow from '../components/profile/follow'
+import friend from '../components/profile/friend'
 
 Vue.use(Router)
 
@@ -54,6 +56,14 @@ export default new Router({
             {
               path: '/profile/:userid/mylike',
               component: mylike
+            },
+            {
+              path: '/profile/:userid/follow',
+              component: follow
+            },
+            {
+              path: '/profile/:userid/friend',
+              component: friend
             }
           ]
         },
