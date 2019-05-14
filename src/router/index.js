@@ -66,7 +66,7 @@ export default new Router({
               component: friend
             }
           ]
-        },
+        }
 
       ]
     },
@@ -76,15 +76,15 @@ export default new Router({
       children: [
         {
           path: 'Song',
-          component:searchSong
+          component: searchSong
         },
         {
           path: 'SongList',
-          component:searchSongList
+          component: searchSongList
         },
         {
           path: 'User',
-          component:searchUser
+          component: searchUser
         },
         {
           path: 'Album',
