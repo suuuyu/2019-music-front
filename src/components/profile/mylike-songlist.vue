@@ -95,8 +95,8 @@ export default {
     min-width: 1200px;
 }
 .panel {
-    float: right;
     margin-right: 50px;
+    margin-bottom: 0;
 }
 .panel-word {
     font-size: 14px;

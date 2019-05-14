@@ -78,6 +78,7 @@ nav.open {
 nav.top-right {
 	top: -140px;
 	right: -140px;
+	z-index: 1000;
 }
 .disc {
 	position: absolute;

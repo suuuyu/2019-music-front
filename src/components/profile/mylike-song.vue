@@ -213,7 +213,6 @@ export default {
 .operate_btn {
     height: 15px;
     position: relative;
-    bottom: 3px;
     top: 3px;
     right: 3px;
 }
@@ -224,8 +223,8 @@ export default {
     min-width: 1200px;
 }
 .panel {
-    float: right;
     margin-right: 50px;
+		margin-bottom: 0;
 }
 .panel-word {
     font-size: 14px;
