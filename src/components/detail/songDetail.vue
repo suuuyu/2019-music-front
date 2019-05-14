@@ -23,7 +23,7 @@
 						  <i-col span="12">播放次数：{{song.playTimes}}</i-col>
 					  </Row>
 						<Row class="buttonGroup">
-							<i-col span="8"><i-button shape="circle" class="myButton" type="primary" v-bind:style="{width:80%  height:100%  fontSize:25px}">播放</i-button></i-col>
+							<i-col span="8"><i-button shape="circle" class="myButton" type="primary">播放</i-button></i-col>
 							<i-col span="8"><i-button shape="circle" class="myButton">添加到</i-button></i-col>
 							<i-col span="8"><i-button shape="circle" class="myButton">下载</i-button></i-col>
 							<!--<i-col span="6"><i-button class="myButton">添加到</i-button></i-col>-->
