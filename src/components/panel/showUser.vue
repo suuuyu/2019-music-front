@@ -1,10 +1,10 @@
 <template>
   <div class="profile_cont">
-    <div class="js_sub" id="focus_singer_box" style="display: block;">
+    <div class="js_sub" style="display: block;" :bordered="false">
       <div class="mod_singer_list mod_singer_list--fans">
         <ul class="singer_list__list">
           <li class="singer_list__item" :key="index" v-for="(u, index) in thisUser">
-            <div class="singer_list__item_box">
+            <Card class="singer_list__item_box">
               <a href="#" class="singer_list__cover js_singer" >
                   <img class="singer_list__pic" src="//y.gtimg.cn/music/photo_new/T001R150x150M000001Y2Gbc2Xt1hU.jpg?max_age=2592000" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/singer_300.png?max_age=31536000';this.error=null;">
               </a>
@@ -13,7 +13,7 @@
               </h3>
               <p class="singer_list__info"  th:data-focusnum="${FollowNum.get(iterStat.index)}" th:text="${FollowNum.get(iterStat.index)}+'人已关注'"></p>
                 <Button type="primary" :loading="loading[index]" @click="changeFollow(100001, u.id, index)"><Icon type="md-add" :size=15 v-show="!loading[index]"/>添加关注</Button>
-            </div>
+            </Card>
           </li>
         </ul>
       </div>

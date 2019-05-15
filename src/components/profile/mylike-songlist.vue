@@ -11,14 +11,14 @@
                   <songPanel :songid="row.songlistid" class="panel"></songPanel>
               </strong>
           </template>
-          <template slot-scope="{ row }" slot="songnum">
-              <strong><a class="panel-word">{{  }}</a></strong>
+          <template slot-scope="{ row, index }" slot="songnum">
+              <strong><span class="panel-word">{{ songnum[index] }}</span></strong>
           </template>
-          <template slot-scope="{ row }" slot="username">
-              <strong><a class="panel-word">{{  }}</a></strong>
+          <template slot-scope="{ row, index }" slot="username">
+              <strong><a class="panel-word">{{ creater[index] }}</a></strong>
           </template>
-          <template slot-scope="{ row }" slot="keepnum">
-              <strong><span class="panel-word">{{  }}</span></strong>
+          <template slot-scope="{ row, index }" slot="keepnum">
+              <strong><span class="panel-word">{{ keepnum[index] }}</span></strong>
           </template>
         </Table>
         <div class="demo-spin-col" slot="skeleton">
@@ -33,15 +33,100 @@
 </template>
 
 <script>
+import {AXIOS} from '@/http/http'
 import songPanel from '../panel/songPanel'
+import { setTimeout } from 'timers';
 export default {
   components: {
       'songPanel': songPanel
     },
   props: ['songlist'],
   name: 'mylike-songlist',
+  mounted () {
+    this.$Loading.start();
+    console.log('list-created')
+    setTimeout(() => {
+      console.log(this.songlist)
+      for(let i=0; i<this.songlist.length; i++) {
+      console.log(i)
+      this.buildSongnum(this.songlist[i], i)
+      this.buildKeepnum(this.songlist[i], i)
+      this.buildCreator(this.songlist[i], i)
+    }
+    }, 1000)
+    setTimeout(() => {
+      this.$Loading.finish();
+    }, 1500)
+  },
+  methods: {
+    buildSongnum(songlist, i) {
+      this.getSongnum(songlist.songlistid, (json) => {
+        this.$set(this.songnum,i,json)
+        // songlist.songnum = json
+      })
+    },
+    buildKeepnum(songlist, i) {
+      this.getSongnum(songlist.songlistid, (json) => {
+        this.$set(this.keepnum,i,json)
+        console.log(this.keepnum)
+        // songlist.keepnum = json
+      })
+    },
+    buildCreator(songlist, i) {
+      this.getSongnum(songlist.songlistid, (json) => {
+        this.$set(this.creater,i,2)
+        // songlist.creater = json
+      })
+    },
+    getSongnum(songlistid, callback) {
+      AXIOS.get('/getNumOfSongList?songlistid=' + songlistid)
+      .then(respond => {
+        callback(respond.data)
+      })
+      .catch(error => {
+        this.$Loading.error();
+        this.$Notice.error({
+            title: '获取歌曲数目出错',
+            desc: error ? error : '未知错误'
+        })
+      })
+    },
+    getKeepnum(songlistid, callback) {
+      AXIOS.get('/getSongListSavedNum?songlistid=' + songlistid)
+      .then(respond => {
+        callback(respond.data)
+      })
+      .catch(error => {
+        this.$Loading.error();
+        this.$Notice.error({
+            title: '获取歌曲收藏出错',
+            desc: error ? error : '未知错误'
+        })
+      })
+    },
+    getUser(id, callback) {
+      AXIOS.get('/getUser?id=' + id)
+      .then(respond => {
+        callback(respond.data)
+      })
+      .catch(error => {
+        this.$Loading.error();
+        this.$Notice.error({
+            title: '获取创建人出错',
+            desc: error ? error : '未知错误'
+        })
+      })
+    },
+    getName(name) {
+      console.log(name)
+      return name
+    }
+  },
   data() {
     return {
+      songnum: [],
+      keepnum: [],
+      creater: [],
       columns:[
 					{
 						title: '歌单',
@@ -67,9 +152,6 @@ export default {
 					}
 				],
     }
-  },
-  methods: {
-
   }
 }
 </script>
@@ -102,6 +184,9 @@ export default {
     font-size: 14px;
     font-family: 微软雅黑,sans-serif;
     font-weight:500;
+}
+a {
+  color: black
 }
 </style>
 
