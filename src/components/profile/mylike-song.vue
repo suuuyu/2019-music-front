@@ -23,7 +23,7 @@
             </a>
         </div>
 				<div class="detail-contain" >
-					<vue-lazy-component  :timeout="1500">
+					<vue-lazy-component  :timeout="2000">
 					<Table stripe  :columns="columns" :data="song">
 							<template slot-scope="{ row }" slot="name">
 									<strong><a class="panel-word">{{ row.songname }}</a></strong>
@@ -167,6 +167,9 @@ export default {
 </script>
 
 <style scoped>
+a {
+  color: black
+}
 .demo-spin-icon-load{
 	animation: ani-demo-spin 1s linear infinite;
 }

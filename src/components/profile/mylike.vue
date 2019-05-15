@@ -48,6 +48,7 @@ export default {
 		mounted() {
 			console.log(this.user.userid)
 			this.getFavorite(this.user.userid)
+			this.getSongList(this.user.userid)
 		},
     methods: {
 			handle(name) {
@@ -71,8 +72,7 @@ export default {
 				AXIOS.get('getSongList?id=' + id)
 				.then(respond => {
 					this.songlist = respond.data
-					this.sl = respond.data.keepedsonglist
-					console.log(this.sl)
+					this.sl = this.songlist.keepedsonglist
 				})
 				.catch(error => {
 					this.$Notice.error({
