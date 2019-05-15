@@ -15,13 +15,13 @@
 					<ul class="mod-user-statistic">
 							<li class="user_statistic__item">
 									<a href="javascript:;"  class="js_tab" @click="showFollow">
-											<strong class="user_statistic__number js_num_follow">{{friends.length}}</strong>
+											<strong class="user_statistic__number js_num_follow">{{friends.length + followSingers.length}}</strong>
 											<span class="user_statistic__tit">关注</span>
 									</a>
 							</li>
 							<li class="user_statistic__item user_statistic__item--last">
 									<a href="javascript:;"  class="js_tab" @click="showFan">
-											<strong class="user_statistic__number js_num_fans">{{fans.length + followSingers.length}}</strong>
+											<strong class="user_statistic__number js_num_fans">{{fans.length}}</strong>
 											<span class="user_statistic__tit">粉丝</span>
 									</a>
 							</li>
