@@ -6,13 +6,16 @@
           <li class="singer_list__item" :key="index" v-for="(u, index) in thisUser">
             <Card class="singer_list__item_box">
               <a href="#" class="singer_list__cover js_singer" >
-                  <img class="singer_list__pic" src="//y.gtimg.cn/music/photo_new/T001R150x150M000001Y2Gbc2Xt1hU.jpg?max_age=2592000" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/singer_300.png?max_age=31536000';this.error=null;">
+                  <img class="singer_list__pic" :src="u.img" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/singer_300.png?max_age=31536000';this.error=null;">
               </a>
               <h3 class="singer_list__title">
                 <a href="https://y.qq.com/n/yqq/singer/001Y2Gbc2Xt1hU.html" class="js_singer" v-text="u.name"></a>
               </h3>
-              <p class="singer_list__info"  th:data-focusnum="${FollowNum.get(iterStat.index)}" th:text="${FollowNum.get(iterStat.index)}+'人已关注'"></p>
-                <Button type="primary" :loading="loading[index]" @click="changeFollow(100001, u.id, index)"><Icon type="md-add" :size=15 v-show="!loading[index]"/>添加关注</Button>
+              <p class="singer_list__info"></p>
+                <Button :type="FollowArr[index] == 1? 'error':'primary'" :loading="loading[index]" @click="changeFollow(me, u.id, index)">
+                  <Icon :type="FollowArr[index] == 1? 'md-close':'md-add'" :size=15 v-show="!loading[index]"/>
+                  {{FollowArr[index] == 1? '取消关注':'添加关注'}}
+                  </Button>
             </Card>
           </li>
         </ul>
@@ -22,6 +25,7 @@
 </template>
 
 <script>
+import {AXIOS} from '@/http/http'
 import { setTimeout } from 'timers';
 export default {
   props: ['type', 'user'],
@@ -31,47 +35,86 @@ export default {
       this.user.forEach(u => {
         let idType = this.type == 1? 'userid':'singerid'
         let nameType = this.type == 1? 'username':'singername'
+        let img = this.type == 1? 'userimage':'singerimage'
+        console.log(u[img])
         this.thisUser.push({
           id: u[idType],
-          name: u[nameType]
+          name: u[nameType],
+          img: u[img]
         })
+        this.isFollow(this.me, u[idType])
         this.loading.push(false)
       });
     }, 500)
   },
   data() {
     return {
+      me: sessionStorage.getItem('userid'),
       thisUser: [],
-      loading: []
+      loading: [],
+      FollowArr: []
     }
   },
   methods: {
     isFollow(userid, id) {
       if(this.type == 1) {
-        this.isFollowUser(userid, id)
+        this.isFollowUser(userid, id, (json) => {
+          console.log(json)
+         this.FollowArr.push(json?1:-1)
+        })
       } else {
         this.isFollowSinger(userid, id)
       }
     },
     changeFollow(userid, id, index) {
       this.$set(this.loading, index, true)
-      console.log(this.loading)
       if(this.type == 1) {
-        this.changeFollowUser(userid, id)
+        this.changeFollowUser(userid, id, (json) => {
+          this.$set(this.FollowArr, index, -this.FollowArr[index])
+          console.log(this.FollowArr[index])
+          this.$set(this.loading, index, false)
+          this.$Notice.success({
+							title: json
+					})
+        })
       } else {
         this.changeFollowSinger(userid, id)
       }
     },
-    changeFollowUser(userid, id) {
-
+    changeFollowUser(userid, id, callback) {
+      AXIOS.get('changeFollow?' + this.$qs.stringify({
+        'uid': userid,
+        'fid': id 
+      }))
+				.then(response => {
+					callback(response.data)
+				})
+				.catch(error => {
+					this.$Notice.error({
+							title: '改变关注用户失败',
+							desc: error ? error : '未知错误'
+					})
+				})
     },
-    changeFollowSinger(userid, id) {
-
+    changeFollowSinger(userid, id, callback) {
+      
     },
-    isFollowUser(userid, id) {
-
+    isFollowUser(userid, id, callback) {
+      AXIOS.get('isFollowed?' + this.$qs.stringify({
+        'uid': userid,
+        'fid': id 
+      }))
+				.then(response => {
+					callback(response.data)
+				})
+				.catch(error => {
+					this.$Notice.error({
+							title: '查看关注出错',
+							desc: error ? error : '未知错误'
+					})
+				})
     },
-    isFollowSinger(userid, id) {
+    isFollowSinger(userid, id, callback) {
 
     }
   }

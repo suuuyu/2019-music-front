@@ -62,41 +62,42 @@ export default {
     },
     data () {
         return {
-            user: {
-                // "userid": "100001",
-								// "username": "lemon",
-								// "userpassword": "123",
-								// "userimage": null,
-								// "usersex": "1",
-								// "isvip": "0",
-								// "userbalance": 0,
-								// "isbanned": "0"
-						},
-						fans: [], //关注我人
-						friends: [
-							// like this:
-							// {
-							// "userid": "100000",
-							// "username": "tongji",
+					me: sessionStorage.getItem('userid'),
+					user: {
+							// "userid": "100001",
+							// "username": "lemon",
 							// "userpassword": "123",
 							// "userimage": null,
 							// "usersex": "1",
 							// "isvip": "0",
 							// "userbalance": 0,
-							// "isbanned": null
-							// }
-						], //我关注的人
-						followSingers: [
-							// like this
-							// 	{
-							// 	"singerid": "200000",
-							// 	"singername": "周杰伦",
-							// 	"singerimage": null,
-							// 	"singersex": "男",
-							// 	"region": "中国台湾",
-							// 	"introduction": "中国台湾流行男歌手"
-							// }
-						] //我关注的歌手
+							// "isbanned": "0"
+					},
+					fans: [], //关注我人
+					friends: [
+						// like this:
+						// {
+						// "userid": "100000",
+						// "username": "tongji",
+						// "userpassword": "123",
+						// "userimage": null,
+						// "usersex": "1",
+						// "isvip": "0",
+						// "userbalance": 0,
+						// "isbanned": null
+						// }
+					], //我关注的人
+					followSingers: [
+						// like this
+						// 	{
+						// 	"singerid": "200000",
+						// 	"singername": "周杰伦",
+						// 	"singerimage": null,
+						// 	"singersex": "男",
+						// 	"region": "中国台湾",
+						// 	"introduction": "中国台湾流行男歌手"
+						// }
+					] //我关注的歌手
         }
     },
     methods: {
@@ -107,9 +108,12 @@ export default {
 				}
 			},
 			showFollow() {
+				this.getFriends(this.user.userid)
+				this.getFollowSinger(this.user.userid)
 				this.$router.push('/profile/' + this.user.userid + '/follow')
 			},
 			showFan() {
+				this.getFans(this.user.userid)
 				this.$router.push('/profile/' + this.user.userid + '/friend')
 			},
 			getUser(id) {

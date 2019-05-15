@@ -14,7 +14,7 @@
             </Input>
         </FormItem>
         <FormItem>
-            <Button type="primary" @click="handleSubmit('formInline')">登录</Button>
+            <Button type="primary" @click="handleSubmit('formInline')" :loading="loading" :shape="circle">{{loading?'':'登录'}}</Button>
         </FormItem>
     </Form>
 </div>
@@ -26,6 +26,8 @@ export default{
 	name: 'login',
 	data() {
 		return {
+			loading: false,
+			circle: '',
 			formInline: {
 				user: '',
 				password: ''
@@ -46,6 +48,8 @@ export default{
 		handleSubmit(name) {
 			this.$refs[name].validate((valid) => {
 				if (valid) {
+					this.loading = true
+					this.circle = 'circle'
 					AXIOS.post('/Login', this.$qs.stringify({
 						'id': this.formInline.user,
 						'pwd': this.formInline.password
@@ -61,6 +65,7 @@ export default{
 						this.$router.push('/profile/' + this.formInline.user + '/mylike')
 						if(data.success) {
 							this.$Message.success('Success!')
+							sessionStorage.setItem('userid', this.formInline.user)
 							// this.$router.push('/profile/' + this.formInline.user + '/mylike')
 						} else {
 							this.$Message.error('密码错误或用户不存在')
@@ -69,6 +74,10 @@ export default{
 					.catch(error => {
 						this.$router.push('/profile/' + this.formInline.user + '/mylike')
 						this.$Message.error('Fail!')
+					})
+					.finally(() => {
+						this.loading = false
+						this.circle = ''
 					})
 				} else {
 					this.$Message.error('Fail!')

@@ -73,8 +73,8 @@ export default {
       })
     },
     buildCreator(songlist, i) {
-      this.getSongnum(songlist.songlistid, (json) => {
-        this.$set(this.creater,i,2)
+      this.getUser(songlist.userid, (json) => {
+        this.$set(this.creater,i,json.username)
         // songlist.creater = json
       })
     },
