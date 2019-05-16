@@ -23,7 +23,7 @@
             </a>
         </div>
 				<div class="detail-contain" >
-					<vue-lazy-component  :timeout="1500">
+					<vue-lazy-component  :timeout="3000">
 					<Table stripe  :columns="columns" :data="song">
 							<template slot-scope="{ row }" slot="name">
 									<strong><a class="panel-word">{{ row.songname }}</a></strong>
@@ -34,10 +34,10 @@
 									</strong>
 							</template>
 							<template slot-scope="{ row }" slot="singer">
-									<strong><a class="panel-word">{{ row.singer[0].singername }}</a></strong>
+									<strong><a class="panel-word" v-text="row.singer[0].singername"></a></strong>
 							</template>
 							<template slot-scope="{ row }" slot="album">
-									<strong><a class="panel-word">{{ row.album.albumname }}</a></strong>
+									<strong><a class="panel-word" v-text="row.album.albumname"></a></strong>
 							</template>
 							<template slot-scope="{ row }" slot="length">
 									<strong><span class="panel-word">{{ row.length }}</span></strong>
@@ -67,11 +67,12 @@ export default {
     mounted () {
 			this.$Loading.start();
 			setTimeout(() => {
+				console.log('长度:' + this.song.length)
 				for(let i=0; i<this.song.length; i++){
 					this.buildAlbum(this.song[i].albumid, this.song[i])
 					this.buildSinger(this.song[i].songid, this.song[i])
 				}
-			}, 500)
+			}, 1000)
 			setTimeout(() => {
 				this.$Loading.finish();
 			}, 1500)
@@ -167,6 +168,9 @@ export default {
 </script>
 
 <style scoped>
+a {
+  color: black
+}
 .demo-spin-icon-load{
 	animation: ani-demo-spin 1s linear infinite;
 }
@@ -213,7 +217,6 @@ export default {
 .operate_btn {
     height: 15px;
     position: relative;
-    bottom: 3px;
     top: 3px;
     right: 3px;
 }
@@ -224,8 +227,8 @@ export default {
     min-width: 1200px;
 }
 .panel {
-    float: right;
     margin-right: 50px;
+		margin-bottom: 0;
 }
 .panel-word {
     font-size: 14px;

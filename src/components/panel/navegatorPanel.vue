@@ -9,7 +9,7 @@
 		<a href="#" class="disc l3" >
 			<div id="disc3" class="">个人主页</div>
 		</a>
-		<a href="#" class="disc l4">
+		<a href="#" class="disc l4" @click="exit">
 			<div id="disc4" class="">退出登录</div>
 		</a>
 		<a class="disc l5 toggle" @click="handle">
@@ -30,6 +30,10 @@ export default {
 		}
 	},
 	methods: {
+		exit() {
+			this.$router.push('/login')
+			sessionStorage.clear()
+		},
 		handle() {
 			if(this.nav_class === 'top-right') {
 				this.nav_class = 'top-right open'
@@ -78,6 +82,7 @@ nav.open {
 nav.top-right {
 	top: -140px;
 	right: -140px;
+	z-index: 1000;
 }
 .disc {
 	position: absolute;
