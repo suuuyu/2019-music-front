@@ -6,6 +6,8 @@ import 'iview/dist/styles/iview.css'
 import querystring from 'querystring'
 import VueLazyComponent from '@xunlei/vue-lazy-component'
 import $ from "jquery";
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/js/bootstrap.min.js'
 
 Vue.use(VueLazyComponent)
 
@@ -15,5 +17,6 @@ Vue.use(iView)
 
 new Vue({
   render: h => h(App),
-  router: router
+  router: router,
+  $,
 }).$mount('#app')

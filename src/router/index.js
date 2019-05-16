@@ -14,11 +14,11 @@ import searchSongList from '../components/search/searchSongList'
 import searchUser from '../components/search/searchUser'
 import follow from '../components/profile/follow'
 import friend from '../components/profile/friend'
-
 Vue.use(Router)
 
 export default new Router({
   routes: [
+    //For Development
     {
       path: '/',
       component: HelloWorld,
@@ -38,7 +38,7 @@ export default new Router({
       component: inner,
       children: [
         {
-          path: '/song',
+          path: '/song/:id',
           component: songDetail
         },
         // {
