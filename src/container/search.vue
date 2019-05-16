@@ -91,8 +91,16 @@
                     {{item}}
                 </a>
             </div>
-            <Song :song=song></Song>
+            <Song :song=song v-if="selectedTab==1"></Song>
+            <Album :albums=albums v-if="selectedTab==2"></Album>
+            <Songlist :songlist=sl v-if="selectedTab==3"></Songlist>
         </div>
+        <!-- 搜索动态按钮 -->
+        <transition name="draw" :duration="500">
+            <div class="search_btn" v-if="btnShow">
+                <searchBtn></searchBtn>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -100,15 +108,24 @@
 import mylikesong from '../components/profile/mylike-song'
 import mylikealbum from '../components/profile/mylike-album'
 import mylikesonglist from '../components/profile/mylike-songlist'
+import searchBtn from '../components/search/searchBtn'
 import { AXIOS } from '../http/http';
 
 export default {
     mounted(){
         this.getSongs(100001)
+        // 注册页面滚动事件监听器
+        window.addEventListener('scroll', this.handleScroll)
+    },
+    destroyed(){
+        // 销毁页面滚动事件监听器
+        window.removeEventListener('scroll', this.handleScroll)
     },
     data () {
 			return {
                 song: [],
+                album: [],
+                sl: [],
                 selectedTab: 0,
                 tabsDisplay: ["单曲","专辑","歌单"],
                 searchSong: [{songName: "爱在西元前",singerName:"周杰伦"}],
@@ -119,14 +136,29 @@ export default {
                 inputValue: "",
                 showHis: false,
                 showRes: false,
+                btnShow: false,
 			}
         },
     components: {
 			'Song': mylikesong,
 			'Songlist': mylikesonglist,
-			'Album': mylikealbum
+            'Album': mylikealbum,
+            'searchBtn': searchBtn
     },
     methods: {
+        handleScroll(){
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+            // var offsetTop = document.querySelector('#search_group').offsetTop;
+            // console.log(offsetTop)
+            // console.log(scrollTop)
+            if(scrollTop > 105){
+                this.btnShow = true
+            }
+            else{
+                this.btnShow = false
+            }
+
+        },
         showBox(){
             // console.log(this.inputValue)
             if(this.inputValue == ""){
@@ -255,6 +287,10 @@ dd, dt {
    color: #fff !important;
  }
 
+.search_btn{
+    position: relative;
+    z-index:999;
+}
 
 .mod_search_tips {
     margin-top: 124px;
