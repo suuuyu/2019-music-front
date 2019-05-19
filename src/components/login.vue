@@ -1,6 +1,6 @@
 <template>
   <div class="login-form">
-    <h1>欢迎登录</h1>
+    <h1><b>欢迎登录</b></h1>
 	<img src="../image/Login_image/shiny_music.png" height="120" width="120" />
     <Form class="input-form" ref="formInline" :model="formInline" :rules="ruleInline" >
         <FormItem prop="user">
@@ -13,10 +13,24 @@
                 <Icon type="ios-lock-outline" slot="prepend"></Icon>
             </Input>
         </FormItem>
+		<div class="btn-div">
         <FormItem>
-            <Button type="primary" @click="handleSubmit('formInline')" :loading="loading" :shape="circle">{{loading?'':'登录'}}</Button>
+            <Button class="lg-reg-btn" type="primary" @click="handleSubmit('formInline')" :loading="loading" :shape="circle">{{loading?'':'登录'}}</Button>
         </FormItem>
+		<FormItem>
+            <Button class="lg-reg-btn" type="primary" @click="toRegister()" :shape="circle">注册</Button>
+        </FormItem>
+		</div>
     </Form>
+	<Poptip
+	    class="admin-tip"
+		confirm
+		transfer
+        title="如果您是用户，请按取消；如果您是管理员请按确定"
+        @on-ok="toAdminLogin"
+        @on-cancel="cancel">
+        <Icon id="admin-icon" type="md-contact" />
+    </Poptip>
 </div>
 </template>
 
@@ -45,6 +59,12 @@ export default{
 		}
 	},
 	methods: {
+		toRegister(){
+			this.$parent.handleSelect('2')
+		},
+		toAdminLogin(){
+			this.$parent.handleSelect('3')
+		},
 		handleSubmit(name) {
 			this.$refs[name].validate((valid) => {
 				if (valid) {
@@ -56,8 +76,8 @@ export default{
 					}), 
 					{
 						headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            }
+                         'Content-Type': 'application/x-www-form-urlencoded'
+                        }
 					})
 					.then(response => {
 						console.log(response.data)
@@ -96,7 +116,7 @@ export default{
 	width: 600px;
 	height: auto;
 	padding:2em;
-	margin: 100px auto 0 auto;
+	margin: 0 auto 0 auto;
 	text-align: center;
 	border-radius: 15px;/*圆角边框*/;
 	padding-bottom: 50px;
@@ -111,7 +131,28 @@ export default{
 .input-label {
 	margin-bottom: 10px;
 }
-
-
+h1{
+	color:whitesmoke;
+	font-size: 30px
+}
+.btn-div{
+	display:flex;
+	
+}
+.lg-reg-btn{
+	margin:0 55px;
+	font-weight: 900
+}
+#admin-icon
+{
+    color:rgb(11, 148, 240);
+    font-size:25px;
+}
+.admin-tip
+{
+	position: absolute;
+    right:1%;
+    bottom:1%;
+}
 </style>
 

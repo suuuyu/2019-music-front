@@ -1,15 +1,5 @@
 <template>
   <div :class="bg">
-    <Menu mode="horizontal" class="menu" :theme="menuTheme" active-name="1" @on-select="handleSelect">
-        <MenuItem name="1">
-            <Icon type="ios-paper" />
-            登录
-        </MenuItem>
-        <MenuItem name="2">
-            <Icon type="ios-people" />
-            注册
-        </MenuItem>
-    </Menu>
     <transition name="fade" mode="out-in">
       <router-view></router-view>
     </transition>
@@ -25,7 +15,7 @@ export default {
 	data() {
 		return {
 			menuTheme: 'dark',
-			bg: 'login'
+      bg: 'login'
 		}
   },
   methods: {
@@ -33,11 +23,14 @@ export default {
 		if (name === '1') {
 			this.bg = 'login'
 			this.$router.push('/login')
-		} else {
+		} else if (name === '2') {
 			this.bg = 'register'
 			this.$router.push('/register')
-		}
-	  }
+		} else {
+      this.bg = 'alogin'
+      this.$router.push('/alogin')
+    }
+    }
   }
 }
 </script>
@@ -52,12 +45,21 @@ export default {
 	background-size: 100% 100%;
 	width: 100%;
 	height: 100%;
+  padding-top: 3%
 }
 .register {
 	background: url(../image/Register_image/register.jpg);
 	background-size: 100% 100%;
 	width: 100%;
 	height: 100%;
+  padding-top: 2%
+}
+.alogin {
+  background: url(../image/Login_image/bg.png);
+	background-size: 100% 100%;
+	width: 100%;
+	height: 100%;
+  padding-top: 3%
 }
 .fade-enter-active, .fade-leave-active {
   transition: opacity .3s;
@@ -78,5 +80,16 @@ li {
 }
 a {
   color: #42b983;
+}
+#admin-alert
+{
+	float:left;
+    margin:auto;
+    top:10px;
+    color:rgb(199, 113, 0);
+    background-color: rgb(255, 234, 209);
+    font-size:18px;
+    font-family:"Microsoft YaHei";
+    font-weight: 600
 }
 </style>

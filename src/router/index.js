@@ -14,6 +14,14 @@ import searchSongList from '../components/search/searchSongList'
 import searchUser from '../components/search/searchUser'
 import follow from '../components/profile/follow'
 import friend from '../components/profile/friend'
+import alogin from '../components/alogin'
+import admin from '../container/admin'
+import data from '../components/admin/data'
+import me from '../components/admin/me'
+import ManageSong from '../components/admin/ManageSong'
+import ManageAlbum from '../components/admin/ManageAlbum'
+import ManageSinger from '../components/admin/ManageSinger'
+import BanUser from '../components/admin/BanUser'
 
 Vue.use(Router)
 
@@ -30,8 +38,16 @@ export default new Router({
         {
           path: 'register',
           component: register
-        }
+        },
+        {
+          path: 'alogin',
+          component: alogin
+        },
       ]
+    },
+    {
+      path:'/admin',
+      component:admin
     },
     {
       path: '/inner',
@@ -89,6 +105,36 @@ export default new Router({
         {
           path: 'Album',
           component: searchAlbum
+        }
+      ]
+    },
+    {
+      path:'/admin',
+      component:admin,
+      children:[
+        {
+          path:'data',
+          component:data
+        },
+        {
+          path:'me',
+          component:me
+        },
+        {
+          path:'ManageSong',
+          component:ManageSong
+        },
+        {
+          path:'ManageAlbum',
+          component:ManageAlbum
+        },
+        {
+          path:'ManageSinger',
+          component:ManageSinger
+        },
+        {
+          path:'BanUser',
+          component:BanUser
         }
       ]
     }
