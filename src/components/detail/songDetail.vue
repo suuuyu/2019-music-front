@@ -23,10 +23,20 @@
 						  <i-col span="12">播放次数：{{song.playTimes}}</i-col>
 					  </Row>
 						<Row class="buttonGroup">
-							<i-col span="8"><i-button shape="circle" class="myButton" type="primary">播放</i-button></i-col>
-							<i-col span="8"><i-button shape="circle" class="myButton">添加到</i-button></i-col>
-							<i-col span="8"><i-button shape="circle" class="myButton">下载</i-button></i-col>
-							<!--<i-col span="6"><i-button class="myButton">添加到</i-button></i-col>-->
+							<i-col span="8"><button class="btn btn-default-large myButton" type="button">播放</button></i-col>							
+							<i-col span="8">
+							  <button class="btn btn-default-large myButton dropdown-toggle" 
+							    data-toggle="dropdown" aria-haspopup="true" 
+							    aria-expanded="false" type="button">添加到   
+							    <span class="caret"></span>
+							  </button>
+							  <ul class="dropdown-menu">
+							    <li v-for="songList in songLists" class="songListItem">
+										{{songList.songlistname}}
+									</li>
+							  </ul>
+							</i-col>
+							<i-col span="8"><button class="btn btn-default-large myButton" type="button">下载</button></i-col>
 						</Row>
 					</div> 
 				</i-col>
@@ -40,7 +50,8 @@
 				  <p class="subTitle comment subComment">共{{song.commentNum}}条评论</p>
 				</div>
 			  <div>
-					<i-input type="textarea" placeholder="留下你的评论吧……" :rows="6" ref="commentText" v-model = "commentText"></i-input>
+					<i-input type="textarea" placeholder="留下你的评论吧……" :rows="6" ref="commentText" v-model = "commentText"
+					class = "commentArea" style="{fontSize:30px}"></i-input>
 				</div>
 				<i-button type="primary" class="commentButton" v-on:click="commentSubmit">提交</i-button>
 			</div>
@@ -59,7 +70,7 @@ export default {
 		commentSubmit:function(event){
 			//UserID获取，待完成
 			console.log("Attention!");
-			var userID = "100001";
+			var userID = sessionStorage.getItem("userid");
 			var songID = this.song.id;
 			console.log(this.commentText);
 			var text = this.commentText;
@@ -125,18 +136,30 @@ export default {
 					List[i].name = response.data["commentUsers"][i];
 				}
 				this.commentsList = List;
-				/*for(var i=0; i<List.length; i++){
-					let comment = {};
-					comment.commenttext = List[i].commenttext;
-					comment.commenttime = List[i].commenttime;
-					comment.userid = List[i].userid;
-					this.commentsList.push(comment);
-				}
-				console.log(this.commentsList.length);*/
 			}).catch(response=>{
 				console.log(response.data);
 			});
 		},
+		getSongList:function(){
+			console.log(this.userID);
+			AXIOS.get("/getSongList",{
+				params:{
+					id:this.userID,
+				}
+			}).then(response=>{
+				console.log(response.data);
+				var songList = response.data.createdsonglist;
+				for(let i=0; i<songList.length; i++){
+					this.songLists.push(songList[i]);
+				}
+				console.log(this.songLists.length);
+			}).catch(response=>{
+				console.log(response);
+			});
+		}
+	},
+	beforeMount(){
+		this.userID = sessionStorage.getItem("userid");
 	},
 	components:{
 		commentList
@@ -146,9 +169,11 @@ export default {
 		this.song.id = this.$route.params.id;
 		this.getSingerName();
 		this.getSongInfo();
+		this.getSongList();
 	},
   data(){
 		return {
+			userID:"",
 			commentText:"留下你的评论吧~",
 			song: {
 					id: "",
@@ -164,12 +189,26 @@ export default {
 					commentNum:0,
 			},
 			commentsList:{},
+			songLists:[],
 		}
 	}
 }
 </script>
 
 <style scoped>
+.commentArea{
+	font-size:35px;
+}
+.detail{
+	
+}
+.songListItem{
+	height:50px;
+	font-size:20px;
+	border: 4px 4px 4px 4px;
+	border-color:black;
+	border-style:initial;
+}
 .commentList{
 	margin-top:50px;
 	width:80%;
@@ -209,6 +248,9 @@ export default {
 	width:80%;
 	height:100%;
 	font-size:25px;
+	background:white;
+	border-color:lightskyblue;
+	border:3px 3px 3px 3px;
 }
 .buttonGroup{
 	height:119px;
