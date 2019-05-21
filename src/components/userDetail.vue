@@ -250,7 +250,7 @@ export default {
 }
 .mod-user-statistic {
     height: 40px;
-    margin: 4px 15px 26px;
+    margin: 4px 15px 20px;
     overflow: hidden;
     font-size: 0;
 }
@@ -286,9 +286,9 @@ export default {
 .ivu-menu-light {
     background: #02020200 !important;
 }
-.main-menu {
+/* .main-menu {
     margin-top: 45px;
-}
+} */
 .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item {
     color: rgb(255, 255, 255) ;
     font-family: poppin,Tahoma,Arial,微软雅黑,sans-serif;
