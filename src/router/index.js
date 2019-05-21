@@ -54,7 +54,7 @@ export default new Router({
       component: inner,
       children: [
         {
-          path: '/song',
+          path: '/song/:songid',
           component: songDetail
         },
         // {

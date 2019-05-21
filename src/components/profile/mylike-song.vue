@@ -30,7 +30,7 @@
 							</template>
 							<template slot-scope="{ row }" slot="menuBar">
 									<strong>
-											<songPanel :songid="row.songid" class="panel"></songPanel>
+											<songPanel :songid="row.songid" :type="1" class="panel" @toChoose="toChoose"></songPanel>
 									</strong>
 							</template>
 							<template slot-scope="{ row }" slot="singer">
@@ -51,6 +51,27 @@
 						</div>
 						</vue-lazy-component>
         	</div>
+					<Modal v-model="chooseList">
+						<p slot="header" style="color:#f60;text-align:center">
+								<Icon type="ios-information-circle"></Icon>
+								<span>选择想加入的歌单</span>
+						</p>
+						<div style="text-align:center">
+							 <Card :key="index" v-for="(s, index) in mySonglist">
+										<div style="text-align:center" @click="keepSong(songid, s.songlistid)">
+											<p>{{s.songlistname}}</p>
+										</div>
+								</Card>
+						</div>
+						<div slot="footer">
+								<Button type="success" size="large" long @click="toEdit=true" v-if="!toEdit">新建歌单</Button>
+								<Row v-if="toEdit">
+									<Col span="18"><Input v-model="songlistName" v-if="toEdit" placeholder="请输入新歌单的名字"></Input></Col>
+									<Col span="3"><Button type="success"><span>确定</span></Button></Col>
+									<Col span="3"><Button >取消</Button></Col>
+								</Row>
+						</div>
+				</Modal>
     </div>
 </template>
 
@@ -58,6 +79,7 @@
 import {AXIOS} from '@/http/http'
 import songPanel from '../panel/songPanel'
 import { setTimeout } from 'timers';
+import {showCreatedSongList, keepSong} from '@/request/song'
 export default {
     components: {
         'songPanel': songPanel
@@ -79,6 +101,10 @@ export default {
     },
     data () {
 			return {
+				chooseList: false,
+				songid: '',
+				toEdit: false,
+				songlistName: '',
 				albums: [
 					// "albumid": "1000000",
 					// "albumname": "十一月的萧邦",
@@ -98,7 +124,7 @@ export default {
 					// 	"introduction": "中国台湾流行男歌手"
  				 	// }
 				],
-
+				mySonglist:[],
 				columns:[
 					{
 						title: '歌名',
@@ -127,6 +153,28 @@ export default {
 			}
     },
     methods: {
+			keepSong(songid, songlistid){
+				keepSong(songid, songlistid, json => {
+					if(json.success){
+						this.$Notice.success({
+							title: json.errorMsg
+						})
+						this.chooseList = false
+					} else {
+						this.$Notice.error({
+							title: json.errorMsg
+						})
+					}
+					
+				})
+			},
+			toChoose(id) {
+				this.chooseList = true
+				this.songid = id
+				showCreatedSongList(sessionStorage.getItem('userid'), json => {
+					this.mySonglist = json
+				})
+			},
 			buildAlbum(albumid, song) {
 				this.getAlbum(albumid, (json) => {
 					song.album = json

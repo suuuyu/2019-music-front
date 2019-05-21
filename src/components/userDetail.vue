@@ -2,15 +2,17 @@
     <div>
         <div class="head-contain">
             <div class="inner">
-                <div class="head-img">
-                    <img src="//thirdqq.qlogo.cn/g?b=sdk&amp;k=FDjMMNJZGGJc9MsnCMnHsw&amp;s=140&amp;t=1529503572" 
-                    onerror="this.src='//y.gtimg.cn/mediastyle/global/img/person_300.png?max_age=31536000';this.onerror=null;" alt="flowrain" class="profile-cover" >
-                </div>
-                <h1 class="profile__tit">
-				    <span class="profile-name" v-text="user.username + '  id: ' + user.userid"></span>
-                    <a href="https://y.qq.com/portal/vipportal/index.html">
-                        <img src="//y.gtimg.cn/music/icon/v1/mac/svip_g@2x.png?max_age=2592000" alt="user_cover" class="lv_icon">
-                    </a>
+							<div class="head-img">
+									<img src="//thirdqq.qlogo.cn/g?b=sdk&amp;k=FDjMMNJZGGJc9MsnCMnHsw&amp;s=140&amp;t=1529503572" 
+									onerror="this.src='//y.gtimg.cn/mediastyle/global/img/person_300.png?max_age=31536000';this.onerror=null;" alt="flowrain" class="profile-cover" >
+							</div>
+            <h1 class="profile__tit">
+						<Tooltip placement="left" :content="'id: ' + user.userid">
+							<span class="profile-name" v-text="user.username"></span>
+						</Tooltip>
+						<!-- <a href="https://y.qq.com/portal/vipportal/index.html">
+								<img src="//y.gtimg.cn/music/icon/v1/mac/svip_g@2x.png?max_age=2592000" alt="user_cover" class="lv_icon">
+						</a> -->
 			    </h1>
 					<ul class="mod-user-statistic">
 							<li class="user_statistic__item">
@@ -25,6 +27,7 @@
 											<span class="user_statistic__tit">粉丝</span>
 									</a>
 							</li>
+							<Button v-if="me!==user.userid" type="default" ghost class="follow-btn" @click="handleFollow">{{isFollow==1?'取消关注':'关注'}}</Button>
 			    </ul>
 					<Menu mode="horizontal" active-name="1" class="main-menu" @on-select="Menuselected">
 							<MenuItem name="1">
@@ -43,7 +46,7 @@
 					</div>
 			</div>
 		<div class="body-contain">
-				<router-view :user="user" :fans="fans" 
+				<router-view :userid="userid" :fans="fans" 
 				:friends="friends" :followSingers="followSingers"></router-view>
 		</div>
 	</div>
@@ -51,18 +54,31 @@
 
 <script>
 import {AXIOS} from '../http/http'
+import { changeFollowUser, isFollowUser} from '@/request/follow'
 export default {
     name: 'userDetail',
     created () {
-			this.user.userid = this.$route.params.userid
-			this.getUser(this.user.userid)
-			this.getFans(this.user.userid)
-			this.getFriends(this.user.userid)
-			this.getFollowSinger(this.user.userid)
-    },
+			this.init();
+		},
+		watch: {
+			userid: function () {
+				this.init()
+				console.log(this.userid + ' !!!!!!!!!!!')
+			}
+		},
+		beforeRouteUpdate(to, from, next){
+			// 在当前路由改变，但是该组件被复用时调用
+			// 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，
+			// 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
+			// 可以访问组件实例 `this`
+			this.userid = to.params.userid
+			next()
+		},
     data () {
         return {
+					isFollow: -1,
 					me: sessionStorage.getItem('userid'),
+					userid: this.$route.params.userid,
 					user: {
 							// "userid": "100001",
 							// "username": "lemon",
@@ -101,6 +117,27 @@ export default {
         }
     },
     methods: {
+			init() {
+				this.user.userid = this.$route.params.userid
+				this.getUser(this.user.userid)
+				this.getFans(this.user.userid)
+				this.getFriends(this.user.userid)
+				this.getFollowSinger(this.user.userid)
+				isFollowUser(this.me, this.user.userid, json => {
+					this.isFollow = json?1:-1
+					console.log(json)
+				})
+			},
+			handleFollow() {
+				changeFollowUser(this.me, this.user.userid, json => {
+					this.$Notice.success({
+							title: json
+					})
+					this.getFans(this.user.userid)
+					this.isFollow = -this.isFollow
+					console.log(this.isFollow)
+				})
+			},
 			Menuselected(name) {
 				switch(name){
 					case '1':
@@ -169,6 +206,9 @@ export default {
 </script>
 
 <style scoped>
+.follow-btn {
+	margin-bottom: 40px;
+}
 .head-contain {
     height: 380px;
     padding-top: 65px;
