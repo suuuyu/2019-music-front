@@ -27,6 +27,7 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
+    //For Development
     {
       path: '/',
       component: HelloWorld,
