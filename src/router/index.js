@@ -16,8 +16,7 @@ import follow from '../components/profile/follow'
 import friend from '../components/profile/friend'
 import alogin from '../components/alogin'
 import admin from '../container/admin'
-import data from '../components/admin/data'
-import me from '../components/admin/me'
+import MyData from '../components/admin/MyData'
 import ManageSong from '../components/admin/ManageSong'
 import ManageAlbum from '../components/admin/ManageAlbum'
 import ManageSinger from '../components/admin/ManageSinger'
@@ -113,12 +112,8 @@ export default new Router({
       component:admin,
       children:[
         {
-          path:'data',
-          component:data
-        },
-        {
-          path:'me',
-          component:me
+          path:'MyData',
+          component:MyData
         },
         {
           path:'ManageSong',
