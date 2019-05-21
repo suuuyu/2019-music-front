@@ -22,7 +22,7 @@ export default {
 			'Album': mylikealbum
     },
     name: 'mylike',
-    props: ['user', 'sMethod', 'slMethod', 'aMethod'],
+    props: ['userid', 'sMethod', 'slMethod', 'aMethod'],
     data () {
 			return {
 				song: [],
@@ -46,14 +46,22 @@ export default {
 			}
 		},
 		mounted() {
-			console.log(this.user.userid)
-			this.getFavorite(this.user.userid)
-			this.getSongList(this.user.userid)
+			this.fetchData()
 		},
+		// watch: {
+		// 	userid: function() {
+		// 		this.fetchData()
+		// 	}
+		// },
     methods: {
+			fetchData() {
+				console.log(this.userid)
+				this.getFavorite(this.userid)
+				this.getSongList(this.userid)
+			},
 			handle(name) {
 				switch(name){
-					case 'name2':this.sl.length ===0 ? this.getSongList(this.user.userid): null
+					case 'name2':this.sl.length ===0 ? this.getSongList(this.userid): null
 				}
 			},
 			getFavorite(id) {

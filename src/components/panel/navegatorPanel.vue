@@ -6,10 +6,10 @@
 		<a href="#" class="disc l2" >
 			<div id="disc2" class="">我的音乐</div>
 		</a>
-		<a href="#" class="disc l3" >
+		<a  class="disc l3" @click="home">
 			<div id="disc3" class="">个人主页</div>
 		</a>
-		<a href="#" class="disc l4" @click="exit">
+		<a class="disc l4" @click="exit">
 			<div id="disc4" class="">退出登录</div>
 		</a>
 		<a class="disc l5 toggle" @click="handle">
@@ -26,13 +26,22 @@ export default {
 	data() {
 		return {
 			nav_class: 'top-right',
-			menu: '菜单'
+			menu: '菜单',
+			me: null
 		}
 	},
 	methods: {
 		exit() {
 			this.$router.push('/login')
 			sessionStorage.clear()
+		},
+		home() {
+			this.me = sessionStorage.getItem('userid')
+			if(this.me == null) {
+				this.$Message.error('您当前未登录')
+			}
+			this.$router.push({path:'/profile/' + this.me + '/mylike', key:this.me})
+			this.$router.go(0);
 		},
 		handle() {
 			if(this.nav_class === 'top-right') {
