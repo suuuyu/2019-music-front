@@ -139,9 +139,14 @@ export default {
 				})
 			},
 			Menuselected(name) {
+				console.log(name)
 				switch(name){
 					case '1':
 						this.$router.push('/profile/' + this.user.userid + '/mylike')
+						break
+					case '3':
+						this.$router.push('/profile/' + this.user.userid + '/myCreated')
+						break
 				}
 			},
 			showFollow() {

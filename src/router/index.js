@@ -22,6 +22,7 @@ import ManageSong from '../components/admin/ManageSong'
 import ManageAlbum from '../components/admin/ManageAlbum'
 import ManageSinger from '../components/admin/ManageSinger'
 import BanUser from '../components/admin/BanUser'
+import myCreated from '../components/profile/myCreated'
 
 Vue.use(Router)
 
@@ -81,6 +82,10 @@ export default new Router({
             {
               path: 'friend',
               component: friend
+            },
+            {
+              path: 'myCreated',
+              component: myCreated
             }
           ]
         }

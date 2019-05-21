@@ -37,4 +37,17 @@ function keepSong(songid, songlistid, callback) {
   })
 }
 
-export { likeSong, showCreatedSongList, keepSong }
+function createSonglist(userid, name, callback) {
+  AXIOS.get('/createNewSonglist?' + querystring.stringify({
+    'userid': userid,
+    'name': name
+  }))
+  .then(response => {
+    callback(response.data)
+  })
+  .catch(error => {
+    console.error('获取我的歌单出错：' + error)
+  })
+}
+
+export { likeSong, showCreatedSongList, keepSong, createSonglist }

@@ -56,8 +56,8 @@ export default {
     methods: {
 			fetchData() {
 				console.log(this.userid)
-			this.getFavorite(this.userid)
-			this.getSongList(this.userid)
+				this.getFavorite(this.userid)
+				this.getSongList(this.userid)
 			},
 			handle(name) {
 				switch(name){

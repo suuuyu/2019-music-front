@@ -67,8 +67,8 @@
 								<Button type="success" size="large" long @click="toEdit=true" v-if="!toEdit">新建歌单</Button>
 								<Row v-if="toEdit">
 									<Col span="18"><Input v-model="songlistName" v-if="toEdit" placeholder="请输入新歌单的名字"></Input></Col>
-									<Col span="3"><Button type="success"><span>确定</span></Button></Col>
-									<Col span="3"><Button >取消</Button></Col>
+									<Col span="3"><Button type="success" @click="createSonglist" ><span>确定</span></Button></Col>
+									<Col span="3"><Button @click="cancelEdit">取消</Button></Col>
 								</Row>
 						</div>
 				</Modal>
@@ -78,8 +78,8 @@
 <script>
 import {AXIOS} from '@/http/http'
 import songPanel from '../panel/songPanel'
-import { setTimeout } from 'timers';
-import {showCreatedSongList, keepSong} from '@/request/song'
+import { setTimeout } from 'timers'
+import {showCreatedSongList, keepSong, createSonglist} from '@/request/song'
 export default {
     components: {
         'songPanel': songPanel
@@ -153,6 +153,19 @@ export default {
 			}
     },
     methods: {
+			createSonglist() {
+				createSonglist(sessionStorage.getItem('userid'), this.songlistName, json => {
+					this.$Notice.success({
+						title: json
+					})
+					this.cancelEdit()
+					this.toChoose(this.songid)
+				})
+			},
+			cancelEdit() {
+				this.songlistName = ''
+				this.toEdit = false
+			},
 			keepSong(songid, songlistid){
 				keepSong(songid, songlistid, json => {
 					if(json.success){
