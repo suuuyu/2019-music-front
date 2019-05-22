@@ -48,7 +48,7 @@ export default{
         this.songList = response.data;
         var createdTime = this.songList.createtime;
         createdTime = createdTime.substring(0,11);
-        createdTime = createdTime
+        this.songList.createtime = createdTime;
       }).catch(response=>{
         console.log(response);
       });
