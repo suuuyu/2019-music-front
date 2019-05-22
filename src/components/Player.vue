@@ -175,7 +175,7 @@ export default {
       } else {
         this.isMax = true;
         this.$refs.main.style =
-          "position:fixed; left:-50px; bottom:-50px; width:100%; height:950px; z-index:9999;";
+          "position:absolute; left:50px; top:-73px; width:100%; height:950px; z-index:9999;";
       }
     },
     loadMusic() {
@@ -576,10 +576,10 @@ li {
   width: 140%;
 }
 .miniBg {
-  position: relative;
+  position: absolute;
   height: 50px;
   width: 50px;
-  padding-right: 20px;
+  left: -40px;
 }
 .bg img {
   background-size: cover;
