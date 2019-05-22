@@ -14,6 +14,7 @@ import searchSongList from '../components/search/searchSongList'
 import searchUser from '../components/search/searchUser'
 import follow from '../components/profile/follow'
 import friend from '../components/profile/friend'
+import balance from '../components/profile/balance'
 import alogin from '../components/alogin'
 import admin from '../container/admin'
 import MyData from '../components/admin/MyData'
@@ -85,6 +86,10 @@ export default new Router({
             {
               path: 'myCreated',
               component: myCreated
+            },
+            {
+              path:'balance',
+              component:balance
             }
           ]
         }

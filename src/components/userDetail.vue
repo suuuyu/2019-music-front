@@ -21,10 +21,16 @@
 											<span class="user_statistic__tit">关注</span>
 									</a>
 							</li>
-							<li class="user_statistic__item user_statistic__item--last">
+							<li class="user_statistic__item">
 									<a href="javascript:;"  class="js_tab" @click="showFan">
 											<strong class="user_statistic__number js_num_fans">{{fans.length}}</strong>
 											<span class="user_statistic__tit">粉丝</span>
+									</a>
+							</li>
+							<li class="user_statistic__item user_statistic__item--last">
+									<a href="javascript:;"  class="js_tab" @click="showBalance">
+											<strong class="user_statistic__number js_num_fans">{{balance}}</strong>
+											<span class="user_statistic__tit">余额</span>
 									</a>
 							</li>
 							<Button v-if="me!==user.userid" type="default" ghost class="follow-btn" @click="handleFollow">{{isFollow==1?'取消关注':'关注'}}</Button>
@@ -79,6 +85,7 @@ export default {
 					isFollow: -1,
 					me: sessionStorage.getItem('userid'),
 					userid: this.$route.params.userid,
+					balance:0,
 					user: {
 							// "userid": "100001",
 							// "username": "lemon",
@@ -162,6 +169,7 @@ export default {
 				AXIOS.get('getUser?id=' + id)
 				.then(response => {
 					this.user = response.data
+					this.balance=response.data.userbalance
 				})
 				.catch(error => {
 					this.$Notice.error({
@@ -205,6 +213,9 @@ export default {
 							desc: error ? error : '未知错误'
 					})
 				})
+			},
+			showBalance(){
+				this.$router.push('/profile/' + this.user.userid + '/balance')
 			}
     }
 }
