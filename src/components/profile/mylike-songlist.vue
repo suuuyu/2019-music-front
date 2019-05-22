@@ -15,7 +15,8 @@
               <strong><span class="panel-word">{{ songnum[index] }}</span></strong>
           </template>
           <template slot-scope="{ row, index }" slot="username">
-              <strong><a class="panel-word">{{ creater[index] }}</a></strong>
+              <strong><router-link class="panel-word" 
+                  :to="'/profile/' + creater[index].userid + '/mylike'" :key="creater[index].userid">{{ creater[index].username }}</router-link></strong>
           </template>
           <template slot-scope="{ row, index }" slot="keepnum">
               <strong><span class="panel-word">{{ keepnum[index] }}</span></strong>
@@ -48,7 +49,6 @@ export default {
     setTimeout(() => {
       console.log(this.songlist)
       for(let i=0; i<this.songlist.length; i++) {
-      console.log(i)
       this.buildSongnum(this.songlist[i], i)
       this.buildKeepnum(this.songlist[i], i)
       this.buildCreator(this.songlist[i], i)
@@ -68,13 +68,12 @@ export default {
     buildKeepnum(songlist, i) {
       this.getSongnum(songlist.songlistid, (json) => {
         this.$set(this.keepnum,i,json)
-        console.log(this.keepnum)
         // songlist.keepnum = json
       })
     },
     buildCreator(songlist, i) {
       this.getUser(songlist.userid, (json) => {
-        this.$set(this.creater,i,json.username)
+        this.$set(this.creater,i,json)
         // songlist.creater = json
       })
     },

@@ -30,7 +30,7 @@
 							</template>
 							<template slot-scope="{ row }" slot="menuBar">
 									<strong>
-											<songPanel :songid="row.songid" class="panel"></songPanel>
+											<songPanel :songid="row.songid" :type="1" class="panel" @toChoose="toChoose"></songPanel>
 									</strong>
 							</template>
 							<template slot-scope="{ row }" slot="singer">
@@ -51,16 +51,20 @@
 						</div>
 						</vue-lazy-component>
         	</div>
+					<songlist-choose :chooseList="chooseList" :songid="songid" :mySonglist="mySonglist"></songlist-choose>
     </div>
 </template>
 
 <script>
 import {AXIOS} from '@/http/http'
 import songPanel from '../panel/songPanel'
-import { setTimeout } from 'timers';
+import songlistChoose from '../panel/songlistChoose'
+import { setTimeout } from 'timers'
+import {showCreatedSongList, keepSong, createSonglist} from '@/request/song'
 export default {
     components: {
-        'songPanel': songPanel
+				'songPanel': songPanel,
+				'songlist-choose': songlistChoose
     },
     props:['song'],
     name: 'mylike-song',
@@ -79,6 +83,10 @@ export default {
     },
     data () {
 			return {
+				chooseList: false,
+				songid: '',
+				toEdit: false,
+				songlistName: '',
 				albums: [
 					// "albumid": "1000000",
 					// "albumname": "十一月的萧邦",
@@ -98,7 +106,7 @@ export default {
 					// 	"introduction": "中国台湾流行男歌手"
  				 	// }
 				],
-
+				mySonglist:[],
 				columns:[
 					{
 						title: '歌名',
@@ -127,6 +135,13 @@ export default {
 			}
     },
     methods: {
+			toChoose(id) {
+				this.chooseList = true
+				this.songid = id
+				showCreatedSongList(sessionStorage.getItem('userid'), json => {
+					this.mySonglist = json
+				})
+			},
 			buildAlbum(albumid, song) {
 				this.getAlbum(albumid, (json) => {
 					song.album = json
