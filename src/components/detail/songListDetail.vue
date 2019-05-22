@@ -8,14 +8,14 @@
 				</i-col>
 				<i-col span="14" class="songListText">
 					<div class="title">{{songList.songlistname}}</div>
-					<div class="subTitle">{{createdUserName}}</div>
+					<div class="subTitle">创建者：{{user.username}}</div>
 					<div class="text">
 						<Row>
 					   <i-col span="12">创建时间：{{songList.createtime}}</i-col>
 					  </Row>
 						<Row class="buttonGroup">
 							<i-col span="8"><button class="btn btn-default-large myButton" type="button">播放全部</button></i-col>							
-							<i-col span="8"><button class="btn btn-default-large myButton" type="button" @click="displaySongList">收藏</button></i-col>
+							<i-col span="8"><button class="btn btn-default-large myButton" type="button">收藏</button></i-col>
 						</Row>
 					</div> 
 				</i-col>
@@ -36,19 +36,17 @@ export default{
     }
   },
   methods:{
-    getCreatedUserName:function(){
-    },
     getSongListInfo:function(){
       AXIOS.get('/getSongListById',{
         params:{
           songListId:this.songListId,
         }
       }).then(response=>{
-        console.log(response.data);
         this.songList = response.data;
         var createdTime = this.songList.createtime;
-        createdTime = createdTime.substring(0,11);
-        createdTime = createdTime
+        createdTime = createdTime.substring(0,10);
+        this.songList.createtime = createdTime;
+        this.getCreatedUserName();
       }).catch(response=>{
         console.log(response);
       });
@@ -63,15 +61,13 @@ export default{
         this.user = response.data;
       }).catch(response=>{
         console.log(response);
-      })
+      });
     }
   },
   mounted(){
     this.songListId = this.$route.params.songListID;
     this.getSongListInfo();
-    this.getCreatedUserName();
   },
-  
 }
 </script>
 <style scoped>
