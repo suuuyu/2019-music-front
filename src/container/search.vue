@@ -5,15 +5,15 @@
             <!-- 搜索框 -->
             <div class="mod_search_input" id="search_group">
                 <input class="search_input__input" aria-label="请输入搜索内容" type="text" placeholder="搜索关键字" @input="inputFun" v-model="inputValue" @click="showBox">
-                <button class="search_input__btn"><Icon type="ios-search" size="18"/><span class="icon_txt">搜索</span></button>
+                <button @click="search(inputValue)" class="search_input__btn"><Icon type="ios-search" size="18"/><span class="icon_txt">搜索</span></button>
             </div>
             <div class="mod_search_tips">
                 热门搜索：
-                <a href="javascript:;" class="search_tips__item js_smartbox_search" data-name="流浪">流浪</a>
-                <a href="javascript:;" class="search_tips__item js_smartbox_search" data-name="去年夏天">去年夏天</a>
-                <a href="javascript:;" class="search_tips__item js_smartbox_search" data-name="周杰伦">周杰伦</a>
-                <a href="javascript:;" class="search_tips__item js_smartbox_search" data-name="年少有为">年少有为</a>
-                <a href="javascript:;" class="search_tips__item js_smartbox_search" data-name="不染">不染</a>
+                <a  class="search_tips__item " data-name="流浪">流浪</a>
+                <a  class="search_tips__item " data-name="去年夏天">去年夏天</a>
+                <a  class="search_tips__item " data-name="周杰伦">周杰伦</a>
+                <a  class="search_tips__item " data-name="年少有为">年少有为</a>
+                <a  class="search_tips__item " data-name="不染">不染</a>
             </div>
             <div class="js_smartbox" id="smartBox">
                 <!-- 搜索历史 -->
@@ -22,13 +22,13 @@
                         <div class="search_history">
                             <dl class="search_history__list">
                                 <dt class="search_history__tit">搜索历史
-                                    <a href="javascript:;" class="search_history__clear js_smartbox_delete_all">
-                                    <Icon type="md-trash" size="18"/>
+                                    <a  class="search_history__clear" @click.stop="clearAllHis">
+                                    <Icon type="md-trash" size="18" />
                                     <span class="icon_txt" >清空</span></a>
                                 </dt>
                                 <dd class="search_history__item" :key="index" v-for="(item,index) in searchHis" @mouseover="hoverIndex=index" @mouseout="hoverIndex=-1" :class="{ 'hoverBg':index==hoverIndex}">
-                                    <div href="javascript:;" class="search_history__link" data-name="1">{{item}}</div>
-                                    <a href="javascript:;" class="search_history__delete" data-name="1" title="删除">
+                                    <div  class="search_history__link">{{item}}</div>
+                                    <a class="search_history__delete" title="删除" @click.stop="clearItem(index)">
                                         <Icon type="md-close" size="18" class="search_history__icon_delete"/>
                                         <span class="icon_txt">删除</span>
                                     </a>
@@ -59,7 +59,7 @@
 
                                     <li :key="index" v-for="(item,index) in searchSinger">
                                         <a class="search_result__link">
-                                            <span class="search_result__name">{{item}}</span>
+                                            <span class="search_result__name" v-html="item.singername"></span>
                                         </a>
                                     </li>
                                     
@@ -72,8 +72,7 @@
 
                                     <li :key="index" v-for="(item,index) in searchAlbum">
                                         <a class="search_result__link">
-                                            <span class="search_result__name">{{item.songName}}</span>-
-                                            <span class="search_result__name">{{item.singerName}}</span>
+                                            <span class="search_result__name" v-html="item.albumname"></span>
                                         </a>
                                     </li>		
                                     
@@ -130,13 +129,13 @@ export default {
                 tabsDisplay: ["单曲","专辑","歌单"],
                 searchSong: [{songName: "爱在西元前",singerName:"周杰伦"}],
                 searchAlbum: [{songName: "爱在西元前",singerName:"周杰伦"}],
-                searchSinger: ["周杰伦","张学友"],
+                searchSinger: [],
                 searchHis: ["爱","我相信","周杰伦"],
                 hoverIndex: -1, //表示当前hover的是第几个li 初始为 -1 或 null 不能为0 0表示第一个li
                 inputValue: "",
                 showHis: false,
                 showRes: false,
-                btnShow: true,
+                btnShow: false,
 			}
         },
     components: {
@@ -146,11 +145,17 @@ export default {
             'searchBtn': searchBtn
     },
     methods: {
+        clearAllHis(e){
+            e.stopPropagation();
+            console.log("clear")
+            this.searchHis.splice(0,this.searchHis.length)
+        },
+        clearItem(index){
+            console.log(index)
+            this.searchHis.splice(index,1)
+        },
         handleScroll(){
             var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-            // var offsetTop = document.querySelector('#search_group').offsetTop;
-            // console.log(offsetTop)
-            // console.log(scrollTop)
             if(scrollTop > 105){
                 this.btnShow = true
             }
@@ -160,12 +165,13 @@ export default {
 
         },
         showBox(){
-            // console.log(this.inputValue)
+            console.log("showbox")
             if(this.inputValue == ""){
                 this.showHis = !this.showHis
             }
         },
         hideBox(event){
+            console.log("hidebox")
             var sp = document.getElementById("search_group");
             if(sp){
                 //如果我们点击到了id为myPanel以外的区域
@@ -178,6 +184,8 @@ export default {
         inputFun(e){
             // console.log(e.target.value)
             this.getSongs(e.target.value)
+            this.getSingers(e.target.value)
+            this.getAlbums(e.target.value)
 
             if(e.target.value == ""){
                 this.showHis = true
@@ -197,7 +205,15 @@ export default {
 				.then(respond => {
                     this.song = respond.data
                     // 深复制JSON.parse(JSON.stringify(a))
-                    this.searchSong = this.changeColor(JSON.parse(JSON.stringify(respond.data.slice(0,4))))
+                    if (respond.data.length == 0){
+                        this.searchSong = [{songname: "暂无匹配"}]
+                    }
+                    else{
+                        this.searchSong = this.changeColor(
+                            JSON.parse(JSON.stringify(respond.data.slice(0,4)))
+                            ,"song")
+                    }
+                    
 				})
 				.catch(error => {
 					this.$Notice.error({
@@ -209,7 +225,15 @@ export default {
         getAlbums(words){
             AXIOS.get('/Search/Album?words=' + words)
 				.then(respond => {
-					this.album = respond.data
+                    this.albums = respond.data
+                    if (respond.data.length == 0){
+                        this.searchAlbum = [{albumname: "暂无匹配"}]
+                    }
+                    else{
+                        this.searchAlbum = this.changeColor(
+                            JSON.parse(JSON.stringify(respond.data.slice(0,3)))
+                            ,"album")
+                    }
 				})
 				.catch(error => {
 					this.$Notice.error({
@@ -219,10 +243,29 @@ export default {
 				})
 
         },
+        getSingers(words){
+            AXIOS.get('/searchSinger?word=' + words)
+				.then(respond => {
+                    if (respond.data.length == 0){
+                        this.searchSinger = [{singername: "暂无匹配"}]
+                    }
+                    else{
+                        this.searchSinger = this.changeColor(respond.data.slice(0,3),"singer")
+                    }
+					
+				})
+				.catch(error => {
+					this.$Notice.error({
+							title: '获取歌手出错',
+							desc: error ? error : '未知错误'
+					})
+				})
+
+        },
         getSongLists(words){
             AXIOS.get('/Search/SongList?words=' + words)
 				.then(respond => {
-					this.song = respond.data
+					this.sl = respond.data
 				})
 				.catch(error => {
 					this.$Notice.error({
@@ -231,21 +274,47 @@ export default {
 					})
 				})
         },
+        search(words){
+            if(this.selectedTab == 0){
+                this.getSongs(words)
+            }
+            else if(this.selectedTab == 1){
+                this.getAlbums(words)
+            }
+            else if(this.selectedTab == 2){
+                this.getSongLists(words)
+            }
+        },
         // 高亮显示关键词
-        changeColor (resultsList) {
+        changeColor (resultsList,type="song") {
             resultsList.map(
                 (item, index) => {
                     // console.log('item', item)
                     if (this.inputValue && this.inputValue.length > 0) {
-                    // 匹配关键字正则
-                    let replaceReg = new RegExp(this.inputValue, 'g')
-                    // 高亮替换v-html值
-                    let replaceString =
-                        "<span style='color: blue'>" + this.inputValue + '</span>'
-                    resultsList[index].songname = item.songname.replace(
-                        replaceReg,
-                        replaceString
-                    )
+                        // 匹配关键字正则
+                        let replaceReg = new RegExp(this.inputValue, 'g')
+                        // 高亮替换v-html值
+                        let replaceString =
+                            "<span style='color: blue'>" + this.inputValue + '</span>'
+                        if(type === "song"){
+                            resultsList[index].songname = item.songname.replace(
+                                replaceReg,
+                                replaceString
+                            )
+                        }
+                        else if(type == "singer"){
+                            resultsList[index].singername = item.singername.replace(
+                                replaceReg,
+                                replaceString
+                            )
+                        }
+                        else if(type == "album"){
+                            resultsList[index].albumname = item.albumname.replace(
+                                replaceReg,
+                                replaceString
+                            )
+                        }
+                    
                 }
             })
             return resultsList
@@ -268,6 +337,10 @@ li {
 
 dd, dt {
     line-height: 36px;
+}
+
+dl {
+    margin: 0%;
 }
 
 .mod_search {
