@@ -46,8 +46,8 @@
                                 <ul class="search_result__list">
                                     <li :key="index" v-for="(item,index) in searchSong">
                                         <a class="search_result__link">
-                                            <span class="search_result__name">{{item.songName}}</span>-
-                                            <span class="search_result__singer">{{item.singerName}}</span>
+                                            <span class="search_result__name" v-html="item.songname"></span>
+                                            <!-- -<span class="search_result__singer">{{item.singerName}}</span> -->
                                         </a>
                                     </li>
                                 </ul>
@@ -91,9 +91,9 @@
                     {{item}}
                 </a>
             </div>
-            <Song :song=song v-if="selectedTab==1"></Song>
-            <Album :albums=albums v-if="selectedTab==2"></Album>
-            <Songlist :songlist=sl v-if="selectedTab==3"></Songlist>
+            <Song :song=song v-if="selectedTab==0"></Song>
+            <Album :albums=albums v-if="selectedTab==1"></Album>
+            <Songlist :songlist=sl v-if="selectedTab==2"></Songlist>
         </div>
         <!-- 搜索动态按钮 -->
         <transition name="draw" :duration="500">
@@ -113,7 +113,7 @@ import { AXIOS } from '../http/http';
 
 export default {
     mounted(){
-        this.getSongs(100001)
+        this.getSongs('a')
         // 注册页面滚动事件监听器
         window.addEventListener('scroll', this.handleScroll)
     },
@@ -136,7 +136,7 @@ export default {
                 inputValue: "",
                 showHis: false,
                 showRes: false,
-                btnShow: false,
+                btnShow: true,
 			}
         },
     components: {
@@ -168,7 +168,8 @@ export default {
         hideBox(event){
             var sp = document.getElementById("search_group");
             if(sp){
-                if(!sp.contains(event.target)){            //如果我们点击到了id为myPanel以外的区域
+                //如果我们点击到了id为myPanel以外的区域
+                if(!sp.contains(event.target)){            
                     this.showHis = false;
                     this.showRes = false;
                 }
@@ -176,6 +177,8 @@ export default {
         },
         inputFun(e){
             // console.log(e.target.value)
+            this.getSongs(e.target.value)
+
             if(e.target.value == ""){
                 this.showHis = true
                 this.showRes = false
@@ -189,36 +192,63 @@ export default {
             this.selectedTab = index;
             console.log(this.tabsDisplay[index])
         },
-        getSongs(id) {
-				AXIOS.get('/getFavorite?id=' + id)
+        getSongs(words) {
+				AXIOS.get('/Search/Song?words=' + words)
+				.then(respond => {
+                    this.song = respond.data
+                    // 深复制JSON.parse(JSON.stringify(a))
+                    this.searchSong = this.changeColor(JSON.parse(JSON.stringify(respond.data.slice(0,4))))
+				})
+				.catch(error => {
+					this.$Notice.error({
+							title: '获取歌曲出错',
+							desc: error ? error : '未知错误'
+					})
+				})
+            },
+        getAlbums(words){
+            AXIOS.get('/Search/Album?words=' + words)
+				.then(respond => {
+					this.album = respond.data
+				})
+				.catch(error => {
+					this.$Notice.error({
+							title: '获取专辑出错',
+							desc: error ? error : '未知错误'
+					})
+				})
+
+        },
+        getSongLists(words){
+            AXIOS.get('/Search/SongList?words=' + words)
 				.then(respond => {
 					this.song = respond.data
 				})
 				.catch(error => {
 					this.$Notice.error({
-							title: '获取我喜欢歌单出错',
+							title: '获取歌单出错',
 							desc: error ? error : '未知错误'
 					})
 				})
-			},
+        },
         // 高亮显示关键词
         changeColor (resultsList) {
-            resultsList.map((item, index) => {
+            resultsList.map(
+                (item, index) => {
                     // console.log('item', item)
                     if (this.inputValue && this.inputValue.length > 0) {
                     // 匹配关键字正则
                     let replaceReg = new RegExp(this.inputValue, 'g')
                     // 高亮替换v-html值
                     let replaceString =
-                        '<span class="search_result__keyword">' + this.inputValue + '</span>'
-                    resultsList[index].name = item.name.replace(
+                        "<span style='color: blue'>" + this.inputValue + '</span>'
+                    resultsList[index].songname = item.songname.replace(
                         replaceReg,
                         replaceString
                     )
                 }
             })
-            this.results = []
-            this.results = resultsList
+            return resultsList
         }
 
     }
@@ -387,6 +417,10 @@ dd, dt {
     font-weight: 400;
     font-size: 14px;
     padding-left: 3%;
+}
+
+.search_result__keyword {
+    color: #31c27c;
 }
 
 .search_result__tit_icon{
