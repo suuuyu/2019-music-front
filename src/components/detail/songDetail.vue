@@ -95,11 +95,8 @@ export default {
 			});
 		},
 		getSingerName:function(){
-			AXIOS.get("/getSingerBySong",{
-				params:{
-					songid:this.song.id,
-				}
-			}).then(response=>{
+			AXIOS.get("/getSingerBySong?songid=" + this.song.id)
+			.then(response=>{
 					var singerList = response.data;
 					this.song.singerName = "";
 					for(var i=0; i<singerList.length; i++){
@@ -166,7 +163,7 @@ export default {
 	},
   name: 'songDetail',
 	mounted(){
-		this.song.id = this.$route.params.id;
+		this.song.id = this.$route.params.songid;
 		this.getSingerName();
 		this.getSongInfo();
 		this.getSongList();
