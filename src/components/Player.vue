@@ -1,17 +1,26 @@
 <template>
-  <div style="position:absolute;display:flex;flex-direction:column; z-index:2;">
-    <div :class="{arrowDown:isMax,arrowUp:!isMax}">
-      <img :src="arrowSrc" width="50px" height="50px" @click="changeMini">
+  <div ref="main" style="position:fixed; left:50px; bottom:20px; width:100%; height:50px; z-index:9999;">
+    <div style="position:absolute;">
+    <div v-if="isMax" class="arrowDown">
+      <img
+        src="../image/arrowDown.png"
+        width="50px"
+        height="50px"
+        @click="changeMini"
+      >
     </div>
-    <div :class="{bg:isMax,miniBg:!isMax}">
+    <div class="bg" v-show="isMax">
       <img ref="bg">
     </div>
     <div class="lrc" ref="lrc" v-show="isMax">
       <ul ref="gc" class="gc">
-        <li v-for="(one,index) in lrcList" :key="index" ref="oneLrc">{{one}}</li>
+        <li v-for="one,index in lrcList" ref="oneLrc">{{one}}</li>
       </ul>
     </div>
     <div class="audio green-audio-player" ref="audioPlayer" @mousedown="tryDragging">
+      <div class="miniBg" v-show="!isMax">
+      <img ref="miniBg">
+    </div>
       <div id="lastSong" class="lastSong">
         <img
           @click="playLast"
@@ -22,7 +31,7 @@
         >
       </div>
       <div class="loading" v-show="!hasMusic">
-        <img class="spinner" width="30" height="30" src="loading.png">
+        <img class="spinner" width="30" height="30" src="../image/loading.png">
       </div>
       <div class="play-pause-btn" v-show="hasMusic">
         <img
@@ -101,16 +110,19 @@
       >
         <source :src="currentSrc" type="audio/mpeg">
       </audio>
+      <div v-if="!isMax" style="padding-left:80px;">
+        <img src="../image/arrowUp.png" width="35px" height="35px" @click="changeMini">
+      </div>
+    </div>
     </div>
   </div>
 </template>
 <script>
-import axios from 'axios'
+import $axios from 'axios' 
 export default {
   data() {
     return {
       isMax: true,
-      arrowSrc: "arrowDown.png",
       musicList: [],
       currentMusicID: 0,
       currentMusicIndex: 0,
@@ -148,9 +160,9 @@ export default {
   },
   methods: {
     addMusic(arr) {
-      this.musicList=this.musicList.concat(arr);
-      if (this.musicList.length>0&&!this.hasMusic) {
-        console.log(this.musicList)
+      this.musicList = this.musicList.concat(arr);
+      if (this.musicList.length > 0 && !this.hasMusic) {
+        console.log(this.musicList);
         this.hasMusic = 1;
         this.changeMusic(0);
       }
@@ -158,14 +170,10 @@ export default {
     changeMini() {
       if (this.isMax) {
         this.isMax = false;
-        this.arrowSrc = "arrowUp.png";
-        this.$refs.audioPlayer.style.left = "200px";
-        this.$refs.audioPlayer.style.top = "670px";
+        this.$refs.main.style = "position:fixed; left:50px; bottom:20px; width:100%; height:50px; z-index:9999;";
       } else {
         this.isMax = true;
-        this.arrowSrc = "arrowDown.png";
-        this.$refs.audioPlayer.style.left = "40px";
-        this.$refs.audioPlayer.style.top = "0px";
+        this.$refs.main.style = "position:fixed; left:-50px; bottom:-50px; width:100%; height:950px; z-index:9999;";
       }
     },
     loadMusic() {
@@ -174,7 +182,8 @@ export default {
       this.togglePlay();
       this.$refs.bg.src =
         "https://v1.itooi.cn/kuwo/pic?id=" + this.currentMusicID;
-      axios({
+      this.$refs.miniBg.src ="https://v1.itooi.cn/kuwo/pic?id=" + this.currentMusicID;
+      $axios({
         method: "get",
         url: "https://v1.itooi.cn/kuwo/lrc?id=" + this.currentMusicID,
         data: {}
@@ -223,7 +232,7 @@ export default {
     },
     changeMusic(index) {
       var _this = this;
-      axios({
+      $axios({
         method: "get",
         url:
           "https://v1.itooi.cn/kuwo/search?type=song&pageSize=100&page=0&keyword=" +
@@ -416,7 +425,7 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  left: 40px;
+  left: 100px;
   bottom: 30px;
   border-radius: 4px;
   user-select: none;
@@ -558,19 +567,19 @@ li {
   width: 3rem;
 }
 .bg {
-  height: 700px;
-  width: 135%;
+  left: -20px;
+  height: 840px;
+  width: 140%;
 }
 .miniBg {
   position: relative;
-  top: 700px;
-  left: 120px;
   height: 50px;
   width: 50px;
+  padding-right: 20px;
 }
 .bg img {
   background-size: cover;
-  width: 100%;
+  width: 110%;
   height: 110%;
   background-position: center;
   -webkit-filter: blur(30px);
@@ -578,14 +587,14 @@ li {
   filter: blur(30px);
 }
 .miniBg img {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
 }
 .lrc {
   z-index: 100;
   position: absolute;
-  left: 300px;
-  top: 100px;
+  left: 380px;
+  top: 200px;
   width: 600px;
   height: 500px;
   overflow-x: hidden;
@@ -627,8 +636,8 @@ li {
   position: relative;
   width: 10px;
   height: 10px;
-  left: 1500px;
-  top: -20px;
+  left: 1600px;
+  top: 60px;
 }
 .arrowUp {
   cursor: pointer;
@@ -636,7 +645,5 @@ li {
   position: relative;
   width: 50px;
   height: 50px;
-  left: 1500px;
-  top: 760px;
 }
 </style>
