@@ -637,11 +637,11 @@ li {
 .arrowDown {
   z-index: 1;
   cursor: pointer;
-  position: relative;
+  position: absolute;
   width: 10px;
   height: 10px;
-  left: 1600px;
-  top: 60px;
+  right: -50px;
+  top: 100px;
 }
 .arrowUp {
   cursor: pointer;
