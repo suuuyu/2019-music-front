@@ -26,7 +26,7 @@
 					<vue-lazy-component  :timeout="3000">
 					<Table stripe  :columns="columns" :data="song">
 							<template slot-scope="{ row }" slot="name">
-									<strong><a class="panel-word">{{ row.songname }}</a></strong>
+									<strong><router-link class="panel-word" :to="'/song/' + row.songid" :key="$route.path">{{ row.songname }}</router-link></strong>
 							</template>
 							<template slot-scope="{ row }" slot="menuBar">
 									<strong>

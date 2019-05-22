@@ -1,7 +1,7 @@
 <template>
 	<div @mouseenter="showPanel" align="center"  @mouseleave="disShow" style="height: 60px;width:400px;background-color:rgba(255, 255, 255, 0.5);">
     <div class="songlist__btn" v-if="show">
-        <a href="javascript:;"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></a>
+		<router-link tag="a" target="_blank" :to="{path:'/player',query:{musicList:['等你下课','发如雪','夜曲']} }"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></router-link>
         <span><a href="javascript:;" @click="like"><img src="Index_image/like.png" alt="like" height="35px" width="35px" class="songlist_btn"></a></span>
         <span><a href="javascript:;" @click="choose"><img src="Index_image/add.png" alt="add" height="35px" width="35px" class="songlist_btn"></a></span>
         <span><a href="javascript:;"><img src="Index_image/download.png" alt="download" height="35px" width="35px" class="songlist_btn"></a></span>

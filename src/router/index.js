@@ -14,6 +14,7 @@ import searchSongList from '../components/search/searchSongList'
 import searchUser from '../components/search/searchUser'
 import follow from '../components/profile/follow'
 import friend from '../components/profile/friend'
+import balance from '../components/profile/balance'
 import alogin from '../components/alogin'
 import admin from '../container/admin'
 import MyData from '../components/admin/MyData'
@@ -23,11 +24,13 @@ import ManageSinger from '../components/admin/ManageSinger'
 import BanUser from '../components/admin/BanUser'
 import myCreated from '../components/profile/myCreated'
 import songListDetail from '../components/detail/songListDetail'
+import player from '../components/Player'
+
 Vue.use(Router)
 
 export default new Router({
   routes: [
-    //For Development
+    // For Development
     {
       path: '/',
       component: HelloWorld,
@@ -43,12 +46,16 @@ export default new Router({
         {
           path: 'alogin',
           component: alogin
-        },
+        }
       ]
     },
     {
-      path:'/admin',
-      component:admin
+      path: '/admin',
+      component: admin
+    },
+    {
+      path: '/player',
+      component: player
     },
     {
       path: '/inner',
@@ -85,6 +92,10 @@ export default new Router({
             {
               path: 'myCreated',
               component: myCreated
+            },
+            {
+              path:'balance',
+              component:balance
             }
           ]
         }
@@ -114,28 +125,28 @@ export default new Router({
       ]
     },
     {
-      path:'/admin',
-      component:admin,
-      children:[
+      path: '/admin',
+      component: admin,
+      children: [
         {
           path:'MyData',
           component:MyData
         },
         {
-          path:'ManageSong',
-          component:ManageSong
+          path: 'ManageSong',
+          component: ManageSong
         },
         {
-          path:'ManageAlbum',
-          component:ManageAlbum
+          path: 'ManageAlbum',
+          component: ManageAlbum
         },
         {
-          path:'ManageSinger',
-          component:ManageSinger
+          path: 'ManageSinger',
+          component: ManageSinger
         },
         {
-          path:'BanUser',
-          component:BanUser
+          path: 'BanUser',
+          component: BanUser
         }
       ]
     }
