@@ -2,9 +2,7 @@
     <div>
         <Tabs value="name1" @on-click="handle">
             <TabPane label="歌曲" name="name1" class="real-panel"><Song :song=song></Song></TabPane>
-            <TabPane label="歌单" name="name2">
-							<Songlist :songlist=sl></Songlist>
-						</TabPane>
+            <TabPane label="歌单" name="name2"><Songlist :songlist=sl></Songlist></TabPane>
             <TabPane label="专辑" name="name3"><Album :albums=albums></Album></TabPane>
         </Tabs>
     </div>
@@ -40,9 +38,68 @@ export default {
 					keepedsonglist: [
 					]
 				},
-				albums: {
-
-				}
+				albums: [
+									{
+										"albumid": "1000000",
+										"albumname": "十一月的萧邦",
+										"singerid": "200000",
+										"albumimage": null,
+										"albumage": "00",
+										"language": "中文",
+										"company": "索尼音乐",
+										"adminid": "1000"
+									},
+									{
+										"albumid": "1000001",
+										"albumname": "七里香",
+										"singerid": "200000",
+										"albumimage": null,
+										"albumage": "00",
+										"language": "中文",
+										"company": "索尼音乐",
+										"adminid": "1000"
+									},
+									{
+										"albumid": "1000002",
+										"albumname": "崇拜",
+										"singerid": "200001",
+										"albumimage": null,
+										"albumage": "00",
+										"language": "中文",
+										"company": "相信音乐",
+										"adminid": "1000"
+									},
+									{
+										"albumid": "1000003",
+										"albumname": "几个薛之谦",
+										"singerid": "200002",
+										"albumimage": null,
+										"albumage": "00",
+										"language": "中文",
+										"company": "索尼音乐",
+										"adminid": "1000"
+									},
+									{
+										"albumid": "1000004",
+										"albumname": "U87",
+										"singerid": "200003",
+										"albumimage": null,
+										"albumage": "00",
+										"language": "中文",
+										"company": "索尼音乐",
+										"adminid": "1000"
+									},
+									{
+										"albumid": "1000005",
+										"albumname": "她说",
+										"singerid": "200004",
+										"albumimage": null,
+										"albumage": "00",
+										"language": "中文",
+										"company": "索尼音乐",
+										"adminid": "1000"
+									}
+								]
 			}
 		},
 		mounted() {

@@ -72,9 +72,13 @@ export default {
 			this.$Loading.start();
 			setTimeout(() => {
 				console.log('长度:' + this.song.length)
+				let msg = {'albumid': [], 'songid': []};
 				for(let i=0; i<this.song.length; i++){
+					// msg.albumid.push(this.song[i].albumid)
+					// msg.songid.push(this.song[i].songid)
 					this.buildAlbum(this.song[i].albumid, this.song[i])
 					this.buildSinger(this.song[i].songid, this.song[i])
+					// this.buildMsg(msg)
 				}
 			}, 1000)
 			setTimeout(() => {
@@ -140,6 +144,18 @@ export default {
 				this.songid = id
 				showCreatedSongList(sessionStorage.getItem('userid'), json => {
 					this.mySonglist = json
+				})
+			},
+			buildMsg(msg) {
+				AXIOS.post('/buildSong', msg)
+				.then(response => {
+					alert(response.data)
+					this.albums = response.data.albums
+					this.singers = response.data.singers
+					console.log(response.data)
+				})
+				.catch(error => {
+					console.log(error)
 				})
 			},
 			buildAlbum(albumid, song) {

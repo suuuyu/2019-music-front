@@ -8,7 +8,7 @@
           </template>
           <template slot-scope="{ row }" slot="menuBar">
               <strong>
-                  <songPanel :songid="row.songlistid" class="panel"></songPanel>
+                  <songPanel :songid="row.songlistid" :type="2" class="panel"></songPanel>
               </strong>
           </template>
           <template slot-scope="{ row, index }" slot="songnum">

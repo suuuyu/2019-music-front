@@ -73,7 +73,7 @@ export default {
 
 <style scoped>
 .content {
-  max-height: 300px;
+  max-height: 500px;
   overflow:scroll;
 }
 </style>

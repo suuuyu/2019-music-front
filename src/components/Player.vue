@@ -3,7 +3,7 @@
     <div style="position:absolute;">
     <div v-if="isMax" class="arrowDown">
       <img
-        src="../image/arrowDown.png"
+        src="arrowDown.png"
         width="50px"
         height="50px"
         @click="changeMini"
@@ -415,7 +415,7 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 li {
   list-style: none;
 }

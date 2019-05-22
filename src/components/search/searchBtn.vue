@@ -1,7 +1,7 @@
 <style scoped>
     .search-box {
         position: fixed;
-        top: 18%;
+        top: 8%;
         left: 30px;
         /* transform: translate(-100%, 0%); */
         background: #ffffff;

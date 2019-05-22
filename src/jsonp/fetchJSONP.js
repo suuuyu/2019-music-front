@@ -62,11 +62,25 @@ function fetchSingers (singers, index = 0) {
       }
     })
     .catch(error => {
-      this.$Notice.error({
-        title: '获取图片失败',
-        desc: error || '未知错误'
-      })
+      console.error(error || '未知错误')
     })
 }
 
-export { fetchSingers, fetchJsonp }
+function fetchAlbums (albums, index = 0) {
+  fetchJsonp('https://c.y.qq.com/soso/fcgi-bin/client_search_cp?aggr=1&cr=1&flag_qc=0&p=1&n=1&w=' + albums[index].albumname)
+    .then(data => {
+      let albumid = data.data.song.list[0].albumid
+      albums[index].albumimage = 'http://imgcache.qq.com/music/photo/album_300/' + albumid % 100 + '/300_albumpic_' + albumid + '_0.jpg'
+      console.log(albums[index].albumname + albums[index].albumimage)
+      index++
+      console.log(index)
+      if (index < albums.length) {
+        fetchAlbums(albums, index)
+      }
+    })
+    .catch(error => {
+      console.error(error || '未知错误')
+    })
+}
+
+export { fetchSingers, fetchJsonp, fetchAlbums }

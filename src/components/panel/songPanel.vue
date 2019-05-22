@@ -3,17 +3,17 @@
     <div class="songlist__btn" v-if="show">
 		<router-link tag="a" target="_blank" :to="{path:'/player',query:{musicList:['等你下课','发如雪','夜曲']} }"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></router-link>
         <span><a href="javascript:;" @click="like"><img src="Index_image/like.png" alt="like" height="35px" width="35px" class="songlist_btn"></a></span>
-        <span><a href="javascript:;" @click="choose"><img src="Index_image/add.png" alt="add" height="35px" width="35px" class="songlist_btn"></a></span>
-        <span><a href="javascript:;"><img src="Index_image/download.png" alt="download" height="35px" width="35px" class="songlist_btn"></a></span>
+        <span v-if="type==1"><a href="javascript:;" @click="choose"><img src="Index_image/add.png" alt="add" height="35px" width="35px" class="songlist_btn"></a></span>
+        <span v-if="type==1"><a href="javascript:;"><img src="Index_image/download.png" alt="download" height="35px" width="35px" class="songlist_btn"></a></span>
     </div>
 	</div>
 </template>
 
 <script>
-import {likeSong} from '@/request/song'
+import {likeSong, keepSonglist} from '@/request/song'
 export default {
     name: 'songPanel',
-    props:['songid', 'type'], //type: 1歌曲  2专辑
+    props:['songid', 'type'], //type: 1歌曲  2歌单 3专辑
     data () {
 			return {
 				show: false,
@@ -33,6 +33,21 @@ export default {
 			like() {
 				if(this.type == 1) {
 					likeSong(this.me, this.songid, (json) => {
+						if(json.success){
+							this.$Notice.success({
+								title: '成功',
+								desc: json.errorMsg
+							})
+						} else {
+							this.$Notice.error({
+								title: '失败',
+								desc: json.errorMsg
+							})
+						}
+					})
+				}
+				if(this.type == 2) {
+					keepSonglist(this.me, this.songid, (json) => {
 						if(json.success){
 							this.$Notice.success({
 								title: '成功',
