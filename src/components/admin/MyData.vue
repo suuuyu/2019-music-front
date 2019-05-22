@@ -9,7 +9,7 @@
         <div>
             <Card>
                 <p slot="title">当前时间</p>
-                <p class="info-p" style="font-size:18px;line-height:1.6">{{nowTime}}</p>
+                <p class="info-p" style="font-size:18px;line-height:1.3">{{nowTime}}</p>
             </Card>
         </div>
         <div>
@@ -101,8 +101,20 @@ export default {
     background: rgb(red, green, blue)
 }
 .info-p{
-    font-size:38px;
+    font-size:32px;
     font-weight:900;
     font-family: 'Microsoft YaHei'
+}
+.main-div>div:nth-child(even)>.ivu-card{
+    background: rgb(11, 64, 99) ;
+}
+.main-div>div:nth-child(odd)>.ivu-card{
+    background: white ;
+}
+.main-div>div:nth-child(even) p{
+    color:white ;
+}
+.main-div>div:nth-child(odd) p{
+    color:rgb(11, 64, 99) ;
 }
 </style>
