@@ -1,10 +1,11 @@
 <template>
   <div class="detail">
 		<Layout>
+			<songlistChoose :chooseList="chooseList" :songid="song.id" :mySonglist="songLists"/>
 			<div class="songInfoDisplay">
 			<Row class="myRow">
 				<i-col span="10">
-					<div class="songPic" <!--style="background-image:url(https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3345124030,1424070086&fm=26&gp=0.jpg)"-->/>					
+					<div class="songPic" style="background-image:url(https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3345124030,1424070086&fm=26&gp=0.jpg)"/>					
 				</i-col>
 				<i-col span="14" class="songText">
 					<div class="title">{{song.name}}</div>
@@ -24,18 +25,7 @@
 					  </Row>
 						<Row class="buttonGroup">
 							<i-col span="8"><button class="btn btn-default-large myButton" type="button">播放</button></i-col>							
-							<i-col span="8">
-							  <button class="btn btn-default-large myButton dropdown-toggle" 
-							    data-toggle="dropdown" aria-haspopup="true" 
-							    aria-expanded="false" type="button">添加到   
-							    <span class="caret"></span>
-							  </button>
-							  <ul class="dropdown-menu">
-							    <li v-for="songList in songLists" class="songListItem">
-										{{songList.songlistname}}
-									</li>
-							  </ul>
-							</i-col>
+							<i-col span="8"><button class="btn btn-default-large myButton" type="button" @click="displaySongList">添加到</button></i-col>
 							<i-col span="8"><button class="btn btn-default-large myButton" type="button">下载</button></i-col>
 						</Row>
 					</div> 
@@ -64,9 +54,18 @@
 
 <script>
 import commentList from '../profile/commentList.vue'
+import songlistChoose from '../panel/songlistChoose.vue'
 import { AXIOS } from '../../http/http';
+import {showCreatedSongList, keepSong, createSonglist} from '@/request/song';
 export default {
 	methods:{
+		displaySongList:function(id){
+			this.chooseList = true;
+			this.song.id = id;
+			showCreatedSongList(sessionStorage.getItem('userid'), json => {
+				this.songLists = json;
+			});
+		},
 		commentSubmit:function(event){
 			//UserID获取，待完成
 			console.log("Attention!");
@@ -117,6 +116,8 @@ export default {
 					songId:this.song.id,
 				}
 			}).then(response=>{
+				console.log("Attention! Here!");
+				console.log(response.data);
 			  var songInfo = response.data["songInfo"];
 				this.song.name = songInfo.songname;
 				this.song.albumName = response.data["albumName"];
@@ -162,17 +163,19 @@ export default {
 		this.userID = sessionStorage.getItem("userid");
 	},
 	components:{
-		commentList
+		commentList,songlistChoose
 	},
   name: 'songDetail',
 	mounted(){
-		this.song.id = this.$route.params.id;
+		this.song.id = this.$route.params.songid;
+		console.log(this.song.id);
 		this.getSingerName();
 		this.getSongInfo();
 		this.getSongList();
 	},
   data(){
 		return {
+			chooseList:false,
 			userID:"",
 			commentText:"留下你的评论吧~",
 			song: {
