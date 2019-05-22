@@ -33,7 +33,7 @@
 			</Row>
 		</div>
 		</Layout>
-		<Layout backgroud="green">
+		<Layout>
 			<div class=commentAdd>
 				<div class="commentTitle">
 					<p class="title comment">评论</p>
