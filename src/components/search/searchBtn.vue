@@ -2,7 +2,7 @@
     .search-box {
         position: fixed;
         top: 18%;
-        right: 30px;
+        left: 30px;
         /* transform: translate(-100%, 0%); */
         background: #ffffff;
         /* height: 40px; */
@@ -42,14 +42,43 @@
     .search-box:hover > .search-btn {
         background: #dee8eb;
     }
+
+    .active {
+        width: 240px;
+    }
 </style>
 
 
 <template>
     <div class="search-box">
-			<input class="search-txt" type="text" placeholder="Type to search" />
+			
 			<a class="search-btn" href="#">
 				<i class="ivu-icon ivu-icon-ios-search" style="font-size: 20px;"></i>
 			</a>
+            <input class="search-txt" type="text" placeholder="Type to search" 
+            v-model="inputValue" @input="type" :class="{ 'active': active }"/>
 		</div>
 </template>
+
+<script>
+export default {
+    data () {
+        return {
+            inputValue: "",
+            active: false,
+        }
+    },
+    methods: {
+        type(e){
+            // console.log(this.inputValue)
+            if(this.inputValue !== ""){
+                this.active = true
+            }
+            else{
+                this.active = false
+            }
+        }
+    }
+}
+</script>
+

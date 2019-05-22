@@ -13,12 +13,12 @@
                 <Icon type="ios-lock-outline" slot="prepend"></Icon>
             </Input>
         </FormItem>
-		<div class="btn-div">
+		<div>
         <FormItem>
-            <Button class="lg-reg-btn" type="primary" @click="adminLogin()" :loading="loading" :shape="circle">{{loading?'':'登录'}}</Button>
+            <Button class="lg-reg-btn" type="primary" long @click="adminLogin()" :loading="loading" :shape="circle">{{loading?'':'登录'}}</Button>
         </FormItem>
 		<FormItem>
-            <Button class="lg-reg-btn" type="primary" @click="toLogin()" :shape="circle">返回</Button>
+            <Button class="lg-reg-btn" type="primary" long ghost @click="toLogin()" :shape="circle">返回</Button>
         </FormItem>
 		</div>
     </Form>
@@ -91,10 +91,10 @@ export default{
 	text-align: center;
 	border-radius: 15px;/*圆角边框*/;
 	padding-bottom: 50px;
-	padding-top: 50px;
+	padding-top: 36px;
 }
 .input-form{
-	margin-top: 10%;
+	margin-top: 5%;
 	margin-left: auto;
 	margin-right: auto;
 	width: 60%;
@@ -106,12 +106,7 @@ h1{
 	color:whitesmoke;
 	font-size: 30px
 }
-.btn-div{
-	display:flex;
-	
-}
 .lg-reg-btn{
-	margin:0 55px;
 	font-weight: 900
 }
 #admin-icon

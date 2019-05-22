@@ -15,10 +15,10 @@
         </FormItem>
 		<div class="btn-div">
         <FormItem>
-            <Button class="lg-reg-btn" type="primary" @click="handleSubmit('formInline')" :loading="loading" :shape="circle">{{loading?'':'登录'}}</Button>
+            <Button class="lg-reg-btn" type="primary" long @click="handleSubmit('formInline')" :loading="loading" :shape="circle">{{loading?'':'登录'}}</Button>
         </FormItem>
 		<FormItem>
-            <Button class="lg-reg-btn" type="primary" @click="toRegister()" :shape="circle">注册</Button>
+            <Button class="lg-reg-btn" type="primary" ghost long @click="toRegister()" :shape="circle">注册</Button>
         </FormItem>
 		</div>
     </Form>
@@ -26,7 +26,7 @@
 	    class="admin-tip"
 		confirm
 		transfer
-        title="如果您是用户，请按取消；如果您是管理员请按确定"
+        title="如果您是用户，请按取消；如果您是管理员，请按确定"
         @on-ok="toAdminLogin"
         @on-cancel="cancel">
         <Icon id="admin-icon" type="md-contact" />
@@ -66,6 +66,15 @@ export default{
 			this.$parent.handleSelect('3')
 		},
 		handleSubmit(name) {
+			/*AXIOS.get('/isUserBanned',{params:{uid:this.formInline.user}})
+			.then((res)=>{
+				if(res.data=='1'){
+					this.$Message.info({
+                		content: '您已经因为多次发表违规评论被封禁。若要解封，请发送邮件到music@xx.com或拨打12345咨询客服',
+                		duration: 8
+					});
+				}
+			else{*/
 			this.$refs[name].validate((valid) => {
 				if (valid) {
 					this.loading = true
@@ -83,6 +92,7 @@ export default{
 						console.log(response.data)
 						let data = response.data
 						this.$router.push('/profile/' + this.formInline.user + '/mylike')
+
 						if(data.success) {
 							this.$Message.success('Success!')
 							sessionStorage.setItem('userid', this.formInline.user)
@@ -103,6 +113,8 @@ export default{
 					this.$Message.error('Fail!')
 				}
 			})
+			/*}
+			})*/
 		}
 	}
 }
@@ -120,10 +132,10 @@ export default{
 	text-align: center;
 	border-radius: 15px;/*圆角边框*/;
 	padding-bottom: 50px;
-	padding-top: 50px;
+	padding-top: 36px;
 }
 .input-form{
-	margin-top: 10%;
+	margin-top: 3%;
 	margin-left: auto;
 	margin-right: auto;
 	width: 60%;
@@ -135,12 +147,8 @@ h1{
 	color:whitesmoke;
 	font-size: 30px
 }
-.btn-div{
-	display:flex;
-	
-}
 .lg-reg-btn{
-	margin:0 55px;
+	/*margin:0 55px;*/
 	font-weight: 900
 }
 #admin-icon

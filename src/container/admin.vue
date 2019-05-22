@@ -2,7 +2,7 @@
     <div class="layout">
         <Sider :style="{position: 'fixed', height: '100vh', left: 0, overflow: 'auto'}">
             <Icon style="font-size:60px;color:white;margin-top:20px" type="md-contact" />
-            <p><b>欢迎1000号管理员</b></p>
+            <p><b>欢迎{{id}}号管理员</b></p>
             <Button style='margin-bottom:15px' type=primary icon='md-exit' @click='out()'>退出登录</Button>
             <Menu active-name="1-1" width="auto" :open-names="['1']" accordion>
                 <Submenu name="1">
@@ -10,8 +10,7 @@
                         <Icon type="md-information-circle" />
                         信息概览
                     </template>
-                    <MenuItem name="1-1" @click.native="toData()">数据</MenuItem>
-                    <MenuItem name="1-2" @click.native="me()">我</MenuItem>
+                    <MenuItem name="1-1" @click.native="MyData()">我的数据</MenuItem>
                 </Submenu>
                 <Submenu name="2">
                     <template slot="title">
@@ -50,7 +49,8 @@ export default {
     name:"admin",
     data(){
         return{
-            head:'信息概览/数据'
+            id:sessionStorage.getItem('adminid'),
+            head:'信息概览/我的数据'
         }
     },
     methods:{
@@ -62,11 +62,9 @@ export default {
             });
             this.$router.push('/login')
         },
-        toData(){
-            this.head='信息概览/数据'
-        },
-        me(){
-            this.head='信息概览/我'
+        MyData(){
+            this.head='信息概览/我的数据'
+            this.$router.push('/admin/Mydata')
         },
         song(){
             this.head='音乐管理/歌曲管理'
@@ -84,6 +82,9 @@ export default {
             this.head='用户管理/封禁处理'
             this.$router.push('/admin/BanUser')
         }
+    },
+    mounted(){
+        this.MyData()
     }
 }
 </script>
