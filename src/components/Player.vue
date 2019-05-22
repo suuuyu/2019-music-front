@@ -1,63 +1,11 @@
 <template>
-  <div ref="main" style="position:fixed; left:50px; bottom:20px; width:100%; height:50px; z-index:9999;">
-    <div style="position:absolute;">
-    <div v-if="isMax" class="arrowDown">
-      <img
-        src="arrowDown.png"
-        width="50px"
-        height="50px"
-        @click="changeMini"
-      >
-    </div>
-    <div class="bg" v-show="isMax">
-      <img ref="bg">
-    </div>
-    <div class="lrc" ref="lrc" v-show="isMax">
-      <ul ref="gc" class="gc">
-        <li v-for="one,index in lrcList" ref="oneLrc">{{one}}</li>
-      </ul>
-    </div>
-    <div class="audio green-audio-player" ref="audioPlayer" @mousedown="tryDragging">
-      <div class="miniBg" v-show="!isMax">
-      <img ref="miniBg">
-    </div>
-      <div id="lastSong" class="lastSong">
-        <img
-          @click="playLast"
-          id="lastSongIcon"
-          width="30"
-          height="30"
-          src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDk0MDQ2MTE5IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIxMDgiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNjI1LjUgNTEzVjIxNi4xYzAtMTMuNSAyLjUtMjguOS0xMi45LTM1LjktMTQuMi02LjQtMjYuMyAxLjUtMzcuNyA5LjVDNDM0LjUgMjg4IDI5NCAzODYuMSAxNTMuOCA0ODQuN2MtMzIuMiAyMi43LTMxLjcgMzMuNyAwLjkgNTYuNkMyOTIuOSA2MzguMiA0MzEuMiA3MzUgNTY5LjUgODMxLjhjNC4yIDIuOSA4LjQgNS45IDEyLjggOC40IDI3IDE0LjcgNDMgNS43IDQzLjEtMjUuMSAwLjQtNzUuOSAwLjEtMTUxLjggMC4xLTIyNy44VjUxM3pNNzI3LjkgNTEyLjhjMCA5Mi4xLTAuMSAxODQuMSAwIDI3Ni4yIDAgMzcuNyAxOS4xIDYwLjggNTAuMSA2MS40IDMyIDAuNyA1Mi4yLTIzIDUyLjItNjEuOCAwLjEtMTg0LjEgMC4xLTM2OC4yIDAtNTUyLjMgMC0zNy41LTE5LjMtNjAuOS01MC4xLTYxLjUtMzEuOC0wLjYtNTIuMiAyMy4zLTUyLjIgNjEuOS0wLjEgOTIgMCAxODQgMCAyNzYuMXoiIHAtaWQ9IjIxMDkiIGZpbGw9IiNENkQ4RDQiPjwvcGF0aD48L3N2Zz4="
-        >
-      </div>
-      <div class="loading" v-show="!hasMusic">
-        <img class="spinner" width="30" height="30" src="../image/loading.png">
-      </div>
-      <div class="play-pause-btn" v-show="hasMusic">
-        <img
-          @click="togglePlay"
-          width="30"
-          height="30"
-          src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDkzOTQxMjU2IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE3NjYiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMTAyLjQyNTc0MiAxMDIuMzkzNTY1djgxOS4xNDg1MTZsNjE0LjM2MTM4Ny00MDkuNTc0MjU4eiIgZmlsbD0iI0Q2RDhENCIgcC1pZD0iMTc2NyI+PC9wYXRoPjxwYXRoIGQ9Ik0xNTMuNjIyNTI0IDEwMi4zOTM1NjV2ODE5LjE0ODUxNmw2MTQuMzYxMzg3LTQwOS41NzQyNTh6IiBmaWxsPSIjRDZEOEQ0IiBwLWlkPSIxNzY4Ij48L3BhdGg+PHBhdGggZD0iTTI1OS41OTk4NjMgMTUuODcxMDAzVjgzNC41MDc1NTFsNjE5LjQ4MTA2Ni00MDUuNDc4NTE1eiIgZmlsbD0iI0Q2RDhENCIgcC1pZD0iMTc2OSI+PC9wYXRoPjxwYXRoIGQ9Ik0yNjEuMTM1NzY3IDE4OS40MjgwOTRsLTEuNTM1OTA0IDgxOC42MzY1NDlMODc1LjQ5NzE1NCA1OTkuMDAyMzUzeiIgZmlsbD0iI0Q2RDhENCIgcC1pZD0iMTc3MCI+PC9wYXRoPjxwYXRoIGQ9Ik0yMDQuODE5MzA2IDEwMi4zOTM1NjVtLTEwMi4zOTM1NjQgMGExMDIuMzkzNTY1IDEwMi4zOTM1NjUgMCAxIDAgMjA0Ljc4NzEyOSAwIDEwMi4zOTM1NjUgMTAyLjM5MzU2NSAwIDEgMC0yMDQuNzg3MTI5IDBaIiBmaWxsPSIjRDZEOEQ0IiBwLWlkPSIxNzcxIj48L3BhdGg+PHBhdGggZD0iTTgxOS4xODA2OTQgNDA5LjU3NDI1OGMtNTYuMzE2NDYxIDAtMTAyLjM5MzU2NSA0Ni4wNzcxMDQtMTAyLjM5MzU2NSAxMDIuMzkzNTY1czQ2LjA3NzEwNCAxMDAuMzQ1NjkzIDEwMi4zOTM1NjUgMTAyLjM5MzU2NGM1Ny44NTIzNjQgMi4wNDc4NzEgMTAyLjkwNTUzMi00NS4wNTMxNjggMTAyLjM5MzU2NC0xMDIuMzkzNTY0LTAuNTExOTY4LTU2LjMxNjQ2MS00Ni4wNzcxMDQtMTAyLjM5MzU2NS0xMDIuMzkzNTY0LTEwMi4zOTM1NjV6TTIwNC44MTkzMDYgODE5LjE0ODUxN2MtNTYuMzE2NDYxIDAtMTAyLjM5MzU2NSA0Ni4wNzcxMDQtMTAyLjM5MzU2NCAxMDIuMzkzNTY0czQ2LjA3NzEwNCAxMDAuMzQ1NjkzIDEwMi4zOTM1NjQgMTAyLjM5MzU2NWM1My43NTY2MjEgMi4wNDc4NzEgMTAwLjg1NzY2MS00NS4wNTMxNjggMTAyLjM5MzU2NS0xMDIuMzkzNTY1IDEuNTM1OTAzLTU2LjMxNjQ2MS00Ni4wNzcxMDQtMTAyLjM5MzU2NS0xMDIuMzkzNTY1LTEwMi4zOTM1NjR6IiBmaWxsPSIjRDZEOEQ0IiBwLWlkPSIxNzcyIj48L3BhdGg+PC9zdmc+"
-          class="play-pause-icon"
-          ref="playPause"
-        >
-      </div>
-      <div id="nextSong" class="nextSong">
-        <img
-          @click="playNext"
-          id="nextSongIcon"
-          width="30"
-          height="30"
-          src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDk0MDU4Nzg3IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIyNzkiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNDAyLjkgNTEzVjIxNi4xYzAtMTMuNS0yLjUtMjguOSAxMi45LTM1LjkgMTQuMi02LjQgMjYuMyAxLjUgMzcuNyA5LjUgMTQwLjUgOTguMyAyODEgMTk2LjQgNDIxLjIgMjk1IDMyLjIgMjIuNyAzMS43IDMzLjctMC45IDU2LjZDNzM1LjYgNjM4LjIgNTk3LjMgNzM0LjkgNDU5IDgzMS43Yy00LjIgMi45LTguNCA1LjktMTIuOCA4LjQtMjcgMTQuNy00MyA1LjctNDMuMS0yNS4xLTAuNC03NS45LTAuMS0xNTEuOC0wLjEtMjI3LjgtMC4xLTI0LjgtMC4xLTQ5LjUtMC4xLTc0LjJ6TTMwMC41IDUxMi44YzAgOTIuMSAwLjEgMTg0LjEgMCAyNzYuMiAwIDM3LjctMTkuMSA2MC44LTUwLjEgNjEuNC0zMiAwLjctNTIuMi0yMy01Mi4yLTYxLjgtMC4xLTE4NC4xLTAuMS0zNjguMiAwLTU1Mi4zIDAtMzcuNSAxOS4zLTYwLjkgNTAuMS02MS41IDMxLjgtMC42IDUyLjIgMjMuMyA1Mi4yIDYxLjl2Mjc2LjF6IiBwLWlkPSIyMjgwIiBmaWxsPSIjRDZEOEQ0Ij48L3BhdGg+PC9zdmc+"
-        >
-      </div>
-      <div class="controls">
-        <span ref="currentTime" class="current-time" style="color:#D6D8D4">0:00</span>
-        <div class="slider" data-direction="horizontal">
-          <div class="progress" ref="progress">
-            <div class="pin" id="progress-pin" data-method="rewind"></div>
-          </div>
+  <div
+    ref="main"
+    style="position:fixed; left:3vw; bottom:2vh; width:100%; height:6vh; z-index:9999;"
+  >
+        <div style="position:absolute;">
+        <div v-if="isMax" class="arrowDown">
+          <img src="../image/arrowDown.png" width="50vw" height="50vw" @click="changeMini">
         </div>
         <div class="bg" v-show="isMax">
           <img ref="bg">
@@ -81,7 +29,7 @@
             >
           </div>
           <div class="loading" v-show="!hasMusic">
-            <img class="spinner" width="30" height="30" src="../image/loading.png">
+            <img class="spinner" width="2vw" height="2vw" src="../image/loading.png">
           </div>
           <div class="play-pause-btn" v-show="hasMusic">
             <img
@@ -160,11 +108,10 @@
           >
             <source :src="currentSrc" type="audio/mpeg">
           </audio>
-          <div v-if="!isMax" style="padding-left:80px;">
-            <img src="../image/arrowUp.png" width="35px" height="35px" @click="changeMini">
+          <div v-if="!isMax" style="padding-left:2.5vw;">
+            <img src="../image/arrowUp.png" width="30vw" height="30vw" @click="changeMini">
           </div>
         </div>
-      </div>
     </div>
   </div>
 </template>
@@ -222,11 +169,11 @@ export default {
       if (this.isMax) {
         this.isMax = false;
         this.$refs.main.style =
-          "position:fixed; left:50px; bottom:20px; width:100%; height:50px; z-index:9999;";
+          "position:fixed; left:3vw; bottom:2vh; width:100%; height:6vh; z-index:9999;";
       } else {
         this.isMax = true;
         this.$refs.main.style =
-          "position:absolute; left:50px; top:-73px; width:100%; height:950px; z-index:9999;";
+          "position:fixed; left:3vw; top:-8vh; width:100%; height:117vh; z-index:9999;";
       }
     },
     loadMusic() {
@@ -352,14 +299,14 @@ export default {
     },
     directionAware() {
       if (window.innerHeight < 250) {
-        this.volumeControls.style.bottom = "-54px";
-        this.volumeControls.style.left = "54px";
+        this.volumeControls.style.bottom = "-6.6vh";
+        this.volumeControls.style.left = "3vw";
       } else if (this.$refs.audioPlayer.offsetTop < 154) {
-        this.volumeControls.style.bottom = "-164px";
-        this.volumeControls.style.left = "-3px";
+        this.volumeControls.style.bottom = "-53vh";
+        this.volumeControls.style.left = "-0.17vw";
       } else {
-        this.volumeControls.style.bottom = "52px";
-        this.volumeControls.style.left = "-3px";
+        this.volumeControls.style.bottom = "6.3vh";
+        this.volumeControls.style.left = "-0.17vw";
       }
     },
     tryDragging(event) {
@@ -432,7 +379,7 @@ export default {
       var rect = slider.getBoundingClientRect();
       var K = 0;
       if (slider.dataset.direction == "horizontal") {
-        var offsetX = event.clientX - slider.offsetLeft;
+        var offsetX = event.clientX - slider.getBoundingClientRect().x;
         var width = slider.clientWidth;
         K = offsetX / width;
       } else if (slider.dataset.direction == "vertical") {
@@ -470,18 +417,18 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style>
 li {
   list-style: none;
 }
 .audio.green-audio-player {
   position: relative;
-  min-width: 300px;
+  min-width: 17.6vw;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  left: 100px;
-  bottom: 30px;
+  left: 5.9vw;
+  bottom: 4vh;
   border-radius: 4px;
   user-select: none;
   -webkit-user-select: none;
@@ -489,24 +436,25 @@ li {
   filter: blur(0px);
 }
 .audio.green-audio-player .lastSong {
-  width: 70px;
+  width: 4.1vw;
 }
 .audio.green-audio-player .nextSong {
-  width: 50px;
+  width: 3vw;
+  padding-left: 1vw;
 }
 .audio.green-audio-player .playMode {
-  width: 50px;
+  width: 3vw;
 }
 .audio.green-audio-player .like {
-  width: 50px;
+  width: 3vw;
 }
 .audio.green-audio-player .play-pause-btn {
-  width: 90px;
+  width: 5.3vw;
   cursor: pointer;
 }
 .audio.green-audio-player .spinner {
-  width: 25px;
-  height: 25px;
+  width: 1.5vw;
+  height: 1.5vw;
   -webkit-transform: rotate(360deg);
   animation: rotation 2s linear infinite;
   -moz-animation: rotation 2s linear infinite;
@@ -523,21 +471,22 @@ li {
 }
 
 .audio.green-audio-player .slider {
-  width: 720px;
+  width: 45vw;
   background-color: #d8d8d8;
   cursor: pointer;
   position: relative;
   left: 1px;
 }
 .audio.green-audio-player .slider .progress {
+  position: relative;
   background-color: #44bfa3;
   border-radius: inherit;
-  position: absolute;
   pointer-events: none;
+  overflow: visible;
 }
 .audio.green-audio-player .slider .progress .pin {
-  height: 16px;
-  width: 16px;
+  height: 2vh;
+  width: 1vw;
   border-radius: 8px;
   background-color: #307fbf;
   position: absolute;
@@ -546,29 +495,29 @@ li {
 }
 .audio.green-audio-player .controls {
   font-family: "Roboto", sans-serif;
-  font-size: 16px;
-  line-height: 18px;
+  font-size: 1vw;
+  line-height: 3vh;
   color: #55606e;
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
   align-items: center;
-  margin-left: 24px;
-  margin-right: 24px;
+  margin-left: 1.4vw;
+  margin-right: 1.4vw;
 }
 .audio.green-audio-player .controls .slider {
-  margin-left: 16px;
-  margin-right: 16px;
+  margin-left: 1vw;
+  margin-right: 1vw;
   border-radius: 2px;
-  height: 4px;
+  height: 0.5vh;
 }
 .audio.green-audio-player .controls .slider .progress {
   width: 0;
   height: 100%;
 }
 .audio.green-audio-player .controls .slider .progress .pin {
-  right: -8px;
-  top: -6px;
+  right: -0.5vw;
+  bottom: -0.7vh;
 }
 .audio.green-audio-player .controls span {
   cursor: default;
@@ -577,6 +526,8 @@ li {
   position: relative;
   display: flex;
   flex-direction: column-reverse;
+  left: 1vw;
+  top: 0.4vh;
 }
 .audio.green-audio-player .volume .volume-btn {
   cursor: pointer;
@@ -585,13 +536,13 @@ li {
   fill: #44bfa3;
 }
 .audio.green-audio-player .volume .volume-controls {
-  width: 30px;
-  height: 135px;
+  width: 1.6vw;
+  height: 17vh;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.62);
   border-radius: 7px;
   left: -3px;
-  top: -150px;
+  top: -18vh;
   flex-direction: column;
   align-items: center;
   display: flex;
@@ -600,20 +551,21 @@ li {
   display: none;
 }
 .audio.green-audio-player .volume .volume-controls .slider {
-  margin-top: 12px;
-  margin-bottom: 12px;
-  width: 6px;
+  top: 0.5vh;
+  position: relative;
+  width: 0.4vw;
   border-radius: 3px;
-  height: 120px;
+  height: 16vh;
 }
 .audio.green-audio-player .volume .volume-controls .slider .progress {
-  bottom: 0;
+  position: absolute;
+  bottom: -2.4vh;
   height: 100%;
-  width: 6px;
+  width: 0.4vw;
 }
 .audio.green-audio-player .volume .volume-controls .slider .progress .pin {
-  left: -5px;
-  top: -8px;
+  left: -0.3vw;
+  top: -0.5vh;
 }
 .current-time {
   width: 3rem;
@@ -622,17 +574,19 @@ li {
   width: 3rem;
 }
 .bg {
-  left: -20px;
-  height: 840px;
+  position: relative;
+  left: -5.8vw;
+  height: 100vh;
   width: 140%;
 }
 .miniBg {
   position: absolute;
-  height: 50px;
-  width: 50px;
-  left: -40px;
+  height: 6vh;
+  width: 3vw;
+  left: -2.5vw;
 }
 .bg img {
+  left: -11.7vw;
   background-size: cover;
   width: 110%;
   height: 110%;
@@ -642,16 +596,16 @@ li {
   filter: blur(30px);
 }
 .miniBg img {
-  width: 50px;
-  height: 50px;
+  width: 3vw;
+  height: 3vw;
 }
 .lrc {
   z-index: 100;
   position: absolute;
-  left: 380px;
-  top: 200px;
-  width: 600px;
-  height: 500px;
+  left: 22.3vw;
+  top: 20vh;
+  width: 35.2vw;
+  height: 62vh;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -668,7 +622,7 @@ li {
   background-color: #ccc;
 } /* 滚动条的滑轨背景颜色 */
 .lrc::-webkit-scrollbar {
-  width: 6px;
+  width: 0.4vw;
   background-color: #ccc;
 }
 
@@ -677,28 +631,27 @@ li {
 } /* 滑块颜色 */
 .lrc .gc {
   margin: 10px;
-  font-size: 25px;
+  font-size: 1.5vw;
   color: #d6d8d4;
   font-family: Wawati SC;
   list-style-type: none;
   position: absolute;
-  height: 500px;
-  width: 600px;
+  height: 62vh;
+  width: 35.3vw;
 }
 .arrowDown {
   z-index: 1;
   cursor: pointer;
   position: absolute;
-  width: 10px;
-  height: 10px;
-  right: -50px;
-  top: 100px;
+  width: 0.58vw;
+  height: 1vh;
+  right: -3vw;
+  top: 12vh;
 }
 .arrowUp {
   cursor: pointer;
   z-index: 1;
   position: relative;
-  width: 50px;
-  height: 50px;
+  height: 6vh;
 }
 </style>
