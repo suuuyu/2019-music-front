@@ -3,7 +3,7 @@
     <router-view></router-view>
     <menu-panel></menu-panel>
     <search-btn></search-btn>
-    <player style="top:10px;" ref="player"></player>
+    <player ref="player"></player>
   </div>
 </template>
 
