@@ -23,6 +23,7 @@ import ManageAlbum from '../components/admin/ManageAlbum'
 import ManageSinger from '../components/admin/ManageSinger'
 import BanUser from '../components/admin/BanUser'
 import myCreated from '../components/profile/myCreated'
+import songListDetail from '../components/detail/songListDetail'
 import player from '../components/Player'
 
 Vue.use(Router)
@@ -64,10 +65,10 @@ export default new Router({
           path: '/song/:songid',
           component: songDetail
         },
-        // {
-        //   path: '/songList/:songid',
-        //   component: songListDetail
-        // },
+        {
+          path:'/songList/:songListID',
+          component:songListDetail
+        },
         // {
         //   path: '/singer/:songid',
         //   component: singerDetail

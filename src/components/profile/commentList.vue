@@ -32,8 +32,6 @@
           {{currentPageNum}}/{{pageNum}}页</p>
       </i-col>
     </Row>
-    
-    
   </Layout>
 </template>
 <script>
