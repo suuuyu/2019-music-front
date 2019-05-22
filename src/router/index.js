@@ -23,12 +23,13 @@ import ManageAlbum from '../components/admin/ManageAlbum'
 import ManageSinger from '../components/admin/ManageSinger'
 import BanUser from '../components/admin/BanUser'
 import myCreated from '../components/profile/myCreated'
+import player from '../components/Player'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
-    //For Development
+    // For Development
     {
       path: '/',
       component: HelloWorld,
@@ -44,12 +45,16 @@ export default new Router({
         {
           path: 'alogin',
           component: alogin
-        },
+        }
       ]
     },
     {
-      path:'/admin',
-      component:admin
+      path: '/admin',
+      component: admin
+    },
+    {
+      path: '/player',
+      component: player
     },
     {
       path: '/inner',
@@ -115,32 +120,32 @@ export default new Router({
       ]
     },
     {
-      path:'/admin',
-      component:admin,
-      children:[
+      path: '/admin',
+      component: admin,
+      children: [
         {
-          path:'data',
-          component:data
+          path: 'data',
+          component: data
         },
         {
-          path:'me',
-          component:me
+          path: 'me',
+          component: me
         },
         {
-          path:'ManageSong',
-          component:ManageSong
+          path: 'ManageSong',
+          component: ManageSong
         },
         {
-          path:'ManageAlbum',
-          component:ManageAlbum
+          path: 'ManageAlbum',
+          component: ManageAlbum
         },
         {
-          path:'ManageSinger',
-          component:ManageSinger
+          path: 'ManageSinger',
+          component: ManageSinger
         },
         {
-          path:'BanUser',
-          component:BanUser
+          path: 'BanUser',
+          component: BanUser
         }
       ]
     }

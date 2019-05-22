@@ -4,7 +4,7 @@
         <Icon type="ios-information-circle"></Icon>
         <span>选择想加入的歌单</span>
     </p>
-    <div style="text-align:center">
+    <div style="text-align:center" class="content">
         <Card :key="index" v-for="(s, index) in mySonglist">
             <div style="text-align:center" @click="keepSong(songid, s.songlistid)">
               <p>{{s.songlistname}}</p>
@@ -72,7 +72,10 @@ export default {
 </script>
 
 <style scoped>
-
+.content {
+  max-height: 300px;
+  overflow:scroll;
+}
 </style>
 
 
