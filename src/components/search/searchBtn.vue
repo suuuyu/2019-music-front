@@ -53,7 +53,7 @@
     <div class="search-box">
 			
 			<a class="search-btn" href="#">
-				<i class="ivu-icon ivu-icon-ios-search" style="font-size: 20px;"></i>
+				<i @click="search" class="ivu-icon ivu-icon-ios-search" style="font-size: 20px;"></i>
 			</a>
             <input class="search-txt" type="text" placeholder="Type to search" 
             v-model="inputValue" @input="type" :class="{ 'active': active }"/>
@@ -69,10 +69,14 @@ export default {
         }
     },
     methods: {
+        search(){
+            this.$parent.search(this.inputValue)
+        },
         type(e){
-            // console.log(this.inputValue)
+            //console.log(this.inputValue)
             if(this.inputValue !== ""){
                 this.active = true
+                this.$parent
             }
             else{
                 this.active = false

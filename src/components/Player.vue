@@ -1,127 +1,181 @@
 <template>
   <div
     ref="main"
-    style="position:fixed; left:3vw; bottom:2vh; width:100%; height:6vh; z-index:9999;"
+    style="position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:9999;"
   >
-        <div style="position:absolute;">
-        <div v-if="isMax" class="arrowDown">
-          <img src="../image/arrowDown.png" width="50vw" height="50vw" @click="changeMini">
+    <div style="position:absolute;">
+      <search-btn style="z-index:10;"></search-btn>
+      <div v-if="isMax" class="arrowDown">
+        <img
+          ref="arrowDown"
+          src="arrowDown.png"
+          width="50vw"
+          height="50vw"
+          @click="changeMini"
+          @mouseenter="highlightArrDown"
+          @mouseleave="noLightArrDown"
+        >
+      </div>
+      <div class="bg" v-show="isMax">
+        <img ref="bg">
+      </div>
+      <div class="lrc" ref="lrc" v-show="isMax">
+        <ul ref="gc" class="gc">
+          <li v-for="one,index in lrcList" ref="oneLrc">{{one}}</li>
+        </ul>
+      </div>
+      <div class="audio green-audio-player" ref="audioPlayer" @mousedown="tryDragging">
+        <div class="miniBg" v-show="!isMax">
+          <img ref="miniBg">
         </div>
-        <div class="bg" v-show="isMax">
-          <img ref="bg">
-        </div>
-        <div class="lrc" ref="lrc" v-show="isMax">
-          <ul ref="gc" class="gc">
-            <li v-for="one,index in lrcList" ref="oneLrc">{{one}}</li>
-          </ul>
-        </div>
-        <div class="audio green-audio-player" ref="audioPlayer" @mousedown="tryDragging">
-          <div class="miniBg" v-show="!isMax">
-            <img ref="miniBg">
-          </div>
-          <div id="lastSong" class="lastSong">
-            <img
-              @click="playLast"
-              id="lastSongIcon"
-              width="30"
-              height="30"
-              src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDk0MDQ2MTE5IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIxMDgiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNjI1LjUgNTEzVjIxNi4xYzAtMTMuNSAyLjUtMjguOS0xMi45LTM1LjktMTQuMi02LjQtMjYuMyAxLjUtMzcuNyA5LjVDNDM0LjUgMjg4IDI5NCAzODYuMSAxNTMuOCA0ODQuN2MtMzIuMiAyMi43LTMxLjcgMzMuNyAwLjkgNTYuNkMyOTIuOSA2MzguMiA0MzEuMiA3MzUgNTY5LjUgODMxLjhjNC4yIDIuOSA4LjQgNS45IDEyLjggOC40IDI3IDE0LjcgNDMgNS43IDQzLjEtMjUuMSAwLjQtNzUuOSAwLjEtMTUxLjggMC4xLTIyNy44VjUxM3pNNzI3LjkgNTEyLjhjMCA5Mi4xLTAuMSAxODQuMSAwIDI3Ni4yIDAgMzcuNyAxOS4xIDYwLjggNTAuMSA2MS40IDMyIDAuNyA1Mi4yLTIzIDUyLjItNjEuOCAwLjEtMTg0LjEgMC4xLTM2OC4yIDAtNTUyLjMgMC0zNy41LTE5LjMtNjAuOS01MC4xLTYxLjUtMzEuOC0wLjYtNTIuMiAyMy4zLTUyLjIgNjEuOS0wLjEgOTIgMCAxODQgMCAyNzYuMXoiIHAtaWQ9IjIxMDkiIGZpbGw9IiNENkQ4RDQiPjwvcGF0aD48L3N2Zz4="
-            >
-          </div>
-          <div class="loading" v-show="!hasMusic">
-            <img class="spinner" width="2vw" height="2vw" src="../image/loading.png">
-          </div>
-          <div class="play-pause-btn" v-show="hasMusic">
-            <img
-              @click="togglePlay"
-              width="30"
-              height="30"
-              src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDkzOTQxMjU2IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE3NjYiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMTAyLjQyNTc0MiAxMDIuMzkzNTY1djgxOS4xNDg1MTZsNjE0LjM2MTM4Ny00MDkuNTc0MjU4eiIgZmlsbD0iI0Q2RDhENCIgcC1pZD0iMTc2NyI+PC9wYXRoPjxwYXRoIGQ9Ik0xNTMuNjIyNTI0IDEwMi4zOTM1NjV2ODE5LjE0ODUxNmw2MTQuMzYxMzg3LTQwOS41NzQyNTh6IiBmaWxsPSIjRDZEOEQ0IiBwLWlkPSIxNzY4Ij48L3BhdGg+PHBhdGggZD0iTTI1OS41OTk4NjMgMTUuODcxMDAzVjgzNC41MDc1NTFsNjE5LjQ4MTA2Ni00MDUuNDc4NTE1eiIgZmlsbD0iI0Q2RDhENCIgcC1pZD0iMTc2OSI+PC9wYXRoPjxwYXRoIGQ9Ik0yNjEuMTM1NzY3IDE4OS40MjgwOTRsLTEuNTM1OTA0IDgxOC42MzY1NDlMODc1LjQ5NzE1NCA1OTkuMDAyMzUzeiIgZmlsbD0iI0Q2RDhENCIgcC1pZD0iMTc3MCI+PC9wYXRoPjxwYXRoIGQ9Ik0yMDQuODE5MzA2IDEwMi4zOTM1NjVtLTEwMi4zOTM1NjQgMGExMDIuMzkzNTY1IDEwMi4zOTM1NjUgMCAxIDAgMjA0Ljc4NzEyOSAwIDEwMi4zOTM1NjUgMTAyLjM5MzU2NSAwIDEgMC0yMDQuNzg3MTI5IDBaIiBmaWxsPSIjRDZEOEQ0IiBwLWlkPSIxNzcxIj48L3BhdGg+PHBhdGggZD0iTTgxOS4xODA2OTQgNDA5LjU3NDI1OGMtNTYuMzE2NDYxIDAtMTAyLjM5MzU2NSA0Ni4wNzcxMDQtMTAyLjM5MzU2NSAxMDIuMzkzNTY1czQ2LjA3NzEwNCAxMDAuMzQ1NjkzIDEwMi4zOTM1NjUgMTAyLjM5MzU2NGM1Ny44NTIzNjQgMi4wNDc4NzEgMTAyLjkwNTUzMi00NS4wNTMxNjggMTAyLjM5MzU2NC0xMDIuMzkzNTY0LTAuNTExOTY4LTU2LjMxNjQ2MS00Ni4wNzcxMDQtMTAyLjM5MzU2NS0xMDIuMzkzNTY0LTEwMi4zOTM1NjV6TTIwNC44MTkzMDYgODE5LjE0ODUxN2MtNTYuMzE2NDYxIDAtMTAyLjM5MzU2NSA0Ni4wNzcxMDQtMTAyLjM5MzU2NCAxMDIuMzkzNTY0czQ2LjA3NzEwNCAxMDAuMzQ1NjkzIDEwMi4zOTM1NjQgMTAyLjM5MzU2NWM1My43NTY2MjEgMi4wNDc4NzEgMTAwLjg1NzY2MS00NS4wNTMxNjggMTAyLjM5MzU2NS0xMDIuMzkzNTY1IDEuNTM1OTAzLTU2LjMxNjQ2MS00Ni4wNzcxMDQtMTAyLjM5MzU2NS0xMDIuMzkzNTY1LTEwMi4zOTM1NjR6IiBmaWxsPSIjRDZEOEQ0IiBwLWlkPSIxNzcyIj48L3BhdGg+PC9zdmc+"
-              class="play-pause-icon"
-              ref="playPause"
-            >
-          </div>
-          <div id="nextSong" class="nextSong">
-            <img
-              @click="playNext"
-              id="nextSongIcon"
-              width="30"
-              height="30"
-              src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDk0MDU4Nzg3IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIyNzkiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNDAyLjkgNTEzVjIxNi4xYzAtMTMuNS0yLjUtMjguOSAxMi45LTM1LjkgMTQuMi02LjQgMjYuMyAxLjUgMzcuNyA5LjUgMTQwLjUgOTguMyAyODEgMTk2LjQgNDIxLjIgMjk1IDMyLjIgMjIuNyAzMS43IDMzLjctMC45IDU2LjZDNzM1LjYgNjM4LjIgNTk3LjMgNzM0LjkgNDU5IDgzMS43Yy00LjIgMi45LTguNCA1LjktMTIuOCA4LjQtMjcgMTQuNy00MyA1LjctNDMuMS0yNS4xLTAuNC03NS45LTAuMS0xNTEuOC0wLjEtMjI3LjgtMC4xLTI0LjgtMC4xLTQ5LjUtMC4xLTc0LjJ6TTMwMC41IDUxMi44YzAgOTIuMSAwLjEgMTg0LjEgMCAyNzYuMiAwIDM3LjctMTkuMSA2MC44LTUwLjEgNjEuNC0zMiAwLjctNTIuMi0yMy01Mi4yLTYxLjgtMC4xLTE4NC4xLTAuMS0zNjguMiAwLTU1Mi4zIDAtMzcuNSAxOS4zLTYwLjkgNTAuMS02MS41IDMxLjgtMC42IDUyLjIgMjMuMyA1Mi4yIDYxLjl2Mjc2LjF6IiBwLWlkPSIyMjgwIiBmaWxsPSIjRDZEOEQ0Ij48L3BhdGg+PC9zdmc+"
-            >
-          </div>
-          <div class="controls">
-            <span ref="currentTime" class="current-time" style="color:#D6D8D4">0:00</span>
-            <div class="slider" data-direction="horizontal">
-              <div class="progress" ref="progress">
-                <div class="pin" id="progress-pin" data-method="rewind"></div>
-              </div>
-            </div>
-            <span ref="totalTime" class="total-time" style="color:#D6D8D4">0:00</span>
-          </div>
-          <div id="playMode" class="playMode">
-            <img
-              data-mode="0"
-              id="playModeIcon"
-              width="30"
-              height="30"
-              src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDk0MTE5OTI5IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEzMjQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNOTQ2LjQ4MzUzMiA0NjcuMjE4MDc0IDc5OS41MzM2OTIgNjE2LjQ3NDQ0NmMtNy45OTgxNjEgOC4xMjE5ODEtMTguOTE4ODg1IDEyLjY5NzE4My0zMC4zMTg1MTYgMTIuNjk3MTgzLTExLjM5OTYzMSAwLTIyLjMyMDM1NS00LjU3NTIwMi0zMC4zMTg1MTYtMTIuNjk3MTgzTDU5MS45NDU3OTcgNDY3LjIxODA3NGMtMTYuNDgzNDE2LTE2Ljc0NDM1OS0xNi4yNzA1NjktNDMuNjc2NzU1IDAuNDcxNzQ0LTYwLjE2NTI4OCAxNi43MzkyNDMtMTYuNDgzNDE2IDQzLjY2NTQ5OS0xNi4yNzU2ODUgNjAuMTY1Mjg4IDAuNDcxNzQ0bDgyLjEzNDY0OSA4My40MjYwNjFjLTEwLjY1MzY0MS0xNTQuNDE1ODgyLTEzNy4zOTIxNi0yNzYuNzU3MjU1LTI5MS43NTg5MjMtMjc2Ljc1NzI1NS0xNjEuMzMxMzg1IDAtMjkyLjU4MTY2MiAxMzMuNTkyNjI0LTI5Mi41ODE2NjIgMjk3LjgwNjY2M1MyODEuNjI4MTkyIDgwOS44MDU2NCA0NDIuOTU5NTc3IDgwOS44MDU2NGM1OS4zODA0MTIgMCAxMTYuNTIyODU0LTE3Ljk3OTQ5IDE2NS4yNDE0MzgtNTIuMDAxMzUxIDE5LjI3MTkyNi0xMy40NDUyMiA0NS43OTQ5OTktOC43MzM5MTggNTkuMjQwMjE5IDEwLjUyNzc3NCAxMy40NTEzNiAxOS4yNjY4MDkgOC43MzQ5NDIgNDUuNzg5ODgyLTEwLjUyNjc1MSA1OS4yNDAyMTktNjMuMDc4NjQxIDQ0LjAzOTAwNi0xMzcuMDYxNjMyIDY3LjMyMTI2OC0yMTMuOTU0OTA3IDY3LjMyMTI2OC0yMDguMjQ2OTA1IDAtMzc3LjY2OTU3Mi0xNzEuNzYzOTkyLTM3Ny42Njk1NzItMzgyLjg5MzU1czE2OS40MjE2NDQtMzgyLjg5MzU1IDM3Ny42Njk1NzItMzgyLjg5MzU1YzE5Ni4xMTU2MSAwIDM1Ny43NDE3MDcgMTUyLjM2MDA2IDM3NS45MDQzNjkgMzQ2LjQ1NDY0bDY2Ljk4MTUzMS02OC4wMzU1MzZjMTYuNDk5Nzg5LTE2Ljc1MjU0NiA0My40MzczMDItMTYuOTUwMDQ0IDYwLjE2NTI4OC0wLjQ3MTc0NEM5NjIuNzU1MTI0IDQyMy41NDEzMTkgOTYyLjk2Nzk3MiA0NTAuNDczNzE1IDk0Ni40ODM1MzIgNDY3LjIxODA3NHoiIHAtaWQ9IjEzMjUiIGZpbGw9IiNENkQ4RDQiPjwvcGF0aD48L3N2Zz4="
-            >
-          </div>
-          <div id="like" class="like">
-            <img
-              data-state="0"
-              id="likeIcon"
-              onclick="favoriteSong(player.dataset.id)"
-              width="30"
-              height="30"
-              src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDk0MDkzMTk3IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjgxMCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwvc3R5bGU+PC9kZWZzPjxwYXRoIGQ9Ik03MjguMTc3Nzc4IDExMy43Nzc3NzhjLTEzMC44NDQ0NDQgMC0yMTAuNDg4ODg5IDEwMi40LTIxMC40ODg4ODkgMTAyLjRTNDQ5LjQyMjIyMiAxMTMuNzc3Nzc4IDMwNy4yIDExMy43Nzc3NzggNTYuODg4ODg5IDE5My40MjIyMjIgNTYuODg4ODg5IDM4Ni44NDQ0NDRjMCAyNzMuMDY2NjY3IDQ2MC44IDU2OC44ODg4ODkgNDYwLjggNTY4Ljg4ODg4OVM5NjcuMTExMTExIDY0Mi44NDQ0NDQgOTY3LjExMTExMSAzOTIuNTMzMzMzQzk2Ny4xMTExMTEgMTg3LjczMzMzMyA4MzYuMjY2NjY3IDExMy43Nzc3NzggNzI4LjE3Nzc3OCAxMTMuNzc3Nzc4TTUxNy42ODg4ODkgODg3LjQ2NjY2N1MxMTMuNzc3Nzc4IDYwOC43MTExMTEgMTEzLjc3Nzc3OCAzODYuODQ0NDQ0YzAtMTQyLjIyMjIyMiA5Ni43MTExMTEtMjIxLjg2NjY2NyAyMDQuOC0yMjEuODY2NjY2QzQyNi42NjY2NjcgMTY0Ljk3Nzc3OCA1MTcuNjg4ODg5IDI4NC40NDQ0NDQgNTE3LjY4ODg4OSAyODQuNDQ0NDQ0czEwOC4wODg4ODktMTE5LjQ2NjY2NyAyMDQuOC0xMTkuNDY2NjY2Yzk2LjcxMTExMSAwIDE5My40MjIyMjIgNzMuOTU1NTU2IDE5My40MjIyMjIgMjI3LjU1NTU1NS01LjY4ODg4OSAyMTYuMTc3Nzc4LTM5OC4yMjIyMjIgNDk0LjkzMzMzMy0zOTguMjIyMjIyIDQ5NC45MzMzMzQiIGZpbGw9IiNENkQ4RDQiIHAtaWQ9IjgxMSI+PC9wYXRoPjwvc3ZnPg=="
-            >
-          </div>
-          <div class="volume">
-            <div class="volume-controls hidden" ref="volumeControls">
-              <div class="slider" data-direction="vertical">
-                <div class="progress" ref="volumeProgress">
-                  <div class="pin" id="volume-pin" data-method="changeVolume"></div>
-                </div>
-              </div>
-            </div>
-            <div class="volume-btn" ref="volumeBtn" @click="volumeBtnClick">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path
-                  fill="#566574"
-                  fill-rule="evenodd"
-                  d="M14.667 0v2.747c3.853 1.146 6.666 4.72 6.666 8.946 0 4.227-2.813 7.787-6.666 8.934v2.76C20 22.173 24 17.4 24 11.693 24 5.987 20 1.213 14.667 0zM18 11.693c0-2.36-1.333-4.386-3.333-5.373v10.707c2-.947 3.333-2.987 3.333-5.334zm-18-4v8h5.333L12 22.36V1.027L5.333 7.693H0z"
-                  ref="speaker"
-                ></path>
-              </svg>
-            </div>
-          </div>
-          <audio
-            crossorigin
-            ref="audio"
-            @timeupdate="updateProgress"
-            @canplay="makePlay"
-            @volumechange="updateVolume"
-            @loadedmetadata="loadMusic"
-            @ended="playNext"
+        <div class="lastSong">
+          <img
+            ref="lastSong"
+            @click="playLast"
+            @mouseenter="highlightLast"
+            @mouseleave="noLightLast"
+            width="30"
+            height="30"
+            src="last.png"
           >
-            <source :src="currentSrc" type="audio/mpeg">
-          </audio>
-          <div v-if="!isMax" style="padding-left:2.5vw;">
-            <img src="../image/arrowUp.png" width="30vw" height="30vw" @click="changeMini">
+        </div>
+        <div class="loading" v-show="!hasMusic">
+          <img class="spinner" width="2vw" height="2vw" src="loading.png">
+        </div>
+        <div class="play-pause-btn" v-show="hasMusic">
+          <img
+            @click="togglePlay"
+            @mouseenter="highlightPlay"
+            @mouseleave="noLightPlay"
+            width="30"
+            height="30"
+            src="play.png"
+            class="play-pause-icon"
+            ref="playPause"
+          >
+        </div>
+        <div class="nextSong">
+          <img
+            ref="nextSong"
+            @click="playNext"
+            @mouseenter="highlightNext"
+            @mouseleave="noLightNext"
+            width="30"
+            height="30"
+            src="next.png"
+          >
+        </div>
+        <div class="controls">
+          <span ref="currentTime" class="current-time" style="color:#D6D8D4">0:00</span>
+          <div class="slider" data-direction="horizontal">
+            <div class="progress" ref="progress">
+              <div class="pin" id="progress-pin" data-method="rewind"></div>
+            </div>
+          </div>
+          <span ref="totalTime" class="total-time" style="color:#D6D8D4">0:00</span>
+        </div>
+        <div id="playMode" class="playMode">
+          <img
+            data-mode="0"
+            id="playModeIcon"
+            width="30"
+            height="30"
+            src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDk0MTE5OTI5IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEzMjQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNOTQ2LjQ4MzUzMiA0NjcuMjE4MDc0IDc5OS41MzM2OTIgNjE2LjQ3NDQ0NmMtNy45OTgxNjEgOC4xMjE5ODEtMTguOTE4ODg1IDEyLjY5NzE4My0zMC4zMTg1MTYgMTIuNjk3MTgzLTExLjM5OTYzMSAwLTIyLjMyMDM1NS00LjU3NTIwMi0zMC4zMTg1MTYtMTIuNjk3MTgzTDU5MS45NDU3OTcgNDY3LjIxODA3NGMtMTYuNDgzNDE2LTE2Ljc0NDM1OS0xNi4yNzA1NjktNDMuNjc2NzU1IDAuNDcxNzQ0LTYwLjE2NTI4OCAxNi43MzkyNDMtMTYuNDgzNDE2IDQzLjY2NTQ5OS0xNi4yNzU2ODUgNjAuMTY1Mjg4IDAuNDcxNzQ0bDgyLjEzNDY0OSA4My40MjYwNjFjLTEwLjY1MzY0MS0xNTQuNDE1ODgyLTEzNy4zOTIxNi0yNzYuNzU3MjU1LTI5MS43NTg5MjMtMjc2Ljc1NzI1NS0xNjEuMzMxMzg1IDAtMjkyLjU4MTY2MiAxMzMuNTkyNjI0LTI5Mi41ODE2NjIgMjk3LjgwNjY2M1MyODEuNjI4MTkyIDgwOS44MDU2NCA0NDIuOTU5NTc3IDgwOS44MDU2NGM1OS4zODA0MTIgMCAxMTYuNTIyODU0LTE3Ljk3OTQ5IDE2NS4yNDE0MzgtNTIuMDAxMzUxIDE5LjI3MTkyNi0xMy40NDUyMiA0NS43OTQ5OTktOC43MzM5MTggNTkuMjQwMjE5IDEwLjUyNzc3NCAxMy40NTEzNiAxOS4yNjY4MDkgOC43MzQ5NDIgNDUuNzg5ODgyLTEwLjUyNjc1MSA1OS4yNDAyMTktNjMuMDc4NjQxIDQ0LjAzOTAwNi0xMzcuMDYxNjMyIDY3LjMyMTI2OC0yMTMuOTU0OTA3IDY3LjMyMTI2OC0yMDguMjQ2OTA1IDAtMzc3LjY2OTU3Mi0xNzEuNzYzOTkyLTM3Ny42Njk1NzItMzgyLjg5MzU1czE2OS40MjE2NDQtMzgyLjg5MzU1IDM3Ny42Njk1NzItMzgyLjg5MzU1YzE5Ni4xMTU2MSAwIDM1Ny43NDE3MDcgMTUyLjM2MDA2IDM3NS45MDQzNjkgMzQ2LjQ1NDY0bDY2Ljk4MTUzMS02OC4wMzU1MzZjMTYuNDk5Nzg5LTE2Ljc1MjU0NiA0My40MzczMDItMTYuOTUwMDQ0IDYwLjE2NTI4OC0wLjQ3MTc0NEM5NjIuNzU1MTI0IDQyMy41NDEzMTkgOTYyLjk2Nzk3MiA0NTAuNDczNzE1IDk0Ni40ODM1MzIgNDY3LjIxODA3NHoiIHAtaWQ9IjEzMjUiIGZpbGw9IiNENkQ4RDQiPjwvcGF0aD48L3N2Zz4="
+          >
+        </div>
+        <div id="like" class="like">
+          <img
+            data-state="0"
+            id="likeIcon"
+            onclick="favoriteSong(player.dataset.id)"
+            width="30"
+            height="30"
+            src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDk0MDkzMTk3IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjgxMCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwvc3R5bGU+PC9kZWZzPjxwYXRoIGQ9Ik03MjguMTc3Nzc4IDExMy43Nzc3NzhjLTEzMC44NDQ0NDQgMC0yMTAuNDg4ODg5IDEwMi40LTIxMC40ODg4ODkgMTAyLjRTNDQ5LjQyMjIyMiAxMTMuNzc3Nzc4IDMwNy4yIDExMy43Nzc3NzggNTYuODg4ODg5IDE5My40MjIyMjIgNTYuODg4ODg5IDM4Ni44NDQ0NDRjMCAyNzMuMDY2NjY3IDQ2MC44IDU2OC44ODg4ODkgNDYwLjggNTY4Ljg4ODg4OVM5NjcuMTExMTExIDY0Mi44NDQ0NDQgOTY3LjExMTExMSAzOTIuNTMzMzMzQzk2Ny4xMTExMTEgMTg3LjczMzMzMyA4MzYuMjY2NjY3IDExMy43Nzc3NzggNzI4LjE3Nzc3OCAxMTMuNzc3Nzc4TTUxNy42ODg4ODkgODg3LjQ2NjY2N1MxMTMuNzc3Nzc4IDYwOC43MTExMTEgMTEzLjc3Nzc3OCAzODYuODQ0NDQ0YzAtMTQyLjIyMjIyMiA5Ni43MTExMTEtMjIxLjg2NjY2NyAyMDQuOC0yMjEuODY2NjY2QzQyNi42NjY2NjcgMTY0Ljk3Nzc3OCA1MTcuNjg4ODg5IDI4NC40NDQ0NDQgNTE3LjY4ODg4OSAyODQuNDQ0NDQ0czEwOC4wODg4ODktMTE5LjQ2NjY2NyAyMDQuOC0xMTkuNDY2NjY2Yzk2LjcxMTExMSAwIDE5My40MjIyMjIgNzMuOTU1NTU2IDE5My40MjIyMjIgMjI3LjU1NTU1NS01LjY4ODg4OSAyMTYuMTc3Nzc4LTM5OC4yMjIyMjIgNDk0LjkzMzMzMy0zOTguMjIyMjIyIDQ5NC45MzMzMzQiIGZpbGw9IiNENkQ4RDQiIHAtaWQ9IjgxMSI+PC9wYXRoPjwvc3ZnPg=="
+          >
+        </div>
+        <div class="volume">
+          <div class="volume-controls hidden" ref="volumeControls">
+            <div class="slider" data-direction="vertical">
+              <div class="progress" ref="volumeProgress">
+                <div class="pin" id="volume-pin" data-method="changeVolume"></div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="volume-btn"
+            ref="volumeBtn"
+            @click="volumeBtnClick"
+            @mouseenter="highlightVolume"
+            @mouseleave="noLightVolume"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+              <path
+                fill="#DBDBDB"
+                fill-rule="evenodd"
+                d="M14.667 0v2.747c3.853 1.146 6.666 4.72 6.666 8.946 0 4.227-2.813 7.787-6.666 8.934v2.76C20 22.173 24 17.4 24 11.693 24 5.987 20 1.213 14.667 0zM18 11.693c0-2.36-1.333-4.386-3.333-5.373v10.707c2-.947 3.333-2.987 3.333-5.334zm-18-4v8h5.333L12 22.36V1.027L5.333 7.693H0z"
+                ref="speaker"
+              ></path>
+            </svg>
           </div>
         </div>
+        <div style="position:absolute">
+          <songlist
+            ref="songList"
+            v-if="hasList"
+            class="song-list"
+            :currentMusicIndex="currentMusicIndex"
+          ></songlist>
+        </div>
+        <div id="lisyBtn" class="listBtn">
+          <img
+            ref="listIcon"
+            @mouseenter="highlightList"
+            @mouseleave="noLightList"
+            @click="showList"
+            width="33"
+            height="33"
+            src="musicList.png"
+          >
+        </div>
+        <audio
+          crossorigin="anonymous"
+          ref="audio"
+          @timeupdate="updateProgress"
+          @canplay="makePlay"
+          @volumechange="updateVolume"
+          @loadedmetadata="loadMusic"
+          @ended="playNext"
+        >
+          <source :src="currentSrc" type="audio/mpeg">
+        </audio>
+        <div v-if="!isMax" style="padding-left:2.3vw;" class="arrowUp">
+          <img
+            ref="arrowUp"
+            src="arrowUp.png"
+            width="35vw"
+            height="35vw"
+            @click="changeMini"
+            @mouseenter="highlightArrUp"
+            @mouseleave="noLightArrUp"
+          >
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import $axios from "axios";
+import songlist from "./songList";
+import { setTimeout } from "timers";
+import { truncate } from "fs";
+import searchBtn from '../components/search/searchBtn'
 export default {
   data() {
     return {
       isMax: true,
+      hasList: false,
       musicList: [],
+      singerList: [],
       currentMusicID: 0,
       currentMusicIndex: 0,
       currentSrc: "",
@@ -139,6 +193,10 @@ export default {
   },
   //props:['musicList'],
   created() {},
+  components: {
+    songlist,
+    'search-btn': searchBtn,
+  },
   mounted() {
     var _this = this;
     this.player = this.$refs.audio;
@@ -155,8 +213,12 @@ export default {
       this.changeMusic(0);
     }
     this.changeMini();
+    this.changeMini();
   },
   methods: {
+    search(valueInput){
+      this.addMusic(valueInput)
+    },
     addMusic(arr) {
       this.musicList = this.musicList.concat(arr);
       if (this.musicList.length > 0 && !this.hasMusic) {
@@ -169,17 +231,18 @@ export default {
       if (this.isMax) {
         this.isMax = false;
         this.$refs.main.style =
-          "position:fixed; left:3vw; bottom:2vh; width:100%; height:6vh; z-index:9999;";
+          "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:9999;";
       } else {
         this.isMax = true;
         this.$refs.main.style =
-          "position:fixed; left:3vw; top:-8vh; width:100%; height:117vh; z-index:9999;";
+          "position:fixed; left:3vw; top:-6vh; width:100%; height:117vh; z-index:9999;";
       }
     },
     loadMusic() {
       var _this = this;
       this.$refs.totalTime.textContent = this.formatTime(this.player.duration);
       this.togglePlay();
+      this.$refs.playPause.src = "pause.png";
       this.$refs.bg.src =
         "https://v1.itooi.cn/kuwo/pic?id=" + this.currentMusicID;
       this.$refs.miniBg.src =
@@ -220,6 +283,56 @@ export default {
           console.log(error);
         });
     },
+    highlightLast() {
+      this.$refs.lastSong.src = "lastH.png";
+    },
+    noLightLast() {
+      this.$refs.lastSong.src = "last.png";
+    },
+    highlightNext() {
+      this.$refs.nextSong.src = "nextH.png";
+    },
+    noLightNext() {
+      this.$refs.nextSong.src = "next.png";
+    },
+    highlightPlay() {
+      if (this.player.paused) this.$refs.playPause.src = "playH.png";
+      else this.$refs.playPause.src = "pauseH.png";
+    },
+    noLightPlay() {
+      if (this.player.paused) this.$refs.playPause.src = "play.png";
+      else this.$refs.playPause.src = "pause.png";
+    },
+    highlightList() {
+      if (!this.hasList) this.$refs.listIcon.src = "musicListH.png";
+    },
+    noLightList() {
+      if (!this.hasList) this.$refs.listIcon.src = "musicList.png";
+    },
+    highlightVolume() {
+      if (this.speaker.style.fill != "#8a8a8a") {
+        this.speaker.style.fill = "#8a8a8a";
+      }
+    },
+    highlightArrUp() {
+      this.$refs.arrowUp.src = "arrowUpH.png";
+    },
+    noLightArrUp() {
+      console.log(this.$refs.arrowUp.src)
+      this.$refs.arrowUp.src = "arrowUp.png";
+    },
+    highlightArrDown() {
+      this.$refs.arrowDown.src = "arrowDownH.png";
+    },
+    noLightArrDown() {
+      this.$refs.arrowDown.src = "arrowDownp.png";
+    },
+    noLightVolume() {
+      console.log(this.speaker.className);
+      if (this.volumeControls.className.indexOf("hidden") != -1) {
+        this.speaker.style.fill = "#DBDBDB";
+      }
+    },
     playNext() {
       if (this.currentMusicIndex < this.musicList.length - 1)
         ++this.currentMusicIndex;
@@ -230,6 +343,15 @@ export default {
       if (this.currentMusicIndex > 0) --this.currentMusicIndex;
       else this.currentMusicIndex = this.musicList.length - 1;
       this.changeMusic(this.currentMusicIndex);
+    },
+    showList() {
+      if (!this.hasList) {
+        this.hasList = true;
+        this.$refs.listIcon.src = "musicListH.png";
+      } else {
+        this.hasList = false;
+        this.$refs.listIcon.src = "musicList.png";
+      }
     },
     changeMusic(index) {
       var _this = this;
@@ -268,12 +390,10 @@ export default {
     },
     togglePlay() {
       if (this.player.paused) {
-        this.playPause.src =
-          "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDk0MTI2MzY5IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE2NDUiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMjA5LjQxNyA2MmgxNTAuMDA4djkwMGgtMTUwLjAwOHYtOTAweiIgcC1pZD0iMTY0NiIgZmlsbD0iI0Q2RDhENCI+PC9wYXRoPjxwYXRoIGQ9Ik02NTkuNDE3IDYyaDE0OS45ODV2OTAwaC0xNDkuOTg1di05MDB6IiBwLWlkPSIxNjQ3IiBmaWxsPSIjRDZEOEQ0Ij48L3BhdGg+PC9zdmc+";
+        this.playPause.src = "pauseH.png";
         this.player.play();
       } else {
-        this.playPause.src =
-          "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDkzOTQxMjU2IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE3NjYiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNMTAyLjQyNTc0MiAxMDIuMzkzNTY1djgxOS4xNDg1MTZsNjE0LjM2MTM4Ny00MDkuNTc0MjU4eiIgZmlsbD0iI0Q2RDhENCIgcC1pZD0iMTc2NyI+PC9wYXRoPjxwYXRoIGQ9Ik0xNTMuNjIyNTI0IDEwMi4zOTM1NjV2ODE5LjE0ODUxNmw2MTQuMzYxMzg3LTQwOS41NzQyNTh6IiBmaWxsPSIjRDZEOEQ0IiBwLWlkPSIxNzY4Ij48L3BhdGg+PHBhdGggZD0iTTI1OS41OTk4NjMgMTUuODcxMDAzVjgzNC41MDc1NTFsNjE5LjQ4MTA2Ni00MDUuNDc4NTE1eiIgZmlsbD0iI0Q2RDhENCIgcC1pZD0iMTc2OSI+PC9wYXRoPjxwYXRoIGQ9Ik0yNjEuMTM1NzY3IDE4OS40MjgwOTRsLTEuNTM1OTA0IDgxOC42MzY1NDlMODc1LjQ5NzE1NCA1OTkuMDAyMzUzeiIgZmlsbD0iI0Q2RDhENCIgcC1pZD0iMTc3MCI+PC9wYXRoPjxwYXRoIGQ9Ik0yMDQuODE5MzA2IDEwMi4zOTM1NjVtLTEwMi4zOTM1NjQgMGExMDIuMzkzNTY1IDEwMi4zOTM1NjUgMCAxIDAgMjA0Ljc4NzEyOSAwIDEwMi4zOTM1NjUgMTAyLjM5MzU2NSAwIDEgMC0yMDQuNzg3MTI5IDBaIiBmaWxsPSIjRDZEOEQ0IiBwLWlkPSIxNzcxIj48L3BhdGg+PHBhdGggZD0iTTgxOS4xODA2OTQgNDA5LjU3NDI1OGMtNTYuMzE2NDYxIDAtMTAyLjM5MzU2NSA0Ni4wNzcxMDQtMTAyLjM5MzU2NSAxMDIuMzkzNTY1czQ2LjA3NzEwNCAxMDAuMzQ1NjkzIDEwMi4zOTM1NjUgMTAyLjM5MzU2NGM1Ny44NTIzNjQgMi4wNDc4NzEgMTAyLjkwNTUzMi00NS4wNTMxNjggMTAyLjM5MzU2NC0xMDIuMzkzNTY0LTAuNTExOTY4LTU2LjMxNjQ2MS00Ni4wNzcxMDQtMTAyLjM5MzU2NS0xMDIuMzkzNTY0LTEwMi4zOTM1NjV6TTIwNC44MTkzMDYgODE5LjE0ODUxN2MtNTYuMzE2NDYxIDAtMTAyLjM5MzU2NSA0Ni4wNzcxMDQtMTAyLjM5MzU2NCAxMDIuMzkzNTY0czQ2LjA3NzEwNCAxMDAuMzQ1NjkzIDEwMi4zOTM1NjQgMTAyLjM5MzU2NWM1My43NTY2MjEgMi4wNDc4NzEgMTAwLjg1NzY2MS00NS4wNTMxNjggMTAyLjM5MzU2NS0xMDIuMzkzNTY1IDEuNTM1OTAzLTU2LjMxNjQ2MS00Ni4wNzcxMDQtMTAyLjM5MzU2NS0xMDIuMzkzNTY1LTEwMi4zOTM1NjR6IiBmaWxsPSIjRDZEOEQ0IiBwLWlkPSIxNzcyIj48L3BhdGg+PC9zdmc+";
+        this.playPause.src = "playH.png";
         this.player.pause();
       }
     },
@@ -281,8 +401,10 @@ export default {
       this.hasMusic = 1;
     },
     volumeBtnClick() {
-      this.volumeBtn.classList.toggle("open"); //在类名中移除 若不存在则添加
-      this.volumeControls.classList.toggle("hidden");
+      if (this.volumeControls.className.indexOf("hidden") != -1)
+        this.speaker.style.fill = "#8a8a8a";
+      else this.speaker.style.fill = "#DBDBDB";
+      this.volumeControls.classList.toggle("hidden"); //在类名中移除 若不存在则添加
     },
     updateVolume() {
       this.volumeProgress.style.height = this.player.volume * 100 + "%";
@@ -371,7 +493,6 @@ export default {
     changeVolume(event) {
       if (this.inRange(event)) {
         this.player.volume = this.getCoefficient(event);
-        console.log(this.getCoefficient(event));
       }
     },
     getCoefficient(event) {
@@ -421,6 +542,12 @@ export default {
 li {
   list-style: none;
 }
+.song-list {
+  display: inline;
+  position: relative;
+  bottom: 5vh;
+  left: 38vw;
+}
 .audio.green-audio-player {
   position: relative;
   min-width: 17.6vw;
@@ -437,16 +564,26 @@ li {
 }
 .audio.green-audio-player .lastSong {
   width: 4.1vw;
+  cursor: pointer;
 }
 .audio.green-audio-player .nextSong {
   width: 3vw;
   padding-left: 1vw;
+  cursor: pointer;
 }
 .audio.green-audio-player .playMode {
   width: 3vw;
+  cursor: pointer;
 }
 .audio.green-audio-player .like {
   width: 3vw;
+  cursor: pointer;
+}
+.audio.green-audio-player .listBtn {
+  padding-top: 0.2vh;
+  padding-left: 2vw;
+  width: 3vw;
+  cursor: pointer;
 }
 .audio.green-audio-player .play-pause-btn {
   width: 5.3vw;
@@ -526,14 +663,11 @@ li {
   position: relative;
   display: flex;
   flex-direction: column-reverse;
-  left: 1vw;
+  left: 0.8vw;
   top: 0.4vh;
 }
 .audio.green-audio-player .volume .volume-btn {
   cursor: pointer;
-}
-.audio.green-audio-player .volume .volume-btn.open path {
-  fill: #44bfa3;
 }
 .audio.green-audio-player .volume .volume-controls {
   width: 1.6vw;
@@ -577,7 +711,7 @@ li {
   position: relative;
   left: -5.8vw;
   height: 100vh;
-  width: 140%;
+  width: 130%;
 }
 .miniBg {
   position: absolute;
@@ -602,7 +736,7 @@ li {
 .lrc {
   z-index: 100;
   position: absolute;
-  left: 22.3vw;
+  left: 25vw;
   top: 20vh;
   width: 35.2vw;
   height: 62vh;
@@ -653,5 +787,6 @@ li {
   z-index: 1;
   position: relative;
   height: 6vh;
+  top: 1.1vh;
 }
 </style>

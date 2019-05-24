@@ -11,6 +11,7 @@ export default {
 	name: 'HelloWorld',
   mounted () {
     this.$router.push('/login')
+    //this.$router.push('/inner')
   },
 	data() {
 		return {
