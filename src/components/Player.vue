@@ -325,7 +325,7 @@ export default {
       this.$refs.arrowDown.src = "arrowDownH.png";
     },
     noLightArrDown() {
-      this.$refs.arrowDown.src = "arrowDownp.png";
+      this.$refs.arrowDown.src = "arrowDown.png";
     },
     noLightVolume() {
       console.log(this.speaker.className);
