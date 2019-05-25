@@ -148,7 +148,7 @@
         >
           <source :src="currentSrc" type="audio/mpeg">
         </audio>
-        <div v-if="!isMax" style="padding-left:2.3vw;" class="arrowUp">
+        <div v-if="!isMax" style="margin-left:2.2vw;" class="arrowUp">
           <img
             ref="arrowUp"
             src="arrowUp.png"
@@ -234,7 +234,7 @@ export default {
       } else {
         this.isMax = true;
         this.$refs.main.style =
-          "position:fixed; left:3vw; top:-6vh; width:100%; height:117vh; z-index:9999;";
+          "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:9999;";
       }
     },
     loadMusic() {
@@ -626,7 +626,7 @@ li {
 }
 .audio.green-audio-player .slider .progress .pin {
   height: 2vh;
-  width: 1vw;
+  width: 2vh;
   border-radius: 8px;
   background-color: #307fbf;
   position: absolute;
@@ -649,7 +649,7 @@ li {
   margin-left: 1vw;
   margin-right: 1vw;
   border-radius: 2px;
-  height: 0.5vh;
+  height: 4px;
 }
 .audio.green-audio-player .controls .slider .progress {
   width: 0;
