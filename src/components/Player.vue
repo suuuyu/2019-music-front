@@ -547,7 +547,7 @@ li {
 }
 .song-list {
   position: absolute;
-  width: 6vw;
+  width: 7vw;
   bottom: 2vh;
   left: 38vw;
 }
