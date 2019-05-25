@@ -52,8 +52,8 @@
 <template>
     <div class="search-box">
 			
-			<a class="search-btn" href="#">
-				<i @click="search" class="ivu-icon ivu-icon-ios-search" style="font-size: 20px;"></i>
+			<a class="search-btn" href="#" @click="search">
+				<i class="ivu-icon ivu-icon-ios-search" style="font-size: 20px;"></i>
 			</a>
             <input class="search-txt" type="text" placeholder="Type to search" 
             v-model="inputValue" @input="type" :class="{ 'active': active }"/>

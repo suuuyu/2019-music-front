@@ -222,7 +222,6 @@ export default {
     addMusic(arr) {
       this.musicList = this.musicList.concat(arr);
       if (this.musicList.length > 0 && !this.hasMusic) {
-        console.log(this.musicList);
         this.hasMusic = 1;
         this.changeMusic(0);
       }
@@ -250,7 +249,7 @@ export default {
       $axios({
         method: "get",
         url: "https://v1.itooi.cn/kuwo/lrc?id=" + this.currentMusicID,
-        data: {}
+        data: {},
       })
         .then(function(response) {
           var lrc = response.data;
@@ -328,7 +327,6 @@ export default {
       this.$refs.arrowDown.src = "arrowDown.png";
     },
     noLightVolume() {
-      console.log(this.speaker.className);
       if (this.volumeControls.className.indexOf("hidden") != -1) {
         this.speaker.style.fill = "#DBDBDB";
       }
@@ -360,10 +358,10 @@ export default {
         url:
           "https://v1.itooi.cn/kuwo/search?type=song&pageSize=100&page=0&keyword=" +
           _this.musicList[index],
-        data: {}
+        data: {},
       })
         .then(function(response) {
-          var id = response.data.data[0].MP3RID;
+            var id = response.data.data[0].MP3RID;
           _this.player.src =
             "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
             id.slice(4, id.length);
@@ -513,7 +511,12 @@ export default {
     parseLyric(text) {
       var lines = text.split("\n"), //将文本分隔成一行一行，存入数组
         pattern = /\[\d{2}:\d{2}.\d{2}\]/g, //用于匹配时间的正则表达式，匹配的结果类似[xx:xx.xx]
+        pattern1 = /\[\d{2}:\d{2}.\d{3}\]/g,
         result = []; //保存最终结果的数组
+      if(pattern1.test(lines[0])){
+        result.push([0,"暂无歌词"])
+        return result 
+      }
       while (!pattern.test(lines[0])) {
         //去掉不含时间的行
         lines = lines.slice(1);
@@ -543,9 +546,9 @@ li {
   list-style: none;
 }
 .song-list {
-  display: inline;
-  position: relative;
-  bottom: 5vh;
+  position: absolute;
+  width: 6vw;
+  bottom: 2vh;
   left: 38vw;
 }
 .audio.green-audio-player {
@@ -767,7 +770,7 @@ li {
   margin: 10px;
   font-size: 1.5vw;
   color: #d6d8d4;
-  font-family: Wawati SC;
+  font-family: wawati;
   list-style-type: none;
   position: absolute;
   height: 62vh;
@@ -789,4 +792,5 @@ li {
   height: 6vh;
   top: 1.1vh;
 }
+
 </style>
