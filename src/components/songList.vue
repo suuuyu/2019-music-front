@@ -67,12 +67,16 @@ export default {
       this.$parent.musicList.splice(index, 1);
       setTimeout(() => {
         if (this.currentMusicIndex == index) {
-          this.$parent.changeMusic(index);
-          this.$refs.songInfo[index].classList.toggle("playing");
-          this.$refs.songInfo[index].innerHTML =
-            '<marquee scrolldelay="300">' +
-            this.$refs.songInfo[index].innerHTML +
-            "</marquee>";
+          if (index == this.$parent.musicList.length) index = 0;
+          console.log(index)
+          if (this.$parent.musicList.length != 0) {
+            this.playOne(index);
+            this.$refs.songInfo[index].classList.toggle("playing");
+            this.$refs.songInfo[index].innerHTML =
+              '<marquee scrolldelay="300">' +
+              this.$refs.songInfo[index].innerHTML +
+              "</marquee>";
+          }
         } else if (this.currentMusicIndex > index) {
           this.flag = 1;
           this.$parent.currentMusicIndex -= 1;
