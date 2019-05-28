@@ -213,7 +213,7 @@ export default {
       this.changeMusic(0);
     }
     this.changeMini();
-    this.changeMini();
+    //this.changeMini();
   },
   methods: {
     search(valueInput){
