@@ -213,7 +213,7 @@ export default {
       this.changeMusic(0);
     }
     this.changeMini();
-    //this.changeMini();
+    this.changeMini();
   },
   methods: {
     search(valueInput){
@@ -739,7 +739,7 @@ li {
 .lrc {
   z-index: 100;
   position: absolute;
-  left: 25vw;
+  left: 26vw;
   top: 20vh;
   width: 35.2vw;
   height: 62vh;
