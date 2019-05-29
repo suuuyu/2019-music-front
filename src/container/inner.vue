@@ -14,7 +14,7 @@ import player from "../components/Player"
 export default {
   mounted(){
     console.log("Attention! Inner Page!");
-    var arr=['素颜','七里香']
+    var arr=[{id:-1,name:'Symphony'},{id:-1,name:'七里香'},{id:-1,name:'as if its your last'},{id:-1,name:'残酷月光'},{id:-1,name:'浪费'},{id:-1,name:'kill this love'}]
     this.$refs.player.addMusic(arr)
   },
   components: {

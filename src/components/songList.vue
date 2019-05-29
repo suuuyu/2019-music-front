@@ -7,13 +7,13 @@
         @mouseenter="highlight"
         @mouseleave="noHighlight"
         class="songInfo"
-        :key="song"
+        :key="song.name"
       >
         <span
           ref="songInfo"
           style="padding-top:1vh;padding-bottom:1vh;"
           @click="playOne(index)"
-        >{{song}}</span>
+        >{{song.name}}</span>
         <img src="remove.png" width="15vw" height="15vw" @click="remove(index)">
       </li>
     </div>
@@ -40,8 +40,12 @@ export default {
   watch: {
     currentMusicIndex(newVal, oldVal) {
       if (this.flag == 0) {
-        this.$refs.songInfo[oldVal].innerHTML = this.$parent.musicList[oldVal];
-        this.$refs.songInfo[oldVal].classList.toggle("playing");
+        if (oldVal < this.$parent.musicList.length) {
+          this.$refs.songInfo[oldVal].innerHTML = this.$parent.musicList[
+            oldVal
+          ].name;
+          this.$refs.songInfo[oldVal].classList.toggle("playing");
+        }
         this.$refs.songInfo[newVal].classList.toggle("playing");
         this.$refs.songInfo[newVal].innerHTML =
           '<marquee scrolldelay="300">' +
@@ -67,8 +71,11 @@ export default {
       this.$parent.musicList.splice(index, 1);
       setTimeout(() => {
         if (this.currentMusicIndex == index) {
-          if (index == this.$parent.musicList.length) index = 0;
-          console.log(index)
+          if (index == this.$parent.musicList.length) {
+            index = 0;
+            this.playOne(index);
+            return
+          }
           if (this.$parent.musicList.length != 0) {
             this.playOne(index);
             this.$refs.songInfo[index].classList.toggle("playing");

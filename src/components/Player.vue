@@ -122,7 +122,7 @@
           <songlist
             ref="songList"
             v-if="hasList"
-            class="song-list"
+            class="songlist"
             :currentMusicIndex="currentMusicIndex"
           ></songlist>
         </div>
@@ -216,9 +216,6 @@ export default {
     //this.changeMini();
   },
   methods: {
-    search(valueInput){
-      this.addMusic(valueInput)
-    },
     addMusic(arr) {
       this.musicList = this.musicList.concat(arr);
       if (this.musicList.length > 0 && !this.hasMusic) {
@@ -353,11 +350,12 @@ export default {
     },
     changeMusic(index) {
       var _this = this;
-      $axios({
+      if(_this.musicList[index].id<0&&_this.musicList[index].name.length>0){
+        $axios({
         method: "get",
         url:
           "https://v1.itooi.cn/kuwo/search?type=song&pageSize=100&page=0&keyword=" +
-          _this.musicList[index],
+          _this.musicList[index].name,
         data: {},
       })
         .then(function(response) {
@@ -366,10 +364,17 @@ export default {
             "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
             id.slice(4, id.length);
           _this.currentMusicID = id.slice(4, id.length);
+          _this.musicList[index].id=_this.currentMusicID
         })
         .catch(function(error) {
           console.log(error);
         });
+      }
+      else if(_this.musicList[index].id>0){
+        _this.player.src =
+            "https://v1.itooi.cn/kuwo/url?quality=128&id=" +_this.musicList[index].id
+        _this.currentMusicID = _this.musicList[index].id
+      }
       console.log(_this.player.src);
     },
     updateProgress() {
@@ -545,12 +550,15 @@ export default {
 li {
   list-style: none;
 }
-.song-list {
+.songlist {
   position: absolute;
-  width: 7vw;
+  width: 8vw;
   bottom: 2vh;
-  left: 38vw;
+  left: 75.5vw;
+  overflow-y: auto;
+  max-height: 50vh;
 }
+.songlist::-webkit-scrollbar {display:none}
 .audio.green-audio-player {
   position: relative;
   min-width: 17.6vw;
