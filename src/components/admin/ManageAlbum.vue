@@ -30,6 +30,9 @@
                 <Input placeholder="输入发行公司" style="width: 100px" v-model='add.company' />
                 </div>
                 <div>
+                    <Checkbox v-model="add.free">是否收费</Checkbox>
+                </div>
+                <div>
                     <Button type="success" long style="width:360px" @click='addAlbum()'>提交</Button>
                 </div>
             </Card>
@@ -93,7 +96,8 @@ export default {
                 albumname:'',
                 age:'',
                 language:'',
-                company:''
+                company:'',
+                free:false
             },
             //下架专辑
             del:{
@@ -116,6 +120,7 @@ export default {
                     return
                 }
             }
+            let f= this.free==false?0:1
             AXIOS.post('/addAlbum',this.$qs.stringify({
 				'id':this.add.albumid,
                 'name':this.add.albumname,
@@ -123,7 +128,8 @@ export default {
                 'language':this.add.language,
                 'company':this.add.company,
                 'age':this.add.age,
-                'adminid':sessionStorage.getItem('adminid')
+                'adminid':sessionStorage.getItem('adminid'),
+                'free':f
 		    }),
 		    {
 				headers: {

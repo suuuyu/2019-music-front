@@ -141,7 +141,7 @@ export default{
 	width: 60%;
 }
 .input-label {
-	margin-bottom: 10px;
+	margin-bottom: 8px;
 }
 h1{
 	color:whitesmoke;
