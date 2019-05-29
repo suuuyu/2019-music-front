@@ -1,7 +1,7 @@
 <template>
   <div class="login-form">
     <h1><b>管理员登录</b></h1>
-	<img src="../image/Login_image/shiny_music.png" height="120" width="120" />
+	<img src="../image/Login_image/shiny_music.png" height="110" width="110" />
     <Form class="input-form" ref="formInline" :model="formInline" :rules="ruleInline" >
         <FormItem prop="user">
             <Input type="text" class="input-label" v-model="formInline.user" placeholder="Username" size="large">
@@ -81,12 +81,12 @@ export default{
 
 <style scoped>
 .login-form {
-	padding-top: 1.5em;
 	background:rgba(0,30,41,0.70);
 	position: relative;
 	width: 600px;
 	height: auto;
 	padding:2em;
+	padding-top: 1.5em;
 	margin: 0 auto 0 auto;
 	text-align: center;
 	border-radius: 15px;/*圆角边框*/;
@@ -94,13 +94,13 @@ export default{
 	padding-top: 36px;
 }
 .input-form{
-	margin-top: 5%;
+	margin-top: 3%;
 	margin-left: auto;
 	margin-right: auto;
 	width: 60%;
 }
 .input-label {
-	margin-bottom: 10px;
+	margin-bottom: 8px;
 }
 h1{
 	color:whitesmoke;

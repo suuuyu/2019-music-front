@@ -7,7 +7,7 @@
             <li class="singer_list__item" :key="index" v-for="(u, index) in albums">
               <Card class="singer_list__item_box">
                 <a href="#" class="singer_list__cover js_singer" >
-                    <img class="singer_list__pic" :src="u.albumimage" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/singer_300.png?max_age=31536000';this.error=null;">
+                    <img class="singer_list__pic" :src="albumimage.length == 0 ? u.albumimage : albumimage[index]" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/singer_300.png?max_age=31536000';this.error=null;">
                 </a>
                 <h3 class="singer_list__title">
                   <router-link class="js_singer" 
@@ -36,14 +36,26 @@ export default {
 		props: ['albums'],
 		data() {
 			return {
-				
+				albumimage: []
 			}
-		},
-		mounted() {
+    },
+    mounted() {
 			setTimeout(() => {
 				fetchAlbums(this.albums)
-			}, 1500)
+			}, 1000)
 		},
+    watch: {
+      albums() {
+        fetchAlbums(this.albums)
+        this.albumimage = new Array(this.albums.length)
+        setTimeout(() => {
+          this.albums.forEach((element, index) => {
+          this.$set(this.albumimage, index, element.albumimage );
+          console.log(this.albumimage)
+        });
+        }, 1000);
+      }
+    },
 		methods: {
 
 		}

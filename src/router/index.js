@@ -98,30 +98,30 @@ export default new Router({
               component:balance
             }
           ]
+        },
+        {
+          path: '/search',
+          component: search,
+          children: [
+            {
+              path: 'Song',
+              component: searchSong
+            },
+            {
+              path: 'SongList',
+              component: searchSongList
+            },
+            {
+              path: 'User',
+              component: searchUser
+            },
+            {
+              path: 'Album',
+              component: searchAlbum
+            }
+          ]
         }
 
-      ]
-    },
-    {
-      path: '/search',
-      component: search,
-      children: [
-        {
-          path: 'Song',
-          component: searchSong
-        },
-        {
-          path: 'SongList',
-          component: searchSongList
-        },
-        {
-          path: 'User',
-          component: searchUser
-        },
-        {
-          path: 'Album',
-          component: searchAlbum
-        }
       ]
     },
     {

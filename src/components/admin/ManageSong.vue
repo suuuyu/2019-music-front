@@ -40,6 +40,9 @@
                 <Input placeholder="年代" style="width: 100px" v-model='add.age' />
                 </div>
                 <div>
+                    <Checkbox v-model="add.free">是否收费(专辑收费时本项无效)</Checkbox>
+                </div>
+                <div>
                     <Button type="success" long style="width:360px" @click="addSong()">提交</Button>
                 </div>
             </Card>
@@ -115,7 +118,8 @@ export default {
                 language:'',
                 school:'',
                 company:'',
-                age:''
+                age:'',
+                free:false
             },
             //下架歌曲
             del:{
@@ -151,6 +155,7 @@ export default {
                 this.$Message.error('时长字段不正确。规则：分和秒为0~59间的整数。')
                 return
             }
+            let f= this.free==false?0:1
             AXIOS.post('/addSong',this.$qs.stringify({
 				'id':this.add.songid,
                 'name':this.add.songname,
@@ -160,7 +165,8 @@ export default {
                 'school':this.add.school,
                 'company':this.add.company,
                 'age':this.add.age,
-                'adminid':sessionStorage.getItem('adminid')
+                'adminid':sessionStorage.getItem('adminid'),
+                'free':f
 		    }),
 		    {
 				headers: {

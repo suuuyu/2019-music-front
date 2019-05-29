@@ -1,8 +1,9 @@
 <template>
 	<div @mouseenter="showPanel" align="center"  @mouseleave="disShow" style="height: 60px;width:400px;background-color:rgba(255, 255, 255, 0.5);">
     <div class="songlist__btn" v-if="show">
-		<router-link tag="a" target="_blank" :to="{path:'/player',query:{musicList:['等你下课','发如雪','夜曲']} }"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></router-link>
-        <span><a href="javascript:;" @click="like"><img src="Index_image/like.png" alt="like" height="35px" width="35px" class="songlist_btn"></a></span>
+		<!-- <router-link tag="a" target="_blank" :to="{path:'/player',query:{musicList:['等你下课','发如雪','夜曲']} }"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></router-link> -->
+       	<span><a href="javascript:;" @click="play"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></a></span>
+		<span><a href="javascript:;" @click="like"><img src="Index_image/like.png" alt="like" height="35px" width="35px" class="songlist_btn"></a></span>
         <span v-if="type==1"><a href="javascript:;" @click="choose"><img src="Index_image/add.png" alt="add" height="35px" width="35px" class="songlist_btn"></a></span>
         <span v-if="type==1"><a href="javascript:;"><img src="Index_image/download.png" alt="download" height="35px" width="35px" class="songlist_btn"></a></span>
     </div>
@@ -21,6 +22,15 @@ export default {
 			}
     },
     methods: {
+			play() {
+				const inner = this.$root.$children[0].$children[0]
+				if(this.type == 1) {
+					inner.addSong(this.songid)
+				}
+				if(this.type == 2) {
+					inner.addSonglist(this.songid)
+				}
+			},
 			showPanel() {
 				this.show = true
 			},

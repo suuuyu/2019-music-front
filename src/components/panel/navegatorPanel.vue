@@ -1,10 +1,10 @@
 <template>
   <nav :class=nav_class>
-		<a href="#" class="disc l1">
+		<a class="disc l1" @click="search">
 			<div id="disc1" class="">发现音乐</div>
 		</a>
-		<a href="#" class="disc l2" >
-			<div id="disc2" class="">我的音乐</div>
+		<a class="disc l2" @click="search">
+			<div id="disc2" class="">搜素音乐</div>
 		</a>
 		<a  class="disc l3" @click="home">
 			<div id="disc3" class="">个人主页</div>
@@ -34,6 +34,9 @@ export default {
 		exit() {
 			this.$router.push('/login')
 			sessionStorage.clear()
+		},
+		search() {
+			this.$router.push('/search')
 		},
 		home() {
 			this.me = sessionStorage.getItem('userid')

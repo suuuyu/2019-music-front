@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="chooseList">
+  <Modal v-model="chooseList" :styles="{top: '20px'}">
     <p slot="header" style="color:#f60;text-align:center">
         <Icon type="ios-information-circle"></Icon>
         <span>选择想加入的歌单</span>

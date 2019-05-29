@@ -24,9 +24,9 @@
 						  <i-col span="12">播放次数：{{song.playTimes}}</i-col>
 					  </Row>
 						<Row class="buttonGroup">
-							<i-col span="8"><button class="btn btn-default-large myButton" type="button">播放</button></i-col>							
-							<i-col span="8"><button class="btn btn-default-large myButton" type="button" @click="displaySongList">添加到</button></i-col>
-							<i-col span="8"><button class="btn btn-default-large myButton" type="button">下载</button></i-col>
+							<i-col span="8"><Button class="btn btn-default-large myButton" type="primary" :disabled="!bought" @click="play()">播放</Button></i-col>							
+							<i-col span="8"><Button class="btn btn-default-large myButton" type="primary" @click="displaySongList">添加到</Button></i-col>
+							<i-col span="8"><Button class="btn btn-default-large myButton" type="primary" :disabled="bought" @click="buy()">购买</Button></i-col>
 						</Row>
 					</div> 
 				</i-col>
@@ -123,6 +123,8 @@ export default {
 				this.song.language = songInfo.language;
 				this.song.playTimes = songInfo.playtimes;
 				this.song.issueTime = songInfo.songage;
+				this.song.albumid = songInfo.albumid;
+				this.song.free = songInfo.free;
 
 				//歌曲图片获取代码暂未写定，留待进一步工作
 				//this.song.image = 
@@ -154,21 +156,62 @@ export default {
 			}).catch(response=>{
 				console.log(response);
 			});
+		},
+		isBought(){
+			if(this.song.free=='1'){
+				this.bought=true
+				return
+			}else{
+			AXIOS.get('/isSongBought',{params:{songid:this.song.id,albumid:this.song.albumid,userid:sessionStorage.getItem("userid")}})
+			.then((response)=>{
+				this.bought= response.data=='1'?true:false
+			})
+			}
+		},
+		buy(){
+			AXIOS.get('/buyMusic',{params:{id:sessionStorage.getItem('userid'),mid:this.song.id,type:'s'}})
+			.then((response)=>{
+				if(response.data==true){
+					this.bought=true
+					this.$Message.success('您已成功购买此歌曲')
+				}
+				else{
+					this.$Message.error('购买失败。可能原因：余额不足')
+				}
+			})
+		},
+		play(){
+			const inner = this.$root.$children[0].$children[0]
+			inner.addSong(this.song.id)
 		}
 	},
-	beforeMount(){
+	beforeCreate(){
 		this.userID = sessionStorage.getItem("userid");
 	},
 	components:{
 		commentList,songlistChoose
 	},
   name: 'songDetail',
-	mounted(){
+	created(){
 		this.song.id = this.$route.params.songid;
 		console.log(this.song.id);
 		this.getSingerName();
 		this.getSongInfo();
 		this.getSongList();
+		
+	},
+	mounted(){
+		/*setTimeout(1000)
+		this.isBought();*/
+	},
+	watch:{
+		'song.free':{
+			handler(newValue,oldValue){
+				this.isBought()
+			},
+			deep:true,
+			immediate:true
+		}
 	},
   data(){
 		return {
@@ -187,7 +230,10 @@ export default {
 					issueTime:'发行时间',
 					playTimes:0,
 					commentNum:0,
+					albumid:'',
+					free:''
 			},
+			bought:false,
 			commentsList:{},
 			songLists:[],
 		}
@@ -251,6 +297,7 @@ export default {
 	background:white;
 	border-color:lightskyblue;
 	border:3px 3px 3px 3px;
+	color:black
 }
 .buttonGroup{
 	height:119px;

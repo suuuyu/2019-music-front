@@ -23,7 +23,7 @@
             </a>
         </div>
 				<div class="detail-contain" >
-					<vue-lazy-component  :timeout="3000">
+					<vue-lazy-component  :timeout="1000">
 					<Table stripe  :columns="columns" :data="song">
 							<template slot-scope="{ row }" slot="name">
 									<strong><router-link class="panel-word" :to="'/song/' + row.songid" :key="$route.path">{{ row.songname }}</router-link></strong>
@@ -33,11 +33,11 @@
 											<songPanel :songid="row.songid" :type="1" class="panel" @toChoose="toChoose"></songPanel>
 									</strong>
 							</template>
-							<template slot-scope="{ row }" slot="singer">
-									<strong><a class="panel-word" v-text="row.singer[0].singername"></a></strong>
+							<template slot-scope="{ row, index }" slot="singer">
+									<strong><a class="panel-word" v-text="singers[index] ? singers[index].singername: '暂无'"></a></strong>
 							</template>
-							<template slot-scope="{ row }" slot="album">
-									<strong><a class="panel-word" v-text="row.album.albumname"></a></strong>
+							<template slot-scope="{ row, index}" slot="album">
+									<strong><a class="panel-word" v-text="albums[index] ? albums[index].albumname : '暂无'"></a></strong>
 							</template>
 							<template slot-scope="{ row }" slot="length">
 									<strong><span class="panel-word">{{ row.length }}</span></strong>
@@ -72,12 +72,14 @@ export default {
 			this.$Loading.start();
 			setTimeout(() => {
 				console.log('长度:' + this.song.length)
+				this.albums = new Array(this.song.length)
+				this.singers = new Array(this.song.length)
 				let msg = {'albumid': [], 'songid': []};
 				for(let i=0; i<this.song.length; i++){
 					// msg.albumid.push(this.song[i].albumid)
 					// msg.songid.push(this.song[i].songid)
-					this.buildAlbum(this.song[i].albumid, this.song[i])
-					this.buildSinger(this.song[i].songid, this.song[i])
+					this.buildAlbum(this.song[i].albumid, i)
+					this.buildSinger(this.song[i].songid, i)
 					// this.buildMsg(msg)
 				}
 			}, 1000)
@@ -158,14 +160,14 @@ export default {
 					console.log(error)
 				})
 			},
-			buildAlbum(albumid, song) {
+			buildAlbum(albumid, i) {
 				this.getAlbum(albumid, (json) => {
-					song.album = json
+					this.$set(this.albums, i, json)
 				})
 			},
-			buildSinger(songid, song) {
+			buildSinger(songid, i) {
 				this.getSinger(songid, (json) => {
-					song.singer = json
+					this.$set(this.singers, i, json[0])
 				})
 			},
 			getAlbum(albumid, callback) {
