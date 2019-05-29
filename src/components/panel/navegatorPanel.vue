@@ -1,9 +1,9 @@
 <template>
   <nav :class=nav_class>
-		<a href="#" class="disc l1" @click="search">
+		<a class="disc l1" @click="search">
 			<div id="disc1" class="">发现音乐</div>
 		</a>
-		<a href="#" class="disc l2" @click="search">
+		<a class="disc l2" @click="search">
 			<div id="disc2" class="">搜素音乐</div>
 		</a>
 		<a  class="disc l3" @click="home">

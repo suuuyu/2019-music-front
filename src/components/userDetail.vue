@@ -307,6 +307,7 @@ export default {
 }
 .body-contain {
     margin-top: 20px;
+	margin-bottom: 50px;
 }
 </style>
 

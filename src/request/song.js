@@ -1,6 +1,28 @@
 import querystring from 'querystring'
 import { AXIOS } from '@/http/http'
 
+function getSong (songid, callback) {
+  AXIOS.get('/getSong?' + querystring.stringify({
+    'songid': songid
+  }))
+    .then(response => {
+      callback(response.data)
+    })
+    .catch(error => {
+      console.error('查找歌曲失败' + error)
+    })
+}
+
+function getSongsInSonglist (songlistid, callback) {
+  AXIOS.get('/getSongsOfSongList?songlistid=' + songlistid)
+    .then(response => {
+      callback(response.data)
+    })
+    .catch(error => {
+      console.error('查找歌曲失败' + error)
+    })
+}
+
 function likeSong (userid, songid, callback) {
   AXIOS.get('/favoriteSong?' + querystring.stringify({
     'userid': userid,
@@ -63,4 +85,4 @@ function createSonglist (userid, name, callback) {
     })
 }
 
-export { likeSong, showCreatedSongList, keepSong, createSonglist, keepSonglist }
+export { likeSong, showCreatedSongList, keepSong, createSonglist, keepSonglist, getSong, getSongsInSonglist }
