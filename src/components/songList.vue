@@ -29,29 +29,40 @@ export default {
   },
   props: ["currentMusicIndex"],
   mounted() {
-    setTimeout(() => {
-      this.$refs.songInfo[this.currentMusicIndex].classList.toggle("playing");
-      this.$refs.songInfo[this.currentMusicIndex].innerHTML =
-        '<marquee scrolldelay="300">' +
-        this.$refs.songInfo[this.currentMusicIndex].innerHTML +
-        "</marquee>";
-    }, 100);
+    if (this.$refs.songInfo != null)
+      if (
+        this.currentMusicIndex > -1 &&
+        this.currentMusicIndex < this.$refs.songInfo.length
+      )
+        setTimeout(() => {
+          this.$refs.songInfo[this.currentMusicIndex].classList.toggle(
+            "playing"
+          );
+          this.$refs.songInfo[this.currentMusicIndex].innerHTML =
+            '<marquee scrolldelay="300">' +
+            this.$refs.songInfo[this.currentMusicIndex].innerHTML +
+            "</marquee>";
+        }, 100);
   },
   watch: {
     currentMusicIndex(newVal, oldVal) {
-      if (this.flag == 0) {
-        if (oldVal < this.$parent.musicList.length) {
-          this.$refs.songInfo[oldVal].innerHTML = this.$parent.musicList[
-            oldVal
-          ].name;
-          this.$refs.songInfo[oldVal].classList.toggle("playing");
-        }
-        this.$refs.songInfo[newVal].classList.toggle("playing");
-        this.$refs.songInfo[newVal].innerHTML =
-          '<marquee scrolldelay="300">' +
-          this.$refs.songInfo[newVal].innerHTML +
-          "</marquee>";
-      } else this.flag = 0;
+      setTimeout(() => {
+        if (this.flag == 0) {
+          if (oldVal < this.$parent.musicList.length && oldVal > -1) {
+            this.$refs.songInfo[oldVal].innerHTML = this.$parent.musicList[
+              oldVal
+            ].name;
+            this.$refs.songInfo[oldVal].classList.toggle("playing");
+          }
+          if (newVal < this.$parent.musicList.length && newVal > -1) {
+            this.$refs.songInfo[newVal].classList.toggle("playing");
+            this.$refs.songInfo[newVal].innerHTML =
+              '<marquee scrolldelay="300">' +
+              this.$refs.songInfo[newVal].innerHTML +
+              "</marquee>";
+          }
+        } else this.flag = 0;
+      });
     }
   },
   methods: {
@@ -65,7 +76,6 @@ export default {
     },
     playOne(index) {
       this.$parent.changeMusic(index);
-      this.$parent.currentMusicIndex = index;
     },
     remove(index) {
       this.$parent.musicList.splice(index, 1);
@@ -74,7 +84,7 @@ export default {
           if (index == this.$parent.musicList.length) {
             index = 0;
             this.playOne(index);
-            return
+            return;
           }
           if (this.$parent.musicList.length != 0) {
             this.playOne(index);
@@ -83,6 +93,8 @@ export default {
               '<marquee scrolldelay="300">' +
               this.$refs.songInfo[index].innerHTML +
               "</marquee>";
+          } else {
+            this.$parent.playNext();
           }
         } else if (this.currentMusicIndex > index) {
           this.flag = 1;
