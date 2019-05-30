@@ -767,9 +767,7 @@ li {
   width: 110%;
   height: 110%;
   background-position: center;
-  -webkit-filter: blur(30px);
-  -ms-filter: blur(30px);
-  filter: blur(30px);
+  -webkit-filter:contrast(30%) saturate(400%) blur(30px);
 }
 .miniBg img {
   width: 3vw;
@@ -780,7 +778,7 @@ li {
   position: absolute;
   left: 26vw;
   top: 20vh;
-  width: 35.2vw;
+  width: 37vw;
   height: 62vh;
   overflow-x: hidden;
   overflow-y: auto;
