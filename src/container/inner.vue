@@ -35,17 +35,21 @@ export default {
     addSong(songid) {
       getSong(songid, (json) => {
         this.$refs.player.addMusic(json.songname)
+        this.$Notice.success({
+            title: '歌曲成功添加到播放列表'
+        });
       })
     },
     addSonglist(songlistid) {
-      console.log(songlistid)
       getSongsInSonglist(songlistid, (json) => {
-        console.log(json)
         let arr = []
         json.forEach(s => {
           arr.push(s.songname)
         });
         this.$refs.player.addMusic(arr)
+        this.$Notice.success({
+            title: '歌单中歌曲已全部成功添加到播放列表'
+        });
       })
     }
   }
