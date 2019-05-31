@@ -122,7 +122,7 @@
           <songlist
             ref="songList"
             v-if="hasList"
-            class="song-list"
+            class="songlist"
             :currentMusicIndex="currentMusicIndex"
           ></songlist>
         </div>
@@ -145,6 +145,7 @@
           @volumechange="updateVolume"
           @loadedmetadata="loadMusic"
           @ended="playNext"
+          @error="loadErr"
         >
           <source :src="currentSrc" type="audio/mpeg">
         </audio>
@@ -168,7 +169,7 @@ import $axios from "axios";
 import songlist from "./songList";
 import { setTimeout } from "timers";
 import { truncate } from "fs";
-import searchBtn from '../components/search/searchBtn'
+import searchBtn from "../components/search/searchBtn";
 export default {
   data() {
     return {
@@ -177,9 +178,9 @@ export default {
       musicList: [],
       singerList: [],
       currentMusicID: 0,
-      currentMusicIndex: 0,
+      currentMusicIndex: -1,
       currentSrc: "",
-      hasMusic: 0,
+      hasMusic: 1,
       player: NaN,
       playPause: NaN,
       volumeBtn: NaN,
@@ -195,10 +196,11 @@ export default {
   created() {},
   components: {
     songlist,
-    'search-btn': searchBtn,
+    "search-btn": searchBtn
   },
   mounted() {
     var _this = this;
+    this.currentMusicIndex = -1;
     this.player = this.$refs.audio;
     this.playPause = this.$refs.playPause;
     this.volumeBtn = this.$refs.volumeBtn;
@@ -209,21 +211,21 @@ export default {
     window["changeVolume"] = this.changeVolume;
     //this.musicList=this.$route.query.musicList
     if (this.musicList.length > 0) {
-      this.hasMusic = 1;
       this.changeMusic(0);
+    } else {
+      this.$refs.bg.src = "logo.png";
+      this.$refs.miniBg.src = "logo.png";
     }
     this.changeMini();
     //this.changeMini();
   },
   methods: {
-    search(valueInput){
-      this.addMusic(valueInput)
-    },
     addMusic(arr) {
-      this.musicList = this.musicList.concat(arr);
-      if (this.musicList.length > 0 && !this.hasMusic) {
-        this.hasMusic = 1;
-        this.changeMusic(0);
+      if (this.musicList.length == 0) {
+        this.musicList = this.musicList.concat(arr);
+        if (this.musicList.length > 0) this.changeMusic(0);
+      } else {
+        this.musicList = this.musicList.concat(arr);
       }
     },
     changeMini() {
@@ -239,6 +241,7 @@ export default {
     },
     loadMusic() {
       var _this = this;
+      _this.hasMusic = 1;
       this.$refs.totalTime.textContent = this.formatTime(this.player.duration);
       this.togglePlay();
       this.$refs.playPause.src = "pause.png";
@@ -249,7 +252,7 @@ export default {
       $axios({
         method: "get",
         url: "https://v1.itooi.cn/kuwo/lrc?id=" + this.currentMusicID,
-        data: {},
+        data: {}
       })
         .then(function(response) {
           var lrc = response.data;
@@ -271,8 +274,10 @@ export default {
               if (_this.player.currentTime < str[i][0]) break;
             }
             for (var j = 0, k = _this.$refs.oneLrc.length; j < k; j++)
-              _this.$refs.oneLrc[j].style.color = "#D6D8D4";
-            _this.$refs.oneLrc[i].style.color = "#20A774";
+              if (_this.$refs.oneLrc[j] != null)
+                _this.$refs.oneLrc[j].style.color = "#D6D8D4";
+            if (_this.$refs.oneLrc[i] != null)
+              _this.$refs.oneLrc[i].style.color = "#20A774";
             if (i > 8) {
               _this.$refs.lrc.scrollTop = _this.$refs.oneLrc[i].offsetTop - 216;
             }
@@ -281,6 +286,9 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
+    },
+    loadErr() {
+      if (this.musicList.length != 0) this.hasMusic = 0;
     },
     highlightLast() {
       this.$refs.lastSong.src = "lastH.png";
@@ -317,7 +325,7 @@ export default {
       this.$refs.arrowUp.src = "arrowUpH.png";
     },
     noLightArrUp() {
-      console.log(this.$refs.arrowUp.src)
+      console.log(this.$refs.arrowUp.src);
       this.$refs.arrowUp.src = "arrowUp.png";
     },
     highlightArrDown() {
@@ -353,23 +361,46 @@ export default {
     },
     changeMusic(index) {
       var _this = this;
-      $axios({
-        method: "get",
-        url:
-          "https://v1.itooi.cn/kuwo/search?type=song&pageSize=100&page=0&keyword=" +
-          _this.musicList[index],
-        data: {},
-      })
-        .then(function(response) {
-            var id = response.data.data[0].MP3RID;
-          _this.player.src =
-            "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
-            id.slice(4, id.length);
-          _this.currentMusicID = id.slice(4, id.length);
+      _this.currentMusicIndex = index;
+      if (
+        index < _this.musicList.length &&
+        _this.musicList[index].id < 0 &&
+        _this.musicList[index].name.length > 0
+      ) {
+        $axios({
+          method: "get",
+          url:
+            "https://v1.itooi.cn/kuwo/search?type=song&pageSize=100&page=0&keyword=" +
+            _this.musicList[index].name,
+          data: {}
         })
-        .catch(function(error) {
-          console.log(error);
-        });
+          .then(function(response) {
+            var id = response.data.data[0].MP3RID;
+            _this.player.src =
+              "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
+              id.slice(4, id.length);
+            _this.currentMusicID = id.slice(4, id.length);
+            _this.musicList[index].id = _this.currentMusicID;
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      } else if (
+        index < _this.musicList.length &&
+        _this.musicList[index].id > 0
+      ) {
+        _this.player.src =
+          "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
+          _this.musicList[index].id;
+        _this.currentMusicID = _this.musicList[index].id;
+      } else {
+        _this.player.src = "";
+        _this.hasMusic = 1;
+        this.$refs.bg.src = "logo.png";
+        this.$refs.miniBg.src = "logo.png";
+        _this.lrcList = [""];
+        _this.currentMusicIndex=-1
+      }
       console.log(_this.player.src);
     },
     updateProgress() {
@@ -380,6 +411,8 @@ export default {
       this.$refs.totalTime.textContent = this.formatTime(
         this.player.duration - current
       );
+      if (isNaN(this.player.duration))
+        this.$refs.totalTime.textContent = this.formatTime(0);
     },
     formatTime(time) {
       var min = Math.floor(time / 60);
@@ -387,6 +420,7 @@ export default {
       return min + ":" + (sec < 10 ? "0" + sec : sec);
     },
     togglePlay() {
+      if (this.musicList.length == 0) return;
       if (this.player.paused) {
         this.playPause.src = "pauseH.png";
         this.player.play();
@@ -450,7 +484,7 @@ export default {
       var rect = rangeBox.getBoundingClientRect();
       var direction = rangeBox.dataset.direction;
       if (direction == "horizontal") {
-        var min = rangeBox.offsetLeft;
+        var min = rect.x;
         var max = min + rangeBox.offsetWidth;
         if (event.clientX < min || event.clientX > max) return false;
       } else {
@@ -486,7 +520,7 @@ export default {
       if (this.inRange(event)) {
         this.player.currentTime =
           this.player.duration * this.getCoefficient(event);
-      }
+      } else console.log("ss");
     },
     changeVolume(event) {
       if (this.inRange(event)) {
@@ -513,9 +547,9 @@ export default {
         pattern = /\[\d{2}:\d{2}.\d{2}\]/g, //用于匹配时间的正则表达式，匹配的结果类似[xx:xx.xx]
         pattern1 = /\[\d{2}:\d{2}.\d{3}\]/g,
         result = []; //保存最终结果的数组
-      if(pattern1.test(lines[0])){
-        result.push([0,"暂无歌词"])
-        return result 
+      if (pattern1.test(lines[0])) {
+        result.push([0, "暂无歌词"]);
+        return result;
       }
       while (!pattern.test(lines[0])) {
         //去掉不含时间的行
@@ -545,11 +579,16 @@ export default {
 li {
   list-style: none;
 }
-.song-list {
+.songlist {
   position: absolute;
-  width: 7vw;
+  width: 8vw;
   bottom: 2vh;
-  left: 38vw;
+  left: 75.5vw;
+  overflow-y: auto;
+  max-height: 50vh;
+}
+.songlist::-webkit-scrollbar {
+  display: none;
 }
 .audio.green-audio-player {
   position: relative;
@@ -728,9 +767,7 @@ li {
   width: 110%;
   height: 110%;
   background-position: center;
-  -webkit-filter: blur(30px);
-  -ms-filter: blur(30px);
-  filter: blur(30px);
+  -webkit-filter:contrast(30%) saturate(400%) blur(30px);
 }
 .miniBg img {
   width: 3vw;
@@ -741,7 +778,7 @@ li {
   position: absolute;
   left: 26vw;
   top: 20vh;
-  width: 35.2vw;
+  width: 37vw;
   height: 62vh;
   overflow-x: hidden;
   overflow-y: auto;
@@ -792,5 +829,4 @@ li {
   height: 6vh;
   top: 1.1vh;
 }
-
 </style>
