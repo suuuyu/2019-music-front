@@ -16,6 +16,7 @@ Vue.prototype.$qs = querystring
 Vue.config.productionTip = false
 Vue.use(iView)
 Vue.use(musicFactory)
+Vue.use(VueLazyComponent)
 
 new Vue({
   render: h => h(App),

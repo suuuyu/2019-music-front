@@ -2,7 +2,7 @@
 	<div @mouseenter="showPanel" align="center"  @mouseleave="disShow" style="height: 60px;width:400px;background-color:rgba(255, 255, 255, 0.5);">
     <div class="songlist__btn" v-if="show">
 		<!-- <router-link tag="a" target="_blank" :to="{path:'/player',query:{musicList:['等你下课','发如雪','夜曲']} }"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></router-link> -->
-       	<span><a href="javascript:;" @click="play"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></a></span>
+       	<span><a href="javascript:;" @click="play" ><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></a></span>
 		<span><a href="javascript:;" @click="like"><img src="Index_image/like.png" alt="like" height="35px" width="35px" class="songlist_btn"></a></span>
         <span v-if="type==1"><a href="javascript:;" @click="choose"><img src="Index_image/add.png" alt="add" height="35px" width="35px" class="songlist_btn"></a></span>
         <span v-if="type==1"><a href="javascript:;"><img src="Index_image/download.png" alt="download" height="35px" width="35px" class="songlist_btn"></a></span>
@@ -12,6 +12,7 @@
 
 <script>
 import {likeSong, keepSonglist} from '@/request/song'
+import { isNumber } from 'util';
 export default {
     name: 'songPanel',
     props:['songid', 'type'], //type: 1歌曲  2歌单 3专辑
@@ -23,7 +24,8 @@ export default {
     },
     methods: {
 			play() {
-				const inner = this.$root.$children[0].$children[0]
+				const inner = isNumber(this.$root.$children[0].$children[0].bottom) ? this.$root.$children[0].$children[1] : this.$root.$children[0].$children[0]
+				console.log(inner)
 				if(this.type == 1) {
 					inner.addSong(this.songid)
 				}
