@@ -48,18 +48,14 @@ export default {
     currentMusicIndex(newVal, oldVal) {
       setTimeout(() => {
         if (this.flag == 0) {
-          if (oldVal < this.$parent.musicList.length && oldVal > -1) {
+          if (oldVal < this.$parent.musicList.length && oldVal > -1&&this.$refs.songInfo[oldVal].classList.contains("playing")) {
             this.$refs.songInfo[oldVal].innerHTML = this.$parent.musicList[
               oldVal
             ].name;
             this.$refs.songInfo[oldVal].classList.toggle("playing");
           }
           if (newVal < this.$parent.musicList.length && newVal > -1) {
-            this.$refs.songInfo[newVal].classList.toggle("playing");
-            this.$refs.songInfo[newVal].innerHTML =
-              '<marquee scrolldelay="300">' +
-              this.$refs.songInfo[newVal].innerHTML +
-              "</marquee>";
+            this.musicGo(newVal)
           }
         } else this.flag = 0;
       });
@@ -78,27 +74,22 @@ export default {
       this.$parent.changeMusic(index);
     },
     remove(index) {
-      this.$parent.musicList.splice(index, 1);
+      var tempArr;
+      if (index + 1 < this.$parent.musicList.length)
+        tempArr = this.$parent.musicList
+          .slice(0, index)
+          .concat(this.$parent.musicList.slice(index + 1));
+      else tempArr = this.$parent.musicList.slice(0, index);
+      this.$parent.musicList = tempArr;
+    },
+    musicGo(index) {
       setTimeout(() => {
-        if (this.currentMusicIndex == index) {
-          if (index == this.$parent.musicList.length) {
-            index = 0;
-            this.playOne(index);
-            return;
-          }
-          if (this.$parent.musicList.length != 0) {
-            this.playOne(index);
-            this.$refs.songInfo[index].classList.toggle("playing");
-            this.$refs.songInfo[index].innerHTML =
-              '<marquee scrolldelay="300">' +
-              this.$refs.songInfo[index].innerHTML +
-              "</marquee>";
-          } else {
-            this.$parent.playNext();
-          }
-        } else if (this.currentMusicIndex > index) {
-          this.flag = 1;
-          this.$parent.currentMusicIndex -= 1;
+        if (!this.$refs.songInfo[index].classList.contains("playing")) {
+          this.$refs.songInfo[index].classList.toggle("playing");
+          this.$refs.songInfo[index].innerHTML =
+            '<marquee scrolldelay="300">' +
+            this.$refs.songInfo[index].innerHTML +
+            "</marquee>";
         }
       });
     }

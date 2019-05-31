@@ -1,7 +1,7 @@
 <template>
   <div
     ref="main"
-    style="position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:9999;"
+    style="position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:99;"
   >
     <div style="position:absolute;">
       <search-btn style="z-index:10;"></search-btn>
@@ -76,11 +76,13 @@
         </div>
         <div id="playMode" class="playMode">
           <img
-            data-mode="0"
-            id="playModeIcon"
+            ref="playModeIcon"
             width="30"
             height="30"
-            src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTQ1NDk0MTE5OTI5IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEzMjQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNOTQ2LjQ4MzUzMiA0NjcuMjE4MDc0IDc5OS41MzM2OTIgNjE2LjQ3NDQ0NmMtNy45OTgxNjEgOC4xMjE5ODEtMTguOTE4ODg1IDEyLjY5NzE4My0zMC4zMTg1MTYgMTIuNjk3MTgzLTExLjM5OTYzMSAwLTIyLjMyMDM1NS00LjU3NTIwMi0zMC4zMTg1MTYtMTIuNjk3MTgzTDU5MS45NDU3OTcgNDY3LjIxODA3NGMtMTYuNDgzNDE2LTE2Ljc0NDM1OS0xNi4yNzA1NjktNDMuNjc2NzU1IDAuNDcxNzQ0LTYwLjE2NTI4OCAxNi43MzkyNDMtMTYuNDgzNDE2IDQzLjY2NTQ5OS0xNi4yNzU2ODUgNjAuMTY1Mjg4IDAuNDcxNzQ0bDgyLjEzNDY0OSA4My40MjYwNjFjLTEwLjY1MzY0MS0xNTQuNDE1ODgyLTEzNy4zOTIxNi0yNzYuNzU3MjU1LTI5MS43NTg5MjMtMjc2Ljc1NzI1NS0xNjEuMzMxMzg1IDAtMjkyLjU4MTY2MiAxMzMuNTkyNjI0LTI5Mi41ODE2NjIgMjk3LjgwNjY2M1MyODEuNjI4MTkyIDgwOS44MDU2NCA0NDIuOTU5NTc3IDgwOS44MDU2NGM1OS4zODA0MTIgMCAxMTYuNTIyODU0LTE3Ljk3OTQ5IDE2NS4yNDE0MzgtNTIuMDAxMzUxIDE5LjI3MTkyNi0xMy40NDUyMiA0NS43OTQ5OTktOC43MzM5MTggNTkuMjQwMjE5IDEwLjUyNzc3NCAxMy40NTEzNiAxOS4yNjY4MDkgOC43MzQ5NDIgNDUuNzg5ODgyLTEwLjUyNjc1MSA1OS4yNDAyMTktNjMuMDc4NjQxIDQ0LjAzOTAwNi0xMzcuMDYxNjMyIDY3LjMyMTI2OC0yMTMuOTU0OTA3IDY3LjMyMTI2OC0yMDguMjQ2OTA1IDAtMzc3LjY2OTU3Mi0xNzEuNzYzOTkyLTM3Ny42Njk1NzItMzgyLjg5MzU1czE2OS40MjE2NDQtMzgyLjg5MzU1IDM3Ny42Njk1NzItMzgyLjg5MzU1YzE5Ni4xMTU2MSAwIDM1Ny43NDE3MDcgMTUyLjM2MDA2IDM3NS45MDQzNjkgMzQ2LjQ1NDY0bDY2Ljk4MTUzMS02OC4wMzU1MzZjMTYuNDk5Nzg5LTE2Ljc1MjU0NiA0My40MzczMDItMTYuOTUwMDQ0IDYwLjE2NTI4OC0wLjQ3MTc0NEM5NjIuNzU1MTI0IDQyMy41NDEzMTkgOTYyLjk2Nzk3MiA0NTAuNDczNzE1IDk0Ni40ODM1MzIgNDY3LjIxODA3NHoiIHAtaWQ9IjEzMjUiIGZpbGw9IiNENkQ4RDQiPjwvcGF0aD48L3N2Zz4="
+            :src="playModeSrc[playMode]"
+            @click="changeMode"
+            @mouseenter="highlightMode"
+            @mouseleave="noLightMode"
           >
         </div>
         <div id="like" class="like">
@@ -170,6 +172,7 @@ import songlist from "./songList";
 import { setTimeout } from "timers";
 import { truncate } from "fs";
 import searchBtn from "../components/search/searchBtn";
+import { constants } from "crypto";
 export default {
   data() {
     return {
@@ -189,7 +192,19 @@ export default {
       speaker: NaN,
       currentlyDragged: null,
       draggableClasses: ["pin"],
-      lrcList: []
+      lrcList: [],
+      playMode: 0,
+      playModeSrc: [
+        "oneByOne.png",
+        "oneByOneH.png",
+        "random.png",
+        "randomH.png",
+        "onlyOne.png",
+        "onlyOneH.png"
+      ],
+      cancel: null,
+      randomList: [],
+      randomIndex: -1
     };
   },
   //props:['musicList'],
@@ -217,7 +232,102 @@ export default {
       this.$refs.miniBg.src = "logo.png";
     }
     this.changeMini();
-    //this.changeMini();
+    this.changeMini();
+  },
+  watch: {
+    musicList(newVal, oldVal) {
+      if (this.playMode == 2 || this.playMode == 3) {
+        if (newVal.length > oldVal.length) {
+          //新增操作
+          var newArr;
+          if (this.randomIndex + 1 < this.randomList.length) {
+            newArr = newVal
+              .concat(oldVal)
+              .filter(v => newVal.includes(v) && !oldVal.includes(v))
+              .concat(
+                this.randomList.slice(
+                  this.randomIndex + 1,
+                  this.randomList.length
+                )
+              );
+            this.randomList.splice(this.randomIndex + 1);
+          } else
+            newArr = newVal
+              .concat(oldVal)
+              .filter(v => newVal.includes(v) && !oldVal.includes(v));
+          this.randomList = this.randomList.concat(this.shuffer(newArr));
+          for (var i in this.randomList) console.log(this.randomList[i].name);
+        } else {
+          //随机列表移除操作
+          var removedSong = oldVal
+            .concat(newVal)
+            .filter(v => oldVal.includes(v) && !newVal.includes(v))[0];
+          var removedIndex = this.randomList.indexOf(removedSong);
+          //从随机列表中移除
+          this.randomList = this.randomList
+            .concat([removedSong])
+            .filter(
+              v => this.randomList.includes(v) && ![removedSong].includes(v)
+            );
+          if (this.currentMusicIndex == oldVal.indexOf(removedSong)) {
+            if (this.randomIndex == this.randomList.length) {
+              //如果恰好是随机列表最后一首
+              this.randomIndex = 0;
+              this.changeMusic(
+                this.musicList.indexOf(this.randomList[this.randomIndex])
+              );
+              if(this.currentMusicIndex>-1)//防止传-1过去
+              this.$refs.songList.musicGo(this.currentMusicIndex);
+              return;
+            }
+            //让下一首播放
+            if (this.musicList.length != 0) {
+              this.changeMusic(
+                this.musicList.indexOf(this.randomList[this.randomIndex])
+              );
+              this.$refs.songList.musicGo(this.currentMusicIndex);
+            } else {
+              this.playNext();
+            }
+          } else if (this.randomIndex > removedIndex) {
+            this.randomIndex -= 1;
+            if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
+              this.$refs.songList.flag = 1; //不许watch函数触发
+              this.currentMusicIndex -= 1;
+            }
+          } else if (this.randomIndex < removedIndex) {
+            if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
+              this.$refs.songList.flag = 1; //不许watch函数触发
+              this.currentMusicIndex -= 1;
+            }
+          }
+        }
+      } else {
+        //顺序列表移除操作
+        if (newVal.length < oldVal.length) {
+          var removedSong = oldVal
+            .concat(newVal)
+            .filter(v => oldVal.includes(v) && !newVal.includes(v))[0];
+          if (this.currentMusicIndex == oldVal.indexOf(removedSong)) {
+            if (this.currentMusicIndex == this.musicList.length) {
+              //如果恰好是顺序列表最后一首
+              this.changeMusic(0);
+              return;
+            }
+            //让下一首播放
+            if (this.musicList.length != 0) {
+              this.changeMusic(this.currentMusicIndex);
+              this.$refs.songList.musicGo(this.currentMusicIndex);
+            } else {
+              this.playNext();
+            }
+          } else if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
+            this.$refs.songList.flag = 1; //不许watch函数触发
+            this.currentMusicIndex -= 1;
+          }
+        }
+      }
+    }
   },
   methods: {
     addMusic(arr) {
@@ -232,11 +342,11 @@ export default {
       if (this.isMax) {
         this.isMax = false;
         this.$refs.main.style =
-          "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:9999;";
+          "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:99;";
       } else {
         this.isMax = true;
         this.$refs.main.style =
-          "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:9999;";
+          "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:99;";
       }
     },
     loadMusic() {
@@ -286,6 +396,24 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
+    },
+    changeMode() {
+      this.playMode += 2;
+      if (this.playMode >= this.playModeSrc.length) this.playMode = 1;
+      if (this.playMode == 2 || this.playMode == 3) {
+        //如果是随机播放
+        this.randomList = this.shuffer(this.musicList);
+        this.randomIndex = this.randomList.indexOf(
+          this.musicList[this.currentMusicIndex]
+        );
+        for (var i in this.randomList) console.log(this.randomList[i].name);
+      }
+    },
+    highlightMode() {
+      this.playMode += 1;
+    },
+    noLightMode() {
+      this.playMode -= 1;
     },
     loadErr() {
       if (this.musicList.length != 0) this.hasMusic = 0;
@@ -340,12 +468,38 @@ export default {
       }
     },
     playNext() {
+      if (this.playMode == 4 || this.playMode == 5) {
+        this.changeMusic(this.currentMusicIndex);
+        return;
+      }
+      if (this.playMode == 2 || this.playMode == 3) {
+        //如果是随机播放
+        if (this.randomIndex + 1 < this.randomList.length) this.randomIndex++;
+        else this.randomIndex = 0;
+        this.changeMusic(
+          this.musicList.indexOf(this.randomList[this.randomIndex])
+        );
+        return;
+      }
       if (this.currentMusicIndex < this.musicList.length - 1)
         ++this.currentMusicIndex;
       else this.currentMusicIndex = 0;
       this.changeMusic(this.currentMusicIndex);
     },
     playLast() {
+      if (this.playMode == 4 || this.playMode == 5) {
+        this.changeMusic(this.currentMusicIndex);
+        return;
+      }
+      if (this.playMode == 2 || this.playMode == 3) {
+        if (this.randomIndex == 0)
+          this.randomIndex = this.randomList.length - 1;
+        else this.randomIndex--;
+        this.changeMusic(
+          this.musicList.indexOf(this.randomList[this.randomIndex])
+        );
+        return;
+      }
       if (this.currentMusicIndex > 0) --this.currentMusicIndex;
       else this.currentMusicIndex = this.musicList.length - 1;
       this.changeMusic(this.currentMusicIndex);
@@ -360,8 +514,17 @@ export default {
       }
     },
     changeMusic(index) {
+      if(index==-1)
+      index=0
       var _this = this;
+      if (this.cancel) {
+        this.cancel();
+      }
+      let CancelToken = $axios.CancelToken;
       _this.currentMusicIndex = index;
+      if(this.playMode==2||this.playMode==3){
+        this.randomIndex=this.randomList.indexOf(this.musicList[this.currentMusicIndex])
+      }
       if (
         index < _this.musicList.length &&
         _this.musicList[index].id < 0 &&
@@ -372,7 +535,10 @@ export default {
           url:
             "https://v1.itooi.cn/kuwo/search?type=song&pageSize=100&page=0&keyword=" +
             _this.musicList[index].name,
-          data: {}
+          data: {},
+          cancelToken: new CancelToken(c => {
+            this.cancel = c;
+          })
         })
           .then(function(response) {
             var id = response.data.data[0].MP3RID;
@@ -399,7 +565,7 @@ export default {
         this.$refs.bg.src = "logo.png";
         this.$refs.miniBg.src = "logo.png";
         _this.lrcList = [""];
-        _this.currentMusicIndex=-1
+        _this.currentMusicIndex = -1;
       }
       console.log(_this.player.src);
     },
@@ -541,6 +707,20 @@ export default {
         K = 1 - offsetY / height;
       }
       return K;
+    },
+    shuffer(array) {
+      var arr = [];
+      arr = arr.concat(array);
+      for (var i = 0; i < arr.length; i++) {
+        var randomNum = this.getRandomNum(arr.length);
+        var temp = arr[i];
+        arr[i] = arr[randomNum];
+        arr[randomNum] = temp;
+      }
+      return arr;
+    },
+    getRandomNum(max) {
+      return Math.floor(Math.random() * max);
     },
     parseLyric(text) {
       var lines = text.split("\n"), //将文本分隔成一行一行，存入数组
@@ -767,7 +947,7 @@ li {
   width: 110%;
   height: 110%;
   background-position: center;
-  -webkit-filter:contrast(30%) saturate(400%) blur(30px);
+  -webkit-filter: contrast(30%) saturate(400%) blur(30px);
 }
 .miniBg img {
   width: 3vw;

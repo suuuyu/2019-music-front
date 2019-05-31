@@ -8,54 +8,59 @@
 </template>
 
 <script>
-import menuPanel from '../components/panel/navegatorPanel'
-import searchBtn from '../components/search/searchBtn'
-import player from "../components/Player"
-import { getSong, getSongsInSonglist } from '@/request/song'
+import menuPanel from "../components/panel/navegatorPanel";
+import searchBtn from "../components/search/searchBtn";
+import player from "../components/Player";
+import { getSong, getSongsInSonglist } from "@/request/song";
 export default {
-  mounted(){
+  mounted() {
     console.log("Attention! Inner Page!");
-    var arr=[{id:-1,name:'Symphony'},{id:-1,name:'七里香'},{id:-1,name:'as if its your last'},{id:-1,name:'残酷月光'},{id:-1,name:'浪费'},{id:-1,name:'kill this love'}]
-    this.$refs.player.addMusic(arr)
-
+    var arr = [
+      { id: -1, name: "Symphony" },
+      { id: -1, name: "七里香" },
+      { id: -1, name: "as if its your last" },
+      { id: -1, name: "残酷月光" },
+      { id: -1, name: "kill this love" }
+    ];
+    this.$refs.player.addMusic(arr);
   },
   components: {
-    'menu-panel': menuPanel,
-    'search-btn': searchBtn,
-    'player': player
+    "menu-panel": menuPanel,
+    "search-btn": searchBtn,
+    player: player
   },
-  name: 'inner',
-  data(){
-    return{
+  name: "inner",
+  data() {
+    return {
       inner: 1,
       a: 1,
       b: 1,
       c: 1
-    }
+    };
   },
   methods: {
     addSong(songid) {
-      getSong(songid, (json) => {
-        this.$refs.player.addMusic(json.songname)
-      })
+      getSong(songid, json => {
+        this.$refs.player.addMusic(json.songname);
+      });
     },
     addSonglist(songlistid) {
-      console.log(songlistid)
-      getSongsInSonglist(songlistid, (json) => {
-        console.log(json)
-        let arr = []
+      console.log(songlistid);
+      getSongsInSonglist(songlistid, json => {
+        console.log(json);
+        let arr = [];
         json.forEach(s => {
-          arr.push(s.songname)
+          arr.push(s.songname);
         });
-        this.$refs.player.addMusic(arr)
-      })
+        this.$refs.player.addMusic(arr);
+      });
     }
   }
-}
+};
 </script>
 
 <style scoped>
-.container{
+.container {
   margin-bottom: 50px;
 }
 </style>

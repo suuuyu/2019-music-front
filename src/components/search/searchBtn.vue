@@ -71,6 +71,9 @@
 .highlight {
   color: rgb(255, 255, 255);
 }
+.ivu-message{
+  z-index: 100;
+}
 </style>
 
 
@@ -112,7 +115,7 @@ export default {
       inputValue: "",
       active: false,
       searchList: [],
-      idList:[],
+      idList: [],
       cancel: null,
       timer: []
     };
@@ -133,14 +136,19 @@ export default {
           this.cancel();
         }
         this.searchList = [];
-        this.idList=[]
+        this.idList = [];
       }
     }
   },
   methods: {
-    async addMusic(id,name) {
-        var music=await this.musicFactory.createMusic(id,name)
-        this.$parent.addMusic(music);
+    async addMusic(id, name) {
+      var music = await this.musicFactory.createMusic(id, name);
+      for (var i in this.$parent.musicList)
+        if (this.$parent.musicList[i].id == music.id) {
+          this.$Message.info("已经存在该音乐！");
+          return;
+        }
+      this.$parent.addMusic(music);
     },
     highlightTxt(event) {
       event.target.classList.toggle("highlight");
@@ -164,7 +172,7 @@ export default {
         })
           .then(function(response) {
             _this.searchList = [];
-            _this.idList=[]
+            _this.idList = [];
             _this.searchList = response.data.data.slice(0, 10);
           })
           .catch(function(error) {
@@ -174,7 +182,7 @@ export default {
         alert("服务器出错");
         console.log(err);
       }
-    },
+    }
   }
 };
 </script>
