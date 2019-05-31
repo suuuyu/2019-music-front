@@ -12,6 +12,7 @@
 
 <script>
 import {likeSong, keepSonglist} from '@/request/song'
+import { isNumber } from 'util';
 export default {
     name: 'songPanel',
     props:['songid', 'type'], //type: 1歌曲  2歌单 3专辑
@@ -23,7 +24,8 @@ export default {
     },
     methods: {
 			play() {
-				const inner = this.$root.$children[0].$children[0]
+				const inner = isNumber(this.$root.$children[0].$children[0].bottom) ? this.$root.$children[0].$children[1] : this.$root.$children[0].$children[0]
+				console.log(inner)
 				if(this.type == 1) {
 					inner.addSong(this.songid)
 				}

@@ -10,8 +10,10 @@
 <script>
 import menuPanel from '../components/panel/navegatorPanel'
 import searchBtn from '../components/search/searchBtn'
+import { AXIOS } from '@/http/http'
 import player from "../components/Player"
 import { getSong, getSongsInSonglist } from '@/request/song'
+import { async } from 'q';
 export default {
   mounted(){
     console.log("Attention! Inner Page!");
@@ -36,24 +38,66 @@ export default {
   methods: {
     addSong(songid) {
       getSong(songid, (json) => {
-        this.$refs.player.addMusic(json.songname)
-        this.$Notice.success({
-            title: '歌曲成功添加到播放列表'
-        });
+        this.isBought(json, isBought => {
+          if (isBought) {
+            this.$refs.player.addMusic({
+              id: songid,
+              name: json.songname
+            })
+            this.$Notice.success({
+              title: '歌曲成功添加到播放列表'
+            })
+          } else {
+            this.$Notice.error({
+                title: '播放失败',
+                desc: `歌曲 ${json.songname}为付费歌曲，您当前不是会员或未付费购买，暂无法播放，已自动跳过`
+              });
+          }
+        })
       })
     },
     addSonglist(songlistid) {
       getSongsInSonglist(songlistid, (json) => {
         let arr = []
         json.forEach(s => {
-          arr.push(s.songname)
+          this.isBought(s, (isBought) => {
+            if (isBought) {
+              arr.push({
+              id: s.songid,
+              name: s.songname
+              })
+            } else {
+              this.$Notice.error({
+                title: '播放失败',
+                desc: `歌曲 ${s.songname}为付费歌曲，您当前不是会员或未付费购买，暂无法播放，已自动跳过`
+              });
+            }
+          })
         });
         this.$refs.player.addMusic(arr)
         this.$Notice.success({
-            title: '歌单中歌曲已全部成功添加到播放列表'
+            title: '歌单中歌曲添加完毕'
         });
       })
-    }
+    },
+    isBought(song, callback){
+			if(song.free=='1'){
+        callback(true)
+				return
+			} else {
+        AXIOS.get('/isSongBought',{params:{songid: song.id, albumid: song.albumid, userid:sessionStorage.getItem("userid")}})
+        .then((response)=>{
+          const result =  response.data=='1' ? true : false
+          callback(result)
+        })
+        .catch(error => {
+          this.$Notice.error({
+            title: error
+          });
+          callback(false)
+        })
+			}
+		}
   }
 }
 </script>
