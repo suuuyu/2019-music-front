@@ -232,7 +232,7 @@ export default {
       this.$refs.miniBg.src = "logo.png";
     }
     this.changeMini();
-    this.changeMini();
+    //this.changeMini();
   },
   watch: {
     musicList(newVal, oldVal) {
