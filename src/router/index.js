@@ -25,6 +25,7 @@ import BanUser from '../components/admin/BanUser'
 import myCreated from '../components/profile/myCreated'
 import songListDetail from '../components/detail/songListDetail'
 import player from '../components/Player'
+import recorder from '../components/recorder'
 
 Vue.use(Router)
 
@@ -56,6 +57,10 @@ export default new Router({
     {
       path: '/player',
       component: player
+    },
+    {
+      path: '/recorder',
+      component: recorder
     },
     {
       path: '/inner',

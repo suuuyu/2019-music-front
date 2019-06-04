@@ -5,7 +5,18 @@
             <!-- 搜索框 -->
             <div class="mod_search_input" id="search_group">
                 <input class="search_input__input" aria-label="请输入搜索内容" type="text" placeholder="搜索关键字" @input="inputFun" v-model="inputValue" @click="showBox">
-                <button @click="search(inputValue)" class="search_input__btn"><Icon type="ios-search" size="18"/><span class="icon_txt">搜索</span></button>
+                <button 
+                    @click="showLoading=true" 
+                    @mouseover="showTips=true"
+                    @mouseout="showTips=false"
+                    data-tooltip="我是一个3cbest.com提示"
+                    class="search_input__btn"
+                    :class="{ 'hoverBtn':showTips==true}">
+                    <Tooltip content="来试试最新上线的听歌识曲功能吧" theme=light>
+                        <Icon type="ios-microphone" size="18"/>
+                    </Tooltip>
+                    <span class="icon_txt">搜索</span>
+                </button>
             </div>
             <div class="mod_search_tips">
                 热门搜索：
@@ -100,6 +111,12 @@
                 <searchBtn></searchBtn>
             </div>
         </transition>
+
+        <!-- 遮罩层 -->
+        <div class='popContainer' v-if="showLoading" > 
+            <loading @closeLoading="hideLoading"> </loading>
+        </div>
+        
     </div>
 </template>
 
@@ -108,6 +125,7 @@ import mylikesong from '../components/profile/mylike-song'
 import mylikealbum from '../components/profile/mylike-album'
 import mylikesonglist from '../components/profile/mylike-songlist'
 import searchBtn from '../components/search/searchBtn'
+import loading from '../components/search/loading'
 import { AXIOS } from '../http/http';
 
 export default {
@@ -135,6 +153,8 @@ export default {
                 inputValue: "",
                 showHis: false,
                 showRes: false,
+                showTips: false,
+                showLoading: false,
                 btnShow: false,
 			}
         },
@@ -142,7 +162,8 @@ export default {
 			'Song': mylikesong,
 			'Songlist': mylikesonglist,
             'Album': mylikealbum,
-            'searchBtn': searchBtn
+            'searchBtn': searchBtn,
+            'loading': loading
     },
     methods: {
         clearAllHis(e){
@@ -180,6 +201,10 @@ export default {
                     this.showRes = false;
                 }
             }
+        },
+        hideLoading(msg){
+            this.showLoading = false
+            console.log(msg)
         },
         inputFun(e){
             // console.log(e.target.value)
@@ -326,6 +351,15 @@ export default {
 
 <style scoped>
 
+.popContainer{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.3);
+}
+
 /* 选中时不再标注 */
 input:focus{
     outline: 0; 
@@ -408,9 +442,15 @@ dl {
 .mod_search .search_input__btn {
     width: 50px;
     height: 50px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
+
+.hoverBtn{
+    color: white;
+    background-color: #055cff !important;
+}
+
 .search_input__btn {
     position: absolute;
     top: 0;
