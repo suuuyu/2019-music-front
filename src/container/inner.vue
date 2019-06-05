@@ -1,8 +1,10 @@
 <template>
   <div>
-    <router-view></router-view>
-    <menu-panel></menu-panel>
-    <search-btn></search-btn>
+    <div style="margin-bottom: 100px;">
+      <router-view></router-view>
+      <menu-panel></menu-panel>
+      <search-btn></search-btn>
+    </div>
     <player ref="player"></player>
   </div>
 </template>
@@ -46,8 +48,9 @@ export default {
       getSong(songid, (json) => {
         this.isBought(json, isBought => {
           if (isBought) {
+            console.log(json.songname)
             this.$refs.player.addMusic({
-              id: songid,
+              id: -1,
               name: json.songname
             })
             this.$Notice.success({

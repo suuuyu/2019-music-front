@@ -1,23 +1,21 @@
 <template>
-  <Layout>
-    <ul>
-      <li v-for="comment in comments">
-        <div class="container commentBox">
-          <div class="row commentRow">
-            <div class="col-md-2 commentCol">
-              <img class="img-responsive center-block img-circle 
-              headPortrait" src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3345124030,1424070086&fm=26&gp=0.jpg)"/>>
-            </div>
-            <div class="col-md-10 commentCol">
-              <p class="userName">{{comment.name}}</p>
-              <p class="commentText">{{comment.text}}</p>
-              <p class="time">{{comment.time}}</p>
-            </div>
+  <div>
+      <ul class="comment__list js_all_list"> 
+        <li class="comment__list_item c_b_normal js_cmt_li" v-for="(comment, index) in comments" :key="index">
+            <a class="comment__avatar js_nick" >
+              <img class="js_lazy_comment_pic" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/person_300.png?max_age=2592000';this.onerror=null"  style="display: block; visibility: visible;" src="//y.gtimg.cn/music/photo_new/T001R300x300M000002RaR8P3WLVH5.jpg?max_age=2592000">
+            </a>
+          <h4 class="comment__title">
+            <a class="c_tx_thin js_nick js_nick_only" >{{comment.name}}</a>
+          </h4>
+          <p class="c_tx_normal comment__text js_hot_text" >{{comment.text}}</p>
+          <div class="comment__opt js_comment_opt" >
+              <span class="comment__date c_tx_thin">{{comment.time}}</span>
           </div>
-        </div>
-      </li>
-    </ul>
-    <Row class="main">
+        </li>
+      </ul>
+      <Page :total="commentNum" :page-size="commentNumPerPage" show-elevator @on-change="changePage"/>
+    <!-- <Row class="main">
       <i-col span="12">
         <div class="input-group">
       <input type="text" class="form-control" v-model="inputPage">
@@ -31,8 +29,8 @@
         <p class="page" font-size="30px" text-align="bottom">
           {{currentPageNum}}/{{pageNum}}页</p>
       </i-col>
-    </Row>
-  </Layout>
+    </Row> -->
+  </div>
 </template>
 <script>
 import "bootstrap/dist/css/bootstrap.css"
@@ -56,7 +54,8 @@ export default{
     
   },
   methods:{
-    changePage:function(){
+    changePage:function(inputPage){
+      this.inputPage = inputPage
       if(this.inputPage <= 0 || this.inputPage > this.pageNum){
         this.inputPage = 1;
         alert("无效输入！");
@@ -100,6 +99,83 @@ export default{
 }
 </script>
 <style scoped>
+ .mod_all_comment {
+    margin-bottom: 46px;
+}
+.comment_type__title {
+    position: relative;
+    height: 34px;
+    line-height: 34px;
+    padding-bottom: 10px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-color: #ededed;
+}
+.comment_type__title h2 {
+    font-weight: 400;
+    font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.comment__list {
+  min-height: 100px;
+  padding-bottom: 14px;
+}
+.comment__list_item {
+    position: relative;
+    padding: 15px 0 15px 56px;
+    zoom: 1;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-color: #ededed;
+}
+.comment__avatar {
+    position: absolute;
+    left: 0;
+    top: 20px;
+    width: 38px;
+    height: 38px;
+}
+.comment__avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+}
+.comment__title {
+    font-weight: 400;
+    margin-bottom: 6px;
+    overflow: hidden;
+    height: 20px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.comment__title a, .comment__title span {
+    float: left;
+}
+.comment__text {
+    overflow: hidden;
+    word-break: break-all;
+    word-wrap: break-word;
+    line-height: 24px;
+    text-align: justify;
+}
+.comment__opt {
+    line-height: 24px;
+    text-align: right;
+    overflow: hidden;
+}
+.comment__date {
+    float: left;
+    line-height: 28px;
+}
+.comment__zan {
+    vertical-align: -1px;
+}
+.comment__delete, .comment__good, .comment__link, .comment__report, .comment__zan {
+    margin-right: 22px;
+}
 .main{
   width:300px;
   margin-left:750px;

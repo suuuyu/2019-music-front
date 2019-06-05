@@ -103,8 +103,8 @@ export default new Router({
               component: myCreated
             },
             {
-              path:'balance',
-              component:balance
+              path: 'balance',
+              component: balance
             }
           ]
         },

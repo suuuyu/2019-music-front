@@ -11,7 +11,7 @@
                 </a>
                 <h3 class="singer_list__title">
                   <router-link class="js_singer" 
-                  :to="'/profile/' + u.id + '/mylike'" v-text="u.albumname" :key="$route.path"></router-link>
+                  :to="'/album/' + u.albumid" v-text="u.albumname" :key="$route.path"></router-link>
                 </h3>
               </Card>
             </li>

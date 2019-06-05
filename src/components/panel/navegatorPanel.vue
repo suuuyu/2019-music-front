@@ -1,5 +1,5 @@
 <template>
-  <nav :class=nav_class>
+  <nav :class=nav_class @mouseleave="leave">
 		<a class="disc l1" @click="search">
 			<div id="disc1" class="">发现音乐</div>
 		</a>
@@ -12,7 +12,7 @@
 		<a class="disc l4" @click="exit">
 			<div id="disc4" class="">退出登录</div>
 		</a>
-		<a class="disc l5 toggle" @click="handle">
+		<a class="disc l5 toggle"  @mouseenter="handle">
 			{{menu}}
 		</a>
 	</nav>
@@ -47,13 +47,14 @@ export default {
 			this.$router.go(0);
 		},
 		handle() {
-			if(this.nav_class === 'top-right') {
-				this.nav_class = 'top-right open'
-				this.menu = '关闭'
-			} else {
-				this.nav_class = 'top-right'
-				this.menu = '菜单'
-			}
+			this.nav_class = 'top-right open'
+			this.menu = '关闭'
+				// this.nav_class = 'top-right'
+				// this.menu = '菜单'
+		},
+		leave() {
+			this.nav_class = 'top-right'
+			this.menu = '菜单'
 		}
 	}
 }
