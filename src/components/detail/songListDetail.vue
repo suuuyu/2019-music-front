@@ -212,54 +212,6 @@ export default{
 }
 </script>
 <style scoped>
-.commentArea{
-	font-size:35px;
-}
-.detail{
-	
-}
-.songListItem{
-	height:50px;
-	font-size:20px;
-	border: 4px 4px 4px 4px;
-	border-color:black;
-	border-style:initial;
-}
-.commentList{
-	margin-top:50px;
-	width:80%;
-	height:1600px;
-	margin-left:auto;
-	margin-right:auto;
-}
-.commentTitle{
-	position: relative;
-	height:100px;
-}
-.comment{
-	float:left;
-	vertical-align: bottom;
-}
-.subComment{
-	margin-left:40px;
-	height:75px;
-	position:absolute;
-	left:100px;
-	bottom:19px;
-}
-.commentButton{
-	margin-top:30px;
-	float:right;
-	width:100px;
-	height:60px;
-	font-size:20px;
-}
-.commentAdd{
-	padding-top:80px;
-	width:80%;
-	margin-left:auto;
-	margin-right:auto;
-}
 .myButton{
 	width:80%;
 	height:100%;

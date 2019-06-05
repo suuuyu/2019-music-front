@@ -26,7 +26,7 @@ import myCreated from '../components/profile/myCreated'
 import songListDetail from '../components/detail/songListDetail'
 import player from '../components/Player'
 import recorder from '../components/recorder'
-
+import albumDetail from '../components/detail/albumDetail'
 Vue.use(Router)
 
 export default new Router({
@@ -68,11 +68,15 @@ export default new Router({
       children: [
         {
           path: '/song/:songid',
-          component: songDetail
+          component: songDetail,
         },
         {
           path:'/songList/:songListID',
-          component:songListDetail
+          component:songListDetail,
+        },
+        {
+          path:'/album/:albumId',
+          component:albumDetail,
         },
         // {
         //   path: '/singer/:songid',
