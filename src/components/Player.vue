@@ -1,7 +1,7 @@
 <template>
   <div
     ref="main"
-    style="position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:99;"
+    style="position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:1099;"
   >
     <div style="position:absolute;">
       <search-btn style="z-index:10;"></search-btn>
@@ -342,11 +342,11 @@ export default {
       if (this.isMax) {
         this.isMax = false;
         this.$refs.main.style =
-          "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:99;";
+          "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:1099;";
       } else {
         this.isMax = true;
         this.$refs.main.style =
-          "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:99;";
+          "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:1099;";
       }
     },
     loadMusic() {

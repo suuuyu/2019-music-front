@@ -18,14 +18,14 @@ import { async } from 'q';
 export default {
   mounted() {
     console.log("Attention! Inner Page!");
-    var arr = [
-      { id: -1, name: "Symphony" },
-      { id: -1, name: "七里香" },
-      { id: -1, name: "as if its your last" },
-      { id: -1, name: "残酷月光" },
-      { id: -1, name: "kill this love" }
-    ];
-    this.$refs.player.addMusic(arr);
+    // var arr = [
+    //   { id: -1, name: "Symphony" },
+    //   { id: -1, name: "七里香" },
+    //   { id: -1, name: "as if its your last" },
+    //   { id: -1, name: "残酷月光" },
+    //   { id: -1, name: "kill this love" }
+    // ];
+    // this.$refs.player.addMusic(arr);
   },
   components: {
     "menu-panel": menuPanel,

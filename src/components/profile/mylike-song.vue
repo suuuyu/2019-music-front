@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="mod_songlist_toolbar">
+        <!-- <div class="mod_songlist_toolbar">
             <a href="javascript:;" class="mod_btn_blue js_all_play">
                 <i class="mod_btn_green__icon_play"></i>
                 <img src="Index_image/mod_play.png" class="operate_btn" alt="play">
@@ -21,7 +21,7 @@
                 <img src="Index_image/mod_multoperate.png" class="operate_btn" alt="operate">
                 批量操作
             </a>
-        </div>
+        </div> -->
 				<div class="detail-contain" >
 					<vue-lazy-component  :timeout="1000">
 					<Table stripe  :columns="columns" :data="song">

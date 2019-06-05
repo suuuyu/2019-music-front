@@ -72,7 +72,7 @@
   color: rgb(255, 255, 255);
 }
 .ivu-message{
-  z-index: 100;
+  z-index: 1099;
 }
 </style>
 
