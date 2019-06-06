@@ -1,5 +1,5 @@
 <template>
-	<div @mouseenter="showPanel" align="center"  @mouseleave="disShow" style="height: 60px;width:400px;background-color:rgba(255, 255, 255, 0.5);">
+	<div @mouseenter="showPanel" align="center"  @mouseleave="disShow" style="height: 50px;width:400px;background-color:rgba(255, 255, 255, 0.5);">
     <div class="songlist__btn" v-if="show">
 		<!-- <router-link tag="a" target="_blank" :to="{path:'/player',query:{musicList:['等你下课','发如雪','夜曲']} }"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></router-link> -->
        	<span><a href="javascript:;" @click="play" ><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></a></span>
@@ -82,8 +82,7 @@ export default {
 .songlist__btn {
     position: relative;
     white-space: normal;
-		margin-bottom: auto;
-		margin-top: 10px;
+	margin-bottom: auto;
 }
 .songlist_btn {
     margin-left: 10px;

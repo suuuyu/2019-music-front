@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-		<songlistChoose :chooseList="chooseList" :songid="song.id" :mySonglist="songLists"/>
+		<songlistChoose ref="chooser" :songid="song.id" :mySonglist="songLists"/>
 			<div class="main">
 				<div class="mod_data" itemscope="" itemtype="http://schema.org/MusicRecording">
 						<span class="data__cover">
@@ -16,7 +16,7 @@
 							<i class="icon_singer"><a class="js_singer data__singer_txt" >{{song.singerName}}</a></i>
 						</div>
 						<ul class="data__info">
-							<li class="data_info__item" >专辑：<a>{{song.albumName}}</a></li>
+							<li class="data_info__item" >专辑：<router-link :to="'/album/' + song.albumid" :key="$route.path">{{song.albumname}}</router-link></li>
 							<li class="data_info__item data_info__item--even" >{{`语种：${song.language}`}}</li>
 							<li class="data_info__item" >{{`流派：${song.school}`}}</li>
 							<li class="data_info__item data_info__item--even" >{{`公司：${song.company}`}}</li>
@@ -58,7 +58,7 @@ import { setTimeout } from 'timers';
 export default {
 	methods:{
 		displaySongList:function(id){
-			this.chooseList = true;
+			this.$refs.chooser.toShow()
 			this.song.id = id;
 			showCreatedSongList(sessionStorage.getItem('userid'), json => {
 				this.songLists = json;

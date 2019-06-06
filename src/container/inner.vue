@@ -72,7 +72,7 @@ export default {
           this.isBought(s, (isBought) => {
             if (isBought) {
               arr.push({
-              id: s.songid,
+              id: -1,
               name: s.songname
               })
             } else {

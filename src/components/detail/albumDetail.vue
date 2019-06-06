@@ -4,7 +4,7 @@
 			<div class="albumInfoDisplay">
 			<Row class="myRow">
 				<i-col span="10">
-					<div class="albumPic" style="background-image:url(https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3345124030,1424070086&fm=26&gp=0.jpg)"/>					
+					<div class="albumPic"> <img style="width:384px;" :src="album.albumimage" alt=""></div>					
 				</i-col>
 				<i-col span="14" class="albumText">
 					<div class="title">{{album.albumname}}</div>
@@ -32,6 +32,7 @@
   </div>
 </template>
 <script>
+import {fetchAlbums} from '@/jsonp/fetchJSONP'
 import { AXIOS } from '../../http/http';
 import mylikesong from '../profile/mylike-song';
 export default{
@@ -49,13 +50,14 @@ export default{
 		mylikesong,
 	},
   methods:{
-    getAlbumInfo:function(){
+    getAlbumInfo(){
       AXIOS.get('/getAlbum',{
         params:{
           albumid:this.albumId,
         }
       }).then(response=>{
-        this.album = response.data;
+				this.album = response.data;
+				fetchAlbums([this.album])
         console.log(this.album);
         this.getSinger();
       }).catch(response=>{

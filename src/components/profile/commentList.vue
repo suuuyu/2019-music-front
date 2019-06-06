@@ -6,7 +6,7 @@
               <img class="js_lazy_comment_pic" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/person_300.png?max_age=2592000';this.onerror=null"  style="display: block; visibility: visible;" src="//y.gtimg.cn/music/photo_new/T001R300x300M000002RaR8P3WLVH5.jpg?max_age=2592000">
             </a>
           <h4 class="comment__title">
-            <a class="c_tx_thin js_nick js_nick_only" >{{comment.name}}</a>
+            <router-link class="c_tx_thin js_nick js_nick_only" :to="'/profile/' + comment.userid + '/mylike'" :key="comment.userid">{{comment.name}}</router-link>
           </h4>
           <p class="c_tx_normal comment__text js_hot_text" >{{comment.text}}</p>
           <div class="comment__opt js_comment_opt" >
@@ -15,21 +15,6 @@
         </li>
       </ul>
       <Page :total="commentNum" :page-size="commentNumPerPage" show-elevator @on-change="changePage"/>
-    <!-- <Row class="main">
-      <i-col span="12">
-        <div class="input-group">
-      <input type="text" class="form-control" v-model="inputPage">
-      <span class="input-group-btn">
-        <button v-on:click="changePage" class="btn btn-default" type=
-        "button">跳转</button>
-      </span>
-    </div>
-      </i-col>
-      <i-col span="12">
-        <p class="page" font-size="30px" text-align="bottom">
-          {{currentPageNum}}/{{pageNum}}页</p>
-      </i-col>
-    </Row> -->
   </div>
 </template>
 <script>
@@ -42,19 +27,19 @@ export default{
   data(){
     return{
       inputPage:1,
-      commentNum:Number,
+      commentNum: 0,
       commentNumPerPage:8,
-      pageNum:Number,
+      pageNum: 0,
       currentPageNum:1,
       comments:[{name:"孟凡宇",headPortait:"https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3345124030,1424070086&fm=26&gp=0.jpg)",
       text:"这是一条评论",time:"2019-5-14"}],   
     }
   },
   mounted(){
-    
+    console.log(this.commentList)
   },
   methods:{
-    changePage:function(inputPage){
+    changePage(inputPage){
       this.inputPage = inputPage
       if(this.inputPage <= 0 || this.inputPage > this.pageNum){
         this.inputPage = 1;
@@ -70,6 +55,7 @@ export default{
           comment.text = commentList1[i].commenttext;
           comment.time = commentList1[i].commenttime;
           comment.name = commentList1[i].name;
+          comment.userid = commentList1[i].userid
           this.comments.push(comment);
         }
       }
@@ -89,6 +75,7 @@ export default{
         comment.time = List[i].commenttime;
         comment.headPortait = "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3345124030,1424070086&fm=26&gp=0.jpg)";
         comment.name = List[i].name;
+        comment.userid = List[i].userid
         this.comments.push(comment);
         if(i == 7){
           break;
