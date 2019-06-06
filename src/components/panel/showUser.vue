@@ -6,12 +6,12 @@
           <ul class="singer_list__list">
             <li class="singer_list__item" :key="index" v-for="(u, index) in thisUser">
               <Card class="singer_list__item_box">
-                <a href="#" class="singer_list__cover js_singer" >
+                <a  class="singer_list__cover js_singer" @click="type != 1?openSingerDetail(user[index]):''">
                     <img class="singer_list__pic" :src="u.img" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/singer_300.png?max_age=31536000';this.error=null;">
                 </a>
                 <h3 class="singer_list__title">
                   <router-link class="js_singer" 
-                  :to="'/profile/' + u.id + '/mylike'" v-text="u.name" :key="$route.path"></router-link>
+                  :to="type == 1?'/profile/' + u.id + '/mylike':'#'" v-text="u.name" :key="$route.path" @click="type != 1?openSingerDetail(user[index]):''"></router-link>
                 </h3>
                 <p class="singer_list__info"></p>
                   <Button :type="FollowArr[index] == 1? 'error':'primary'" :loading="loading[index]" @click="changeFollow(me, u.id, index)">
@@ -30,15 +30,20 @@
       </Spin>
     </div>
   </vue-lazy-component>
+  <singer-detail ref="singerDetail"></singer-detail>
   </div>
 </template>
 
 <script>
+import singerDetail from '@/components/detail/singerDetail'
 import {AXIOS} from '@/http/http'
 import { setTimeout } from 'timers'
 import { fetchSingers } from '@/jsonp/fetchJSONP'
 import { changeFollowUser, changeFollowSinger,  isFollowUser, isFollowSinger} from '@/request/follow'
 export default {
+  components: {
+    'singer-detail': singerDetail
+  },
   props: ['type', 'user'],
   name: 'showUser',
   mounted() {
@@ -70,13 +75,18 @@ export default {
     }
   },
   methods: {
+    openSingerDetail(singer) {
+			this.$refs.singerDetail.open(singer)
+		},
     isFollow(userid, id) {
       if(this.type == 1) {
         isFollowUser(userid, id, (json) => {
          this.FollowArr.push(json?1:-1)
         })
       } else {
-        isFollowSinger(userid, id)
+        isFollowSinger(userid, id, (json) => {
+         this.FollowArr.push(json?1:-1)
+        })
       }
     },
     changeFollow(userid, id, index) {
@@ -90,7 +100,13 @@ export default {
 					})
         })
       } else {
-        changeFollowSinger(userid, id)
+        changeFollowSinger(userid, id, (json) => {
+          this.$set(this.FollowArr, index, -this.FollowArr[index])
+          this.$set(this.loading, index, false)
+          this.$Notice.success({
+							title: json
+					})
+        })
       }
     },
   }

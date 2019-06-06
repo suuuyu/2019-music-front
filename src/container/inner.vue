@@ -37,17 +37,14 @@ export default {
   name: "inner",
   data() {
     return {
-      inner: 1,
-      a: 1,
-      b: 1,
-      c: 1
+      
     };
   },
   methods: {
     addSong(songid) {
       getSong(songid, (json) => {
         this.isBought(json, isBought => {
-          if (isBought) {
+          if (isBought == 1) {
             console.log(json.songname)
             this.$refs.player.addMusic({
               id: -1,
@@ -94,7 +91,7 @@ export default {
         callback(true)
 				return
 			} else {
-        AXIOS.get('/isSongBought',{params:{songid: song.id, albumid: song.albumid, userid:sessionStorage.getItem("userid")}})
+        AXIOS.get('/isSongBought',{params:{songid: song.songid, albumid: song.albumid, userid:sessionStorage.getItem("userid")}})
         .then((response)=>{
           const result =  response.data=='1' ? true : false
           callback(result)

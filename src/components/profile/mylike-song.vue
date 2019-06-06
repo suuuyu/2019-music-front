@@ -12,10 +12,10 @@
 					</strong>
 				</template>
 				<template slot-scope="{ row, index }" slot="singer">
-					<strong><a class="panel-word" v-text="singers[index] ? singers[index].singername: '暂无'" @click="openSingerDetail(singers[index])"></a></strong>
+					<strong><a class="panel-word" v-text="singers[index] ? singers[index].singername: '暂无'" @click="singers[index] ? openSingerDetail(singers[index]) : ''"></a></strong>
 				</template>
 				<template slot-scope="{ row, index}" slot="album">
-					<strong><a class="panel-word" v-text="albums[index] ? albums[index].albumname : '暂无'"></a></strong>
+					<strong><router-link class="panel-word" :to="'/album/' + row.albumid" :key="$route.path" v-text="albums[index] ? albums[index].albumname : '暂无'"></router-link></strong>
 				</template>
 				<template slot-scope="{ row }" slot="length">
 					<strong><span class="panel-word">{{ row.length }}</span></strong>
@@ -48,7 +48,21 @@ export default {
 		'singer-detail': singerDetail
     },
     props:['song'],
-    name: 'mylike-song',
+	name: 'mylike-song',
+	watch: {
+		song() {
+			this.albums = new Array(this.song.length)
+			this.singers = new Array(this.song.length)
+			let msg = {'albumid': [], 'songid': []};
+			for(let i=0; i<this.song.length; i++){
+				// msg.albumid.push(this.song[i].albumid)
+				// msg.songid.push(this.song[i].songid)
+				this.buildAlbum(this.song[i].albumid, i)
+				this.buildSinger(this.song[i].songid, i)
+				// this.buildMsg(msg)
+			}
+		}
+	},
     mounted () {
 			this.$Loading.start();
 			setTimeout(() => {

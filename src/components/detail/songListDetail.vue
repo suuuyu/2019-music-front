@@ -14,9 +14,9 @@
 					   <i-col span="12">创建时间：{{songList.createtime}}</i-col>
 					  </Row>
 						<Row class="buttonGroup">
-							<i-col span="8"><button class="btn btn-default-large myButton" type="button">播放全部</button></i-col>							
-							<i-col span="8"><button class="btn btn-default-large myButton" type="button" v-on:click="keepSongList" 
-							v-bind:class="{keepedButton:isKeeped}">{{isKeeped?'取消收藏':'收藏'}}</button></i-col>
+							<i-col span="8"><Button class="btn btn-default-large myButton"  @click="playAll">播放全部</Button></i-col>							
+							<i-col span="8"><Button class="btn btn-default-large myButton"  v-on:click="keepSongList" 
+							v-bind:class="{keepedButton:isKeeped}">{{isKeeped?'取消收藏':'收藏'}}</Button></i-col>
 						</Row>
 					</div> 
 				</i-col>
@@ -35,22 +35,28 @@
 <script>
 import { AXIOS } from '../../http/http';
 import mylikesong from '../profile/mylike-song';
+import { isNumber } from 'util';
 export default{
-  name:"songListDetail",
-  data(){
+  	name: 'songListDetail',
+  	data(){
     return{
-      songListId:String,
-      songList:{},
+			songListId:'',
+			songList:{},
 			songListCreater:{},
 			songs:[],
 			isKeeped:false,
-			userId:String,
-    }
+			userId:'',
+    	}
 	},
 	components:{
 		mylikesong,
 	},
   methods:{
+		playAll() {
+				const inner = isNumber(this.$root.$children[0].$children[0].bottom) ? this.$root.$children[0].$children[1] : this.$root.$children[0].$children[0]
+				console.log(inner)
+				inner.addSonglist(this.songListId)
+			},
     getSongListInfo:function(){
       AXIOS.get('/getSongListById',{
         params:{
@@ -104,37 +110,19 @@ export default{
 				}).then(response=>{
 					if(response.data){
 						this.isKeeped = true;
-						this.$alert('收藏成功！','提示',{
-							confirmButtonText:'确定',
-							callback:action=>{
-								this.$message({
-									type:'info',
-									message:`action: ${ action }`
-								});
-							}
-						});
+						this.$Notice.success({
+            	title: '收藏成功'
+        		});
 					}else{
-						this.$alert('收藏失败！','提示',{
-							confirmButtonText:'确定',
-							callback:action=>{
-								this.$message({
-									type:'info',
-									message:`action: ${ action }`
-								});
-							}
-						});
+						this.$Notice.error({
+            	title: '收藏失败'
+        		});
 					}
 				}).catch(response=>{
 					console.log(response);
-					this.$alert('收藏失败！','提示',{
-							confirmButtonText:'确定',
-							callback:action=>{
-								this.$message({
-									type:'info',
-									message:`action: ${ action }`
-								});
-							}
-						});
+					this.$Notice.error({
+            	title: '收藏失败'
+        	});
 				});
 			}else{
 				AXIOS.post('/cancelKeepSongList',this.$qs.stringify({
@@ -149,38 +137,20 @@ export default{
 				}).then(response=>{
 					if(response.data){
 						this.isKeeped = false;
-						this.$alert('取消收藏成功！','提示',{
-							confirmButtonText:'确定',
-							callback:action=>{
-								this.$message({
-									type:'info',
-									message:`action: ${ action }`
-								});
-							}
-						});
+						this.$Notice.success({
+            	title: '取消收藏成功'
+        		});
 					}
 					else{
-						this.$alert('取消收藏失败！','提示',{
-							confirmButtonText:'确定',
-							callback:action=>{
-								this.$message({
-									type:'info',
-									message:`action: ${ action }`
-								});
-							}
-						});
+						this.$Notice.error({
+            	title: '取消收藏失败'
+        	});
 					}
 				}).catch(response=>{
 					console.log(response);
-					this.$alert('取消收藏失败！','提示',{
-							confirmButtonText:'确定',
-							callback:action=>{
-								this.$message({
-									type:'info',
-									message:`action: ${ action }`
-								});
-							}
-						});
+					this.$Notice.error({
+            	title: '取消收藏失败'
+        	});
 				});
 			}
 		},

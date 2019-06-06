@@ -13,7 +13,7 @@
 							<h1 id="songName" class="data__name_txt" >{{song.name}}</h1>
 						</div>
 						<div class="data__singer">
-							<i class="icon_singer"><a class="js_singer data__singer_txt" >{{song.singerName}}</a></i>
+							<i class="icon_singer"><a class="js_singer data__singer_txt" @click="openSingerDetail(singer)">{{song.singerName}}</a></i>
 						</div>
 						<ul class="data__info">
 							<li class="data_info__item" >专辑：<router-link :to="'/album/' + song.albumid" :key="$route.path">{{song.albumname}}</router-link></li>
@@ -45,10 +45,12 @@
 					</div>
 				</div>
 			</div>
+			<singer-detail ref="singerDetail"></singer-detail>
   </div>
 </template>
 
 <script>
+import singerDetail from '@/components/detail/singerDetail'
 import commentList from '../profile/commentList.vue'
 import songlistChoose from '../panel/songlistChoose.vue'
 import { AXIOS } from '../../http/http';
@@ -57,6 +59,9 @@ import {fetchAlbums} from '@/jsonp/fetchJSONP'
 import { setTimeout } from 'timers';
 export default {
 	methods:{
+		openSingerDetail(singer) {
+			this.$refs.singerDetail.open(singer)
+		},
 		displaySongList:function(id){
 			this.$refs.chooser.toShow()
 			this.song.id = id;
@@ -94,13 +99,14 @@ export default {
 		getSingerName:function(){
 			AXIOS.get("/getSingerBySong?songid=" + this.song.id)
 			.then(response=>{
-					var singerList = response.data;
-					this.song.singerName = "";
-					for(var i=0; i<singerList.length; i++){
-						this.song.singerName += singerList[i].singername;
-						this.song.singerName += ",";
-					}
-					this.song.singerName = this.song.singerName.substring(0, this.song.singerName.length-1);
+				var singerList = response.data;
+				this.singer = singerList[0];
+				this.song.singerName = "";
+				for(var i=0; i<singerList.length; i++){
+					this.song.singerName += singerList[i].singername;
+					this.song.singerName += ",";
+				}
+				this.song.singerName = this.song.singerName.substring(0, this.song.singerName.length-1);
 			}).catch((response)=>{
 				  console.log(response.data);
 			});
@@ -191,7 +197,8 @@ export default {
 		this.userID = sessionStorage.getItem("userid");
 	},
 	components:{
-		commentList,songlistChoose
+		commentList,songlistChoose,
+		'singer-detail': singerDetail
 	},
   name: 'songDetail',
 	created(){
@@ -218,6 +225,7 @@ export default {
   data(){
 		return {
 			chooseList:false,
+			singer: {},
 			img: '',
 			userID:"",
 			commentText:"",

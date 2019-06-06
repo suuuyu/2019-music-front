@@ -22,8 +22,10 @@
                             </li>
                         </ul>
                         <div class="data__actions" role="toolbar">
-                            <Button type="success" v-if="!isFollow">关注</Button>
-                            <Button type="error" v-if="isFollow">取消关注</Button>
+                            <Button :type="isFollow?'error':'success'" :loading = loading @click="changeFollow(userid, singer.singerid)">
+                                <Icon :type="isFollow? 'md-close':'md-add'" :size=15 v-show="!loading"/>
+                                {{isFollow? '取消关注':'添加关注'}}
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -57,6 +59,7 @@ import {getSingerDetail} from '@/request/singer'
 import songPanel from '../panel/songPanel'
 import songlistChoose from '../panel/songlistChoose'
 import {showCreatedSongList} from '@/request/song'
+import { changeFollowSinger } from '@/request/follow'
 export default {
     name: 'singerDetail',
     components: {
@@ -79,6 +82,7 @@ export default {
             albumNum: 0,
             songs: [],
             isFollow: false,
+            loading: false,
             userid: sessionStorage.getItem('userid'),
             chooseList: false,
             songid: '',
@@ -105,6 +109,21 @@ export default {
                 this.isFollow = json.isfollow
             })
             this.isOpen = true
+        },
+        changeFollow(userid, singerid) {
+            if (userid === null || userid === undefined) {
+                this.$Notice.error({
+                    title: '请先登录后再进行此操作'
+                })
+            }
+            this.loading = true
+            changeFollowSinger(userid, singerid, json => {
+                this.isFollow = !this.isFollow
+                this.$Notice.success({
+                    title: json
+                })
+                this.loading = false
+            })
         }
     }
 }
@@ -117,6 +136,7 @@ export default {
     margin-left: 10px;
 }
 .data__actions {
+    margin-top: 30px;
     padding-left: 40px;
 }
 a {
