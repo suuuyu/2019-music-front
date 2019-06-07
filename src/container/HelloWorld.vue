@@ -11,7 +11,6 @@ export default {
 	name: 'HelloWorld',
   mounted () {
     this.$router.push('/login')
-    //this.$router.push('/inner')
   },
 	data() {
 		return {
@@ -46,7 +45,7 @@ export default {
 	background-size: 100% 100%;
 	width: 100%;
 	height: 100%;
-  padding-top: 3%
+  padding-top: 3%;
 }
 .register {
 	background: url(../image/Register_image/register.jpg);

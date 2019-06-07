@@ -33,19 +33,19 @@ export default new Router({
   routes: [
     // For Development
     {
-      path: '/',
+      path: '/hello/',
       component: HelloWorld,
       children: [
         {
-          path: 'login',
+          path: '/login',
           component: login
         },
         {
-          path: 'register',
+          path: '/register',
           component: register
         },
         {
-          path: 'alogin',
+          path: '/alogin',
           component: alogin
         }
       ]
@@ -63,20 +63,24 @@ export default new Router({
       component: recorder
     },
     {
-      path: '/inner',
+      path: '/',
       component: inner,
       children: [
         {
+          path: '/',
+          component: () => import('@/components/index')
+        },
+        {
           path: '/song/:songid',
-          component: songDetail,
+          component: songDetail
         },
         {
-          path:'/songList/:songListID',
-          component:songListDetail,
+          path: '/songList/:songListID',
+          component: songListDetail
         },
         {
-          path:'/album/:albumId',
-          component:albumDetail,
+          path: '/album/:albumId',
+          component: albumDetail
         },
         // {
         //   path: '/singer/:songid',
@@ -138,8 +142,8 @@ export default new Router({
       component: admin,
       children: [
         {
-          path:'MyData',
-          component:MyData
+          path: 'MyData',
+          component: MyData
         },
         {
           path: 'ManageSong',

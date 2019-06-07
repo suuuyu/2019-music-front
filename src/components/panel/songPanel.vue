@@ -40,9 +40,21 @@ export default {
 				this.show = false
 			},
 			choose() {
+				if (!this.me) {
+					sessionStorage.setItem('path', this.$router.history.current.fullPath)
+					this.$router.push('/login')
+					this.$Message.error('您当前未登录')
+					return
+				}
 				this.$emit('toChoose', this.songid)
 			},
 			like() {
+				if (!this.me) {
+					sessionStorage.setItem('path', this.$router.history.current.fullPath)
+					this.$router.push('/login')
+					this.$Message.error('您当前未登录')
+					return
+				}
 				if(this.type == 1) {
 					likeSong(this.me, this.songid, (json) => {
 						if(json.success){

@@ -227,7 +227,7 @@ export default {
 }
 .head-contain {
     height: 380px;
-    padding-top: 65px;
+    padding-top: 90px;
     background: url(../image/PM_BG.jpg) 50% no-repeat;
     background-size: auto auto;
     background-size: cover;
