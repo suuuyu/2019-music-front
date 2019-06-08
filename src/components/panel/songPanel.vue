@@ -2,7 +2,7 @@
 	<div @mouseenter="showPanel" align="center"  @mouseleave="disShow" style="height: 50px;width:400px;background-color:rgba(255, 255, 255, 0.5);">
     <div class="songlist__btn" v-if="show">
 		<!-- <router-link tag="a" target="_blank" :to="{path:'/player',query:{musicList:['等你下课','发如雪','夜曲']} }"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></router-link> -->
-       	<span><a href="javascript:;" @click="play" ><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></a></span>
+		<span><a href="javascript:;" @click="play" ><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></a></span>
 		<span><a href="javascript:;" @click="like"><img src="Index_image/like.png" alt="like" height="35px" width="35px" class="songlist_btn"></a></span>
         <span v-if="type==1"><a href="javascript:;" @click="choose"><img src="Index_image/add.png" alt="add" height="35px" width="35px" class="songlist_btn"></a></span>
         <span v-if="type==1"><a href="javascript:;"><img src="Index_image/download.png" alt="download" height="35px" width="35px" class="songlist_btn"></a></span>
@@ -21,12 +21,12 @@ export default {
 				show: false,
 				me: sessionStorage.getItem('userid')
 			}
-    },
+	},
     methods: {
 			play() {
 				const inner = isNumber(this.$root.$children[0].$children[0].bottom) ? this.$root.$children[0].$children[1] : this.$root.$children[0].$children[0]
 				console.log(inner)
-				if(this.type == 1) {
+				if(this.type == 1) {	
 					inner.addSong(this.songid)
 				}
 				if(this.type == 2) {

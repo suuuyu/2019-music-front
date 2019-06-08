@@ -151,6 +151,9 @@ export default {
 					case '1':
 						this.$router.push('/profile/' + this.user.userid + '/mylike')
 						break
+					case '2':
+						this.$router.push('/profile/' + this.user.userid + '/myBought')
+						break
 					case '3':
 						this.$router.push('/profile/' + this.user.userid + '/myCreated')
 						break

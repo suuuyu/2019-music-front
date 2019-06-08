@@ -4,7 +4,12 @@
 			<vue-lazy-component  :timeout="1000">
 			<Table stripe  :columns="columns" :data="song">
 				<template slot-scope="{ row }" slot="name">
-					<strong><router-link class="panel-word" :to="'/song/' + row.songid" :key="$route.path">{{ row.songname }}</router-link></strong>
+					<strong>
+					<router-link class="panel-word" :to="'/song/' + row.songid" :key="$route.path">{{ row.songname }}
+					<Icon type="logo-usd" v-show="row.free=='1'?false:true" 
+					style="color:rgb(255, 174, 0);font-size:18px" />
+					</router-link>
+					</strong>
 				</template>
 				<template slot-scope="{ row }" slot="menuBar">
 					<strong>
