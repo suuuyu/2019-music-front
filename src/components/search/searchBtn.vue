@@ -96,7 +96,7 @@
         <li
           @mouseenter="highlightTxt"
           @mouseleave="highlightTxt"
-          @click="addMusic(song.MP3RID.slice(4, song.MP3RID.length),song.SONGNAME)"
+          @click="addMusic(song)"
           class="search-res"
           v-for="song,index in searchList"
           :key="index"
@@ -141,14 +141,15 @@ export default {
     }
   },
   methods: {
-    async addMusic(id, name) {
-      var music = await this.musicFactory.createMusic(id, name);
+    async addMusic(song) {
+      var music = await this.musicFactory.createMusic(song.MP3RID.slice(4, song.MP3RID.length), song.SONGNAME);
       for (var i in this.$parent.musicList)
         if (this.$parent.musicList[i].id == music.id) {
           this.$Message.info("已经存在该音乐！");
           return;
         }
       this.$parent.addMusic(music);
+      this.$parent.tempSong=song
     },
     highlightTxt(event) {
       event.target.classList.toggle("highlight");

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <router-view></router-view>
+   <!-- <router-view></router-view>
     <menu-panel></menu-panel>
-    <search-btn></search-btn>
+    <search-btn></search-btn>-->
     <player ref="player"></player>
   </div>
 </template>
