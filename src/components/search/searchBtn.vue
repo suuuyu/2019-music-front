@@ -174,7 +174,7 @@ export default {
           .then(function(response) {
             _this.searchList = [];
             _this.idList = [];
-            _this.searchList = response.data.data.slice(0, 10);
+            _this.searchList = response.data.data.slice(0, 20);
           })
           .catch(function(error) {
             console.log(error);
