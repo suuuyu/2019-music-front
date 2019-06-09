@@ -1,35 +1,37 @@
 <template>
   <div class="detail">
 		<songlistChoose ref="chooser" :songid="song.id" :mySonglist="songLists"/>
-			<div class="main">
-				<div class="mod_data" itemscope="" itemtype="http://schema.org/MusicRecording">
+			<div class="main" :style="`background-image: url(${img})`">
+				<div class="glass">
+					<div class="mod_data" itemscope="" >
 						<span class="data__cover">
 							<img id="albumImg" :src="img" class="data__photo">
 							<i class="data__cover_mask"></i>
 						</span>
-					<div class="data__cont">
-						<div class="data__name">
-							<!--/*@thymesVar id="song" type="com.example.demo.entity.Song"*/-->
-							<h1 id="songName" class="data__name_txt" >{{song.name}}</h1>
+						<div class="data__cont">
+							<div class="data__name">
+								<h1 id="songName" class="data__name_txt" >{{song.name}}</h1>
+							</div>
+							<div class="data__singer">
+								<i class="icon_singer"><a class="js_singer data__singer_txt" @click="openSingerDetail(singer)">{{song.singerName}}</a></i>
+							</div>
+							<ul class="data__info">
+								<li class="data_info__item" >专辑：<router-link :to="'/album/' + song.albumid" :key="$route.path">{{song.albumname}}</router-link></li>
+								<li class="data_info__item data_info__item--even" >{{`语种：${song.language}`}}</li>
+								<li class="data_info__item" >{{`流派：${song.school}`}}</li>
+								<li class="data_info__item data_info__item--even" >{{`公司：${song.company}`}}</li>
+								<li class="data_info__item" >{{`发行时间：${song.issueTime} 年代`}}</li>
+								
+							</ul>
+							<div class="data__actions" role="toolbar">
+								<Button class="mod_btn_green js_all_play" type="primary" :disabled="!bought" @click="play()" icon="md-play">播放</Button>
+								<Button class="mod_btn js_fav_album" @click="displaySongList" icon="md-add">添加到</Button>
+								<Button class="mod_btn js_into_comment" :disabled="bought" @click="buy()" icon="ios-card">购买</Button>
+							</div>
 						</div>
-						<div class="data__singer">
-							<i class="icon_singer"><a class="js_singer data__singer_txt" @click="openSingerDetail(singer)">{{song.singerName}}</a></i>
-						</div>
-						<ul class="data__info">
-							<li class="data_info__item" >专辑：<router-link :to="'/album/' + song.albumid" :key="$route.path">{{song.albumname}}</router-link></li>
-							<li class="data_info__item data_info__item--even" >{{`语种：${song.language}`}}</li>
-							<li class="data_info__item" >{{`流派：${song.school}`}}</li>
-							<li class="data_info__item data_info__item--even" >{{`公司：${song.company}`}}</li>
-							<li class="data_info__item" >{{`发行时间：${song.issueTime} 年代`}}</li>
-							
-						</ul>
-						<div class="data__actions" role="toolbar">
-							<Button class="mod_btn_green js_all_play" type="primary" :disabled="!bought" @click="play()" icon="md-play">播放</Button>
-							<Button class="mod_btn js_fav_album" @click="displaySongList" icon="md-add">添加到</Button>
-							<Button class="mod_btn js_into_comment" :disabled="bought" @click="buy()" icon="ios-card">购买</Button>
-            </div>
 					</div>
 				</div>
+				
 			</div>
 			<div class="comment">
 				<div style="max-width: 900px;margin-right:auto;margin-left:auto;">
@@ -257,6 +259,13 @@ export default {
 </script>
 
 <style scoped>
+.glass {
+	width: 100%;
+	height: 100%;
+	padding-top: 40px;
+	padding-bottom: 35px;
+} 
+
 .data__actions .mod_btn, .data__actions .mod_btn_green {
 	min-width: 122px;
 	min-height: 38px;
@@ -295,20 +304,40 @@ li {
 	float: left;
 }
 a {
-    color: #000;
+    color: white;
     text-decoration: none;
 }
 .main, .section_inner {
     max-width: 900px;
-    margin: 0 auto;
     position: relative;
 }
+.main {
+	margin-right: 0;
+	max-width: 1526px;
+	width: 100%;
+	background-size:cover;
+}
+.main::after {
+	content: "";
+    width:100%;
+    height:100%;
+    position: absolute;
+    left:0;
+    top:0;
+    background: inherit;
+    filter: blur(10px);
+    z-index: 2;
+}
 .mod_data {
+	color: white;
 	position: relative;
 	height: 250px;
 	padding-left: 305px;
-	margin-top: 40px;
-	margin-bottom: 35px;
+	margin: auto;
+	max-width: 900px;
+	margin-right: auto;
+	margin-left: auto;
+	z-index: 3;
 }
 .mod_data {
 	padding-left: 340px;
@@ -358,7 +387,7 @@ a {
 }
 .data__singer_txt {
 	font-size: 16px;
-	color: #333;
+	/* color: #333; */
 }
 .data__info {
 	text-align:left;
