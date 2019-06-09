@@ -25,7 +25,7 @@
 							</ul>
 							<div class="data__actions" role="toolbar">
 								<Button class="mod_btn_green js_all_play" type="primary" :disabled="!bought" @click="play()" icon="md-play">播放</Button>
-								<Button class="mod_btn js_fav_album" @click="displaySongList" icon="md-add">添加到</Button>
+								<Button class="mod_btn js_fav_album" @click="displaySongList()" icon="md-add">添加到</Button>
 								<Button class="mod_btn js_into_comment" :disabled="bought" @click="buy()" icon="ios-card">购买</Button>
 							</div>
 						</div>
@@ -64,9 +64,9 @@ export default {
 		openSingerDetail(singer) {
 			this.$refs.singerDetail.open(singer)
 		},
-		displaySongList:function(id){
+		displaySongList:function(){
 			this.$refs.chooser.toShow()
-			this.song.id = id;
+			// this.song.id = id;
 			showCreatedSongList(sessionStorage.getItem('userid'), json => {
 				this.songLists = json;
 			});
@@ -304,7 +304,7 @@ li {
 	float: left;
 }
 a {
-    color: white;
+    color: rgb(146, 142, 142);
     text-decoration: none;
 }
 .main, .section_inner {
@@ -329,7 +329,7 @@ a {
     z-index: 2;
 }
 .mod_data {
-	color: white;
+	color: rgb(146, 142, 142);
 	position: relative;
 	height: 250px;
 	padding-left: 305px;
