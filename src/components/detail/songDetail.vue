@@ -1,66 +1,71 @@
 <template>
   <div class="detail">
-		<Layout>
-			<songlistChoose :chooseList="chooseList" :songid="song.id" :mySonglist="songLists"/>
-			<div class="songInfoDisplay">
-			<Row class="myRow">
-				<i-col span="10">
-					<div class="songPic" style="background-image:url(https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3345124030,1424070086&fm=26&gp=0.jpg)"/>					
-				</i-col>
-				<i-col span="14" class="songText">
-					<div class="title">{{song.name}}</div>
-					<div class="subTitle">{{song.singerName}}</div>
-					<div class="text">
-						<Row>
-					   <i-col span="12">专辑：{{song.albumName}}</i-col>
-					   <i-col span="12">风格：{{song.school}}</i-col>
-					  </Row>
-					  <Row>
-						  <i-col span="12">语种：{{song.language}}</i-col>
-						  <i-col span="12">公司：{{song.company}}</i-col>
-					  </Row>
-					  <Row>
-						  <i-col span="12">发行时间：{{song.issueTime}}</i-col>
-						  <i-col span="12">播放次数：{{song.playTimes}}</i-col>
-					  </Row>
-						<Row class="buttonGroup">
-							<i-col span="8"><Button class="btn btn-default-large myButton" type="primary" :disabled="!bought" @click="play()">播放</Button></i-col>							
-							<i-col span="8"><Button class="btn btn-default-large myButton" type="primary" @click="displaySongList">添加到</Button></i-col>
-							<i-col span="8"><Button class="btn btn-default-large myButton" type="primary" :disabled="bought" @click="buy()">购买</Button></i-col>
-						</Row>
-					</div> 
-				</i-col>
-			</Row>
-		</div>
-		</Layout>
-		<Layout>
-			<div class=commentAdd>
-				<div class="commentTitle">
-					<p class="title comment">评论</p>
-				  <p class="subTitle comment subComment">共{{song.commentNum}}条评论</p>
+		<songlistChoose ref="chooser" :songid="song.id" :mySonglist="songLists"/>
+			<div class="main" :style="`background-image: url(${img})`">
+				<div class="glass">
+					<div class="mod_data" itemscope="" >
+						<span class="data__cover">
+							<img id="albumImg" :src="img" class="data__photo">
+							<i class="data__cover_mask"></i>
+						</span>
+						<div class="data__cont">
+							<div class="data__name">
+								<h1 id="songName" class="data__name_txt" >{{song.name}}</h1>
+							</div>
+							<div class="data__singer">
+								<i class="icon_singer"><a class="js_singer data__singer_txt" @click="openSingerDetail(singer)">{{song.singerName}}</a></i>
+							</div>
+							<ul class="data__info">
+								<li class="data_info__item" >专辑：<router-link :to="'/album/' + song.albumid" :key="$route.path">{{song.albumname}}</router-link></li>
+								<li class="data_info__item data_info__item--even" >{{`语种：${song.language}`}}</li>
+								<li class="data_info__item" >{{`流派：${song.school}`}}</li>
+								<li class="data_info__item data_info__item--even" >{{`公司：${song.company}`}}</li>
+								<li class="data_info__item" >{{`发行时间：${song.issueTime} 年代`}}</li>
+								
+							</ul>
+							<div class="data__actions" role="toolbar">
+								<Button class="mod_btn_green js_all_play" type="primary" :disabled="!bought" @click="play()" icon="md-play">播放</Button>
+								<Button class="mod_btn js_fav_album" @click="displaySongList" icon="md-add">添加到</Button>
+								<Button class="mod_btn js_into_comment" :disabled="bought" @click="buy()" icon="ios-card">购买</Button>
+							</div>
+						</div>
+					</div>
 				</div>
-			  <div>
-					<i-input type="textarea" placeholder="留下你的评论吧……" :rows="6" ref="commentText" v-model = "commentText"
-					class = "commentArea" style="{fontSize:30px}"></i-input>
+				
+			</div>
+			<div class="comment">
+				<div style="max-width: 900px;margin-right:auto;margin-left:auto;">
+					<div class="part__hd">
+						<h2 class="part__tit">评论<span class="c_tx_thin part__tit_desc js_all_comment_num">共{{song.commentNum}}条评论</span></h2>
+					</div>
+					<div class="mod_comment js_cmt_input">
+						<Input v-model="commentText" ref="commentText" type="textarea" :autosize="{minRows: 5,maxRows: 10}" placeholder="说点什么吧" />
+					</div>
+					<Button type="primary" class="commentButton" @click="commentSubmit" icon="md-brush">提交</Button>
+					<div class="commentList">
+						<commentList  v-bind:commentList="commentsList" ref="comment"></commentList>
+					</div>
 				</div>
-				<i-button type="primary" class="commentButton" v-on:click="commentSubmit">提交</i-button>
 			</div>
-			<div class="commentList">
-				<commentList  v-bind:commentList="commentsList" ref="comment"></commentList>
-			</div>
-		</Layout>
+			<singer-detail ref="singerDetail"></singer-detail>
   </div>
 </template>
 
 <script>
+import singerDetail from '@/components/detail/singerDetail'
 import commentList from '../profile/commentList.vue'
 import songlistChoose from '../panel/songlistChoose.vue'
 import { AXIOS } from '../../http/http';
 import {showCreatedSongList, keepSong, createSonglist} from '@/request/song';
+import {fetchAlbums} from '@/jsonp/fetchJSONP'
+import { setTimeout } from 'timers';
 export default {
 	methods:{
+		openSingerDetail(singer) {
+			this.$refs.singerDetail.open(singer)
+		},
 		displaySongList:function(id){
-			this.chooseList = true;
+			this.$refs.chooser.toShow()
 			this.song.id = id;
 			showCreatedSongList(sessionStorage.getItem('userid'), json => {
 				this.songLists = json;
@@ -96,13 +101,14 @@ export default {
 		getSingerName:function(){
 			AXIOS.get("/getSingerBySong?songid=" + this.song.id)
 			.then(response=>{
-					var singerList = response.data;
-					this.song.singerName = "";
-					for(var i=0; i<singerList.length; i++){
-						this.song.singerName += singerList[i].singername;
-						this.song.singerName += ",";
-					}
-					this.song.singerName = this.song.singerName.substring(0, this.song.singerName.length-1);
+				var singerList = response.data;
+				this.singer = singerList[0];
+				this.song.singerName = "";
+				for(var i=0; i<singerList.length; i++){
+					this.song.singerName += singerList[i].singername;
+					this.song.singerName += ",";
+				}
+				this.song.singerName = this.song.singerName.substring(0, this.song.singerName.length-1);
 			}).catch((response)=>{
 				  console.log(response.data);
 			});
@@ -117,7 +123,7 @@ export default {
 				console.log(response.data);
 			  var songInfo = response.data["songInfo"];
 				this.song.name = songInfo.songname;
-				this.song.albumName = response.data["albumName"];
+				this.song.albumname = response.data["albumName"];
 				this.song.school = songInfo.songschool;
 				this.song.company = songInfo.company;
 				this.song.language = songInfo.language;
@@ -128,6 +134,10 @@ export default {
 
 				//歌曲图片获取代码暂未写定，留待进一步工作
 				//this.song.image = 
+				fetchAlbums([this.song])
+				setTimeout(() => {
+					this.img = this.song.albumimage
+				}, 500);
 
 				//获取评论信息
 				var List = response.data["commentsList"];
@@ -164,7 +174,11 @@ export default {
 			}else{
 			AXIOS.get('/isSongBought',{params:{songid:this.song.id,albumid:this.song.albumid,userid:sessionStorage.getItem("userid")}})
 			.then((response)=>{
+				if(response.data=='2'){
+					this.bought=true
+				}else{
 				this.bought= response.data=='1'?true:false
+				}
 			})
 			}
 		},
@@ -189,7 +203,8 @@ export default {
 		this.userID = sessionStorage.getItem("userid");
 	},
 	components:{
-		commentList,songlistChoose
+		commentList,songlistChoose,
+		'singer-detail': singerDetail
 	},
   name: 'songDetail',
 	created(){
@@ -216,8 +231,10 @@ export default {
   data(){
 		return {
 			chooseList:false,
+			singer: {},
+			img: '',
 			userID:"",
-			commentText:"留下你的评论吧~",
+			commentText:"",
 			song: {
 					id: "",
 					name: '名称',
@@ -242,11 +259,175 @@ export default {
 </script>
 
 <style scoped>
+.glass {
+	width: 100%;
+	height: 100%;
+	padding-top: 40px;
+	padding-bottom: 35px;
+} 
+
+.data__actions .mod_btn, .data__actions .mod_btn_green {
+	min-width: 122px;
+	min-height: 38px;
+	text-align: center;
+	padding: 0 18px;
+	font-family: 微软雅黑;
+	margin-right: 10px;
+	font-size: 14px;
+}
+.h1, .h2, .h3, h1, h2, h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.part__hd, .part_detail__hd {
+	overflow: hidden;
+	height: 60px;
+}
+.part__tit, .part_detail__tit {
+	float: left;
+	font-size: 24px;
+	font-weight: 400;
+	line-height: 58px;
+	font-family: 微软雅黑;
+}
+.part__tit_desc {
+	font-size: 14px;
+	margin-left: 12px;
+}
+.c_tx_thin {
+	color: #999;
+}
+.icon_singer {
+	float: left;
+}
+li {
+	float: left;
+}
+a {
+    color: white;
+    text-decoration: none;
+}
+.main, .section_inner {
+    max-width: 900px;
+    position: relative;
+}
+.main {
+	margin-right: 0;
+	max-width: 1526px;
+	width: 100%;
+	background-size:cover;
+}
+.main::after {
+	content: "";
+    width:100%;
+    height:100%;
+    position: absolute;
+    left:0;
+    top:0;
+    background: inherit;
+    filter: blur(10px);
+    z-index: 2;
+}
+.mod_data {
+	color: white;
+	position: relative;
+	height: 250px;
+	padding-left: 305px;
+	margin: auto;
+	max-width: 900px;
+	margin-right: auto;
+	margin-left: auto;
+	z-index: 3;
+}
+.mod_data {
+	padding-left: 340px;
+}
+.data__cover {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 250px;
+	height: 250px;
+}
+.data__photo {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.data__cover_mask {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 300px;
+	height: 266px;
+	background: url(/Index_image/album_cover.png) 0 0 no-repeat;
+	pointer-events: none;
+}
+.data__cont {
+	padding-top: 13px;
+}
+.data__name {
+	overflow: hidden;
+	height: 50px;
+	line-height: 50px;
+}
+.data__name_txt {
+	float: left;
+	font-size: 31px;
+	line-height: 50px;
+	font-weight: 400;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 70%;
+	margin-right: 10px;
+}
+.data__singer {
+	white-space: nowrap;
+}
+.data__singer_txt {
+	font-size: 16px;
+	/* color: #333; */
+}
+.data__info {
+	text-align:left;
+	width: 550px;
+	overflow: hidden;
+	padding-top: 8px;
+}
+.data_info__item {
+	float: left;
+	line-height: 27px;
+	width: 200px;
+	margin-right: 30px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 14px;
+}
+.data_info__item--even {
+	width: 300px;
+	margin-right: 0;
+}
+.data__actions {
+	position: absolute;
+	bottom: 23px;
+	font-size: 0;
+}
 .commentArea{
 	font-size:35px;
 }
-.detail{
-	
+.data__cover {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 250px;
+}
+.data__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 .songListItem{
 	height:50px;
@@ -256,118 +437,22 @@ export default {
 	border-style:initial;
 }
 .commentList{
-	margin-top:50px;
-	width:80%;
-	height:1600px;
-	margin-left:auto;
-	margin-right:auto;
+	margin-top:80px;
 }
 .commentTitle{
 	position: relative;
 	height:100px;
 }
 .comment{
-	float:left;
-	vertical-align: bottom;
+	background: #f5f7f9;
 }
-.subComment{
-	margin-left:40px;
-	height:75px;
-	position:absolute;
-	left:100px;
-	bottom:19px;
-}
-.commentButton{
-	margin-top:30px;
-	float:right;
-	width:100px;
-	height:60px;
-	font-size:20px;
-}
-.commentAdd{
-	padding-top:80px;
-	width:80%;
-	margin-left:auto;
-	margin-right:auto;
-}
-.myButton{
-	width:80%;
-	height:100%;
-	font-size:25px;
-	background:white;
-	border-color:lightskyblue;
-	border:3px 3px 3px 3px;
-	color:black
-}
-.buttonGroup{
-	height:119px;
-	padding-top:55px;
-}
-.text{
-	padding-top:20px;
-	font-size:25px;
-}
-.title{
-	font-size:50px;
-}
-.subTitle{
-	font-size:30px;
-	padding-top: 15px;
 
+.commentButton{
+	margin-top: 20px;
+	font-size: 14px;
+	float:right;
 }
-.songPic{
-	width: 80%;
-  height: 0;
-	padding-bottom: 80%;
-  overflow: hidden;
-  background-position: center center;
-  background-repeat: no-repeat;
-  -webkit-background-size:cover;
-  -moz-background-size:cover;
-  background-size: cover;
-}
-.songText{
-	text-align: left;
-}
-.songInfoDisplay
-{
-	padding: 5% 5% 5% 5%;
-  width: 1280;
-	height:512;
-}
-.myRow{
-	width: 100%;
-	height: 100%;
-}
-.ivu-col{
-	height: 100%;
-}
-.ivu-layout-sider
-{
-	background: white!important
-}
-.detail {
-	width: 1280px;
-	height: 100%;
-	margin-left: auto;
-	margin-right: auto; 
-}
-.name-text {
-	float: left;
-	font-size: 31px;
-	line-height: 50px;
-	font-weight: 400;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	max-width: 70%;
-	margin-right: 10px
-}
-.singer-text {
-	height: 24px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	max-width: 90%
-}
+
+
+
 </style>

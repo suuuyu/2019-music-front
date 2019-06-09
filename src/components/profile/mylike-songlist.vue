@@ -4,7 +4,7 @@
     <vue-lazy-component :timeout="3000">
       <Table stripe  :columns="columns" :data="songlist">
           <template slot-scope="{ row }" slot="songlistname">
-              <strong><a class="panel-word">{{ row.songlistname }}</a></strong>
+              <strong><router-link class="panel-word" :to="'/songList/' + row.songlistid" :key="$route.path">{{ row.songlistname }}</router-link></strong>
           </template>
           <template slot-scope="{ row }" slot="menuBar">
               <strong>

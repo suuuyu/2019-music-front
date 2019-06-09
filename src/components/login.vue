@@ -27,9 +27,16 @@
 		confirm
 		transfer
         title="如果您是用户，请按取消；如果您是管理员，请按确定"
-        @on-ok="toAdminLogin"
-        @on-cancel="cancel">
+        @on-ok="toAdminLogin">
         <Icon id="admin-icon" type="md-contact" />
+    </Poptip>
+	<Poptip
+	    class="back-tip"
+		confirm
+		transfer
+        title="放弃登录并返回之前的页面吗"
+        @on-ok="back">
+        <Icon id="back-icon" type="md-arrow-round-back" />
     </Poptip>
 </div>
 </template>
@@ -59,6 +66,15 @@ export default{
 		}
 	},
 	methods: {
+		back() {
+			let path = sessionStorage.getItem('path')
+			if (path) {
+				this.$router.push(path)
+				sessionStorage.removeItem('path')
+			} else {
+				this.$router.push('/')
+			}
+		},
 		toRegister(){
 			this.$parent.handleSelect('2')
 		},
@@ -91,18 +107,24 @@ export default{
 					.then(response => {
 						console.log(response.data)
 						let data = response.data
-						this.$router.push('/profile/' + this.formInline.user + '/mylike')
-
 						if(data.success) {
 							this.$Message.success('Success!')
 							sessionStorage.setItem('userid', this.formInline.user)
+							let path = sessionStorage.getItem('path')
+							console.log(path)
+							if (path) {
+								this.$router.push(path)
+								sessionStorage.removeItem('path')
+							} else {
+								this.$router.push('/')
+							}
 							// this.$router.push('/profile/' + this.formInline.user + '/mylike')
 						} else {
 							this.$Message.error('密码错误或用户不存在')
 						}
 					})
 					.catch(error => {
-						this.$router.push('/profile/' + this.formInline.user + '/mylike')
+						this.$router.push('/')
 						this.$Message.error('Fail!')
 					})
 					.finally(() => {
@@ -156,11 +178,21 @@ h1{
     color:rgb(11, 148, 240);
     font-size:25px;
 }
+#back-icon {
+	color:rgb(11, 148, 240);
+    font-size:25px;
+}
 .admin-tip
 {
 	position: absolute;
     right:1%;
     bottom:1%;
+}
+.back-tip
+{
+	position: absolute;
+    left:1%;
+    top:1%;
 }
 </style>
 

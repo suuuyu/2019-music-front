@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="chooseList" :styles="{top: '20px'}">
+  <Modal v-model="show" :styles="{top: '20px'}">
     <p slot="header" style="color:#f60;text-align:center">
         <Icon type="ios-information-circle"></Icon>
         <span>选择想加入的歌单</span>
@@ -30,10 +30,14 @@ export default {
   data() {
     return {
       toEdit: false,
-      songlistName: ''
+      songlistName: '',
+      show: false
     }
   },
   methods: {
+    toShow() {
+      this.show = true
+    },
     createSonglist() {
 				createSonglist(sessionStorage.getItem('userid'), this.songlistName, json => {
 					this.$Notice.success({

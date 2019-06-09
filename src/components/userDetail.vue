@@ -151,6 +151,9 @@ export default {
 					case '1':
 						this.$router.push('/profile/' + this.user.userid + '/mylike')
 						break
+					case '2':
+						this.$router.push('/profile/' + this.user.userid + '/myBought')
+						break
 					case '3':
 						this.$router.push('/profile/' + this.user.userid + '/myCreated')
 						break
@@ -227,7 +230,7 @@ export default {
 }
 .head-contain {
     height: 380px;
-    padding-top: 65px;
+    padding-top: 90px;
     background: url(../image/PM_BG.jpg) 50% no-repeat;
     background-size: auto auto;
     background-size: cover;

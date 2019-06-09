@@ -15,6 +15,7 @@ import searchUser from '../components/search/searchUser'
 import follow from '../components/profile/follow'
 import friend from '../components/profile/friend'
 import balance from '../components/profile/balance'
+import myBought from '../components/profile/myBought'
 import alogin from '../components/alogin'
 import admin from '../container/admin'
 import MyData from '../components/admin/MyData'
@@ -25,26 +26,27 @@ import BanUser from '../components/admin/BanUser'
 import myCreated from '../components/profile/myCreated'
 import songListDetail from '../components/detail/songListDetail'
 import player from '../components/Player'
-
+import recorder from '../components/recorder'
+import albumDetail from '../components/detail/albumDetail'
 Vue.use(Router)
 
 export default new Router({
   routes: [
     // For Development
     {
-      path: '/',
+      path: '/hello/',
       component: HelloWorld,
       children: [
         {
-          path: 'login',
+          path: '/login',
           component: login
         },
         {
-          path: 'register',
+          path: '/register',
           component: register
         },
         {
-          path: 'alogin',
+          path: '/alogin',
           component: alogin
         }
       ]
@@ -58,16 +60,28 @@ export default new Router({
       component: player
     },
     {
-      path: '/inner',
+      path: '/recorder',
+      component: recorder
+    },
+    {
+      path: '/',
       component: inner,
       children: [
+        {
+          path: '/',
+          component: () => import('@/components/index')
+        },
         {
           path: '/song/:songid',
           component: songDetail
         },
         {
-          path:'/songList/:songListID',
-          component:songListDetail
+          path: '/songList/:songListID',
+          component: songListDetail
+        },
+        {
+          path: '/album/:albumId',
+          component: albumDetail
         },
         // {
         //   path: '/singer/:songid',
@@ -94,8 +108,12 @@ export default new Router({
               component: myCreated
             },
             {
-              path:'balance',
-              component:balance
+              path: 'balance',
+              component: balance
+            },
+            {
+              path: 'myBought',
+              component: myBought
             }
           ]
         },
@@ -129,8 +147,8 @@ export default new Router({
       component: admin,
       children: [
         {
-          path:'MyData',
-          component:MyData
+          path: 'MyData',
+          component: MyData
         },
         {
           path: 'ManageSong',

@@ -6,12 +6,12 @@
           <ul class="singer_list__list">
             <li class="singer_list__item" :key="index" v-for="(u, index) in albums">
               <Card class="singer_list__item_box">
-                <a href="#" class="singer_list__cover js_singer" >
+                <router-link :to="'/album/' + u.albumid" :key="$route.path" class="singer_list__cover js_singer" >
                     <img class="singer_list__pic" :src="albumimage.length == 0 ? u.albumimage : albumimage[index]" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/singer_300.png?max_age=31536000';this.error=null;">
-                </a>
+                </router-link>
                 <h3 class="singer_list__title">
                   <router-link class="js_singer" 
-                  :to="'/profile/' + u.id + '/mylike'" v-text="u.albumname" :key="$route.path"></router-link>
+                  :to="'/album/' + u.albumid" v-text="u.albumname" :key="$route.path"></router-link>
                 </h3>
               </Card>
             </li>

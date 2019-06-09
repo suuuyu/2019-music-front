@@ -31,4 +31,17 @@ body {
   font-family: "wawati";
   src: url("./assets/WawaSC-Regular.otf") format("truetype");
 }
+
+::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 5px;
+}
+::-webkit-scrollbar-track {
+    background: 0 0;
+}
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
 </style>

@@ -589,6 +589,7 @@ export default {
           .then(function(response) {
             var id = response.data.data[0].MP3RID;
             _this.player.src =
+              "http://111.230.63.192:3000/musicwebsite?base=" +
               "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
               id.slice(4, id.length);
             _this.currentMusicID = id.slice(4, id.length);

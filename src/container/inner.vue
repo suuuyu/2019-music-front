@@ -1,8 +1,10 @@
 <template>
   <div>
-    <router-view></router-view>
-    <menu-panel></menu-panel>
-    <search-btn></search-btn>
+    <div style="margin-bottom: 100px;">
+      <router-view></router-view>
+      <menu-panel></menu-panel>
+      <search-btn></search-btn>
+    </div>
     <player ref="player"></player>
   </div>
 </template>
@@ -18,14 +20,14 @@ import { async } from 'q';
 export default {
   mounted() {
     console.log("Attention! Inner Page!");
-    var arr = [
-      { id: -1, name: "Symphony" },
-      { id: -1, name: "七里香" },
-      { id: -1, name: "as if its your last" },
-      { id: -1, name: "残酷月光" },
-      { id: -1, name: "kill this love" }
-    ];
-    this.$refs.player.addMusic(arr);
+    // var arr = [
+    //   { id: -1, name: "Symphony" },
+    //   { id: -1, name: "七里香" },
+    //   { id: -1, name: "as if its your last" },
+    //   { id: -1, name: "残酷月光" },
+    //   { id: -1, name: "kill this love" }
+    // ];
+    // this.$refs.player.addMusic(arr);
   },
   components: {
     "menu-panel": menuPanel,
@@ -35,25 +37,35 @@ export default {
   name: "inner",
   data() {
     return {
-      inner: 1,
-      a: 1,
-      b: 1,
-      c: 1
+      
     };
   },
   methods: {
     addSong(songid) {
       getSong(songid, (json) => {
         this.isBought(json, isBought => {
-          if (isBought) {
+          if (isBought == 1||isBought == 2) {
+            console.log(json.songname)
+            let mes= isBought == 1?'您已购买过此歌曲':'您是VIP会员，可以无限畅听'
             this.$refs.player.addMusic({
-              id: songid,
+              id: -1,
               name: json.songname
             })
             this.$Notice.success({
-              title: '歌曲成功添加到播放列表'
+              title: '歌曲成功添加到播放列表',
+              desc:mes
             })
-          } else {
+          }else if(isBought=='3'){
+            this.$refs.player.addMusic({
+              id: -1,
+              name: json.songname
+            })
+            this.$Notice.success({
+              title: '歌曲成功添加到播放列表',
+              desc:'免费歌曲'
+            })
+          } 
+          else {
             this.$Notice.error({
                 title: '播放失败',
                 desc: `歌曲 ${json.songname}为付费歌曲，您当前不是会员或未付费购买，暂无法播放，已自动跳过`
@@ -69,7 +81,7 @@ export default {
           this.isBought(s, (isBought) => {
             if (isBought) {
               arr.push({
-              id: s.songid,
+              id: -1,
               name: s.songname
               })
             } else {
@@ -88,13 +100,12 @@ export default {
     },
     isBought(song, callback){
 			if(song.free=='1'){
-        callback(true)
+        callback('3')
 				return
 			} else {
-        AXIOS.get('/isSongBought',{params:{songid: song.id, albumid: song.albumid, userid:sessionStorage.getItem("userid")}})
+        AXIOS.get('/isSongBought',{params:{songid: song.songid, albumid: song.albumid, userid:sessionStorage.getItem("userid")}})
         .then((response)=>{
-          const result =  response.data=='1' ? true : false
-          callback(result)
+          callback(response.data)
         })
         .catch(error => {
           this.$Notice.error({
@@ -108,7 +119,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .container {
   margin-bottom: 50px;
 }

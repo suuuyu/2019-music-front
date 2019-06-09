@@ -1,57 +1,41 @@
 <template>
     <div>
-        <div class="mod_songlist_toolbar">
-            <a href="javascript:;" class="mod_btn_blue js_all_play">
-                <i class="mod_btn_green__icon_play"></i>
-                <img src="Index_image/mod_play.png" class="operate_btn" alt="play">
-                播放
-            </a>
-            <a href="javascript:;" class="mod_btn js_all_fav">
-                <i class="mod_btn__icon_add"></i>
-                <img src="Index_image/mod_add.png" class="operate_btn" alt="add">
-                添加到
-            </a>
-            <a href="javascript:;" class="mod_btn js_all_down">
-                <i class="mod_btn__icon_down"></i>
-                <img src="Index_image/mod_download.png" class="operate_btn" alt="download">
-                下载
-            </a>
-            <a href="javascript:;" class="mod_btn js_batch">
-                <i class="mod_btn__icon_batch"></i>
-                <img src="Index_image/mod_multoperate.png" class="operate_btn" alt="operate">
-                批量操作
-            </a>
+		<div class="detail-contain" >
+			<vue-lazy-component  :timeout="1000">
+			<Table stripe  :columns="columns" :data="song">
+				<template slot-scope="{ row }" slot="name">
+					<strong>
+					<router-link class="panel-word" :to="'/song/' + row.songid" :key="$route.path">{{ row.songname }}
+					<Icon type="logo-usd" v-show="row.free=='1'?false:true" 
+					style="color:rgb(255, 174, 0);font-size:18px" />
+					</router-link>
+					</strong>
+				</template>
+				<template slot-scope="{ row }" slot="menuBar">
+					<strong>
+						<songPanel :songid="row.songid" :type="1" class="panel" @toChoose="toChoose"></songPanel>
+					</strong>
+				</template>
+				<template slot-scope="{ row, index }" slot="singer">
+					<strong><a class="panel-word" v-text="singers[index] ? singers[index].singername: '暂无'" @click="singers[index] ? openSingerDetail(singers[index]) : ''"></a></strong>
+				</template>
+				<template slot-scope="{ row, index}" slot="album">
+					<strong><router-link class="panel-word" :to="'/album/' + row.albumid" :key="$route.path" v-text="albums[index] ? albums[index].albumname : '暂无'"></router-link></strong>
+				</template>
+				<template slot-scope="{ row }" slot="length">
+					<strong><span class="panel-word">{{ row.length }}</span></strong>
+				</template>
+			</Table>
+			<div class="demo-spin-col" slot="skeleton">
+				<Spin fix>
+						<Icon type="ios-loading" size=25 class="demo-spin-icon-load"></Icon>
+						<div>Loading</div>
+				</Spin>
+			</div>
+			</vue-lazy-component>
         </div>
-				<div class="detail-contain" >
-					<vue-lazy-component  :timeout="1000">
-					<Table stripe  :columns="columns" :data="song">
-							<template slot-scope="{ row }" slot="name">
-									<strong><router-link class="panel-word" :to="'/song/' + row.songid" :key="$route.path">{{ row.songname }}</router-link></strong>
-							</template>
-							<template slot-scope="{ row }" slot="menuBar">
-									<strong>
-											<songPanel :songid="row.songid" :type="1" class="panel" @toChoose="toChoose"></songPanel>
-									</strong>
-							</template>
-							<template slot-scope="{ row, index }" slot="singer">
-									<strong><a class="panel-word" v-text="singers[index] ? singers[index].singername: '暂无'"></a></strong>
-							</template>
-							<template slot-scope="{ row, index}" slot="album">
-									<strong><a class="panel-word" v-text="albums[index] ? albums[index].albumname : '暂无'"></a></strong>
-							</template>
-							<template slot-scope="{ row }" slot="length">
-									<strong><span class="panel-word">{{ row.length }}</span></strong>
-							</template>
-						</Table>
-						<div class="demo-spin-col" slot="skeleton">
-							<Spin fix>
-									<Icon type="ios-loading" size=25 class="demo-spin-icon-load"></Icon>
-									<div>Loading</div>
-							</Spin>
-						</div>
-						</vue-lazy-component>
-        	</div>
-					<songlist-choose :chooseList="chooseList" :songid="songid" :mySonglist="mySonglist"></songlist-choose>
+		<songlist-choose ref="chooser" :songid="songid" :mySonglist="mySonglist"></songlist-choose>
+		<singer-detail ref="singerDetail"></singer-detail>
     </div>
 </template>
 
@@ -61,13 +45,29 @@ import songPanel from '../panel/songPanel'
 import songlistChoose from '../panel/songlistChoose'
 import { setTimeout } from 'timers'
 import {showCreatedSongList, keepSong, createSonglist} from '@/request/song'
+import singerDetail from '@/components/detail/singerDetail'
 export default {
     components: {
-				'songPanel': songPanel,
-				'songlist-choose': songlistChoose
+		'songPanel': songPanel,
+		'songlist-choose': songlistChoose,
+		'singer-detail': singerDetail
     },
     props:['song'],
-    name: 'mylike-song',
+	name: 'mylike-song',
+	watch: {
+		song() {
+			this.albums = new Array(this.song.length)
+			this.singers = new Array(this.song.length)
+			let msg = {'albumid': [], 'songid': []};
+			for(let i=0; i<this.song.length; i++){
+				// msg.albumid.push(this.song[i].albumid)
+				// msg.songid.push(this.song[i].songid)
+				this.buildAlbum(this.song[i].albumid, i)
+				this.buildSinger(this.song[i].songid, i)
+				// this.buildMsg(msg)
+			}
+		}
+	},
     mounted () {
 			this.$Loading.start();
 			setTimeout(() => {
@@ -89,7 +89,7 @@ export default {
     },
     data () {
 			return {
-				chooseList: false,
+				singerDetail: false,
 				songid: '',
 				toEdit: false,
 				songlistName: '',
@@ -141,61 +141,64 @@ export default {
 			}
     },
     methods: {
-			toChoose(id) {
-				this.chooseList = true
-				this.songid = id
-				showCreatedSongList(sessionStorage.getItem('userid'), json => {
-					this.mySonglist = json
+		openSingerDetail(singer) {
+			this.$refs.singerDetail.open(singer)
+		},
+		toChoose(id) {
+			this.$refs.chooser.toShow()
+			this.songid = id
+			showCreatedSongList(sessionStorage.getItem('userid'), json => {
+				this.mySonglist = json
+			})
+		},
+		buildMsg(msg) {
+			AXIOS.post('/buildSong', msg)
+			.then(response => {
+				alert(response.data)
+				this.albums = response.data.albums
+				this.singers = response.data.singers
+				console.log(response.data)
+			})
+			.catch(error => {
+				console.log(error)
+			})
+		},
+		buildAlbum(albumid, i) {
+			this.getAlbum(albumid, (json) => {
+				this.$set(this.albums, i, json)
+			})
+		},
+		buildSinger(songid, i) {
+			this.getSinger(songid, (json) => {
+				this.$set(this.singers, i, json[0])
+			})
+		},
+		getAlbum(albumid, callback) {
+			AXIOS.get('/getAlbum?albumid=' + albumid)
+			.then(respond => {
+				callback(respond.data)
+			})
+			.catch(error => {
+				this.$Loading.error();
+				this.$Notice.error({
+						title: '获取专辑出错',
+						desc: error ? error : '未知错误'
 				})
-			},
-			buildMsg(msg) {
-				AXIOS.post('/buildSong', msg)
-				.then(response => {
-					alert(response.data)
-					this.albums = response.data.albums
-					this.singers = response.data.singers
-					console.log(response.data)
+			})
+		},
+		getSinger(songid, callback) {
+			AXIOS.get('/getSingerBySong?songid=' + songid)
+			.then(respond => {
+				callback(respond.data)
+			})
+			.catch(error => {
+				this.$Loading.error();
+				this.$Notice.error({
+						title: '获取歌曲出错',
+						desc: error ? error : '未知错误'
 				})
-				.catch(error => {
-					console.log(error)
-				})
-			},
-			buildAlbum(albumid, i) {
-				this.getAlbum(albumid, (json) => {
-					this.$set(this.albums, i, json)
-				})
-			},
-			buildSinger(songid, i) {
-				this.getSinger(songid, (json) => {
-					this.$set(this.singers, i, json[0])
-				})
-			},
-			getAlbum(albumid, callback) {
-				AXIOS.get('/getAlbum?albumid=' + albumid)
-				.then(respond => {
-					callback(respond.data)
-				})
-				.catch(error => {
-					this.$Loading.error();
-					this.$Notice.error({
-							title: '获取专辑出错',
-							desc: error ? error : '未知错误'
-					})
-				})
-			},
-			getSinger(songid, callback) {
-				AXIOS.get('/getSingerBySong?songid=' + songid)
-				.then(respond => {
-					callback(respond.data)
-				})
-				.catch(error => {
-					this.$Loading.error();
-					this.$Notice.error({
-							title: '获取歌曲出错',
-							desc: error ? error : '未知错误'
-					})
-				})
-			}
+			})
+		}
     }
 }
 </script>
@@ -261,7 +264,7 @@ a {
 }
 .panel {
     margin-right: 50px;
-		margin-bottom: 0;
+	margin-bottom: 0;
 }
 .panel-word {
     font-size: 14px;

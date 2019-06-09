@@ -1,10 +1,10 @@
 <template>
-  <nav :class=nav_class>
-		<a class="disc l1" @click="search">
+  <nav :class=nav_class @mouseleave="leave">
+		<a class="disc l1" @click="index">
 			<div id="disc1" class="">发现音乐</div>
 		</a>
 		<a class="disc l2" @click="search">
-			<div id="disc2" class="">搜素音乐</div>
+			<div id="disc2" class="">搜索音乐</div>
 		</a>
 		<a  class="disc l3" @click="home">
 			<div id="disc3" class="">个人主页</div>
@@ -12,7 +12,7 @@
 		<a class="disc l4" @click="exit">
 			<div id="disc4" class="">退出登录</div>
 		</a>
-		<a class="disc l5 toggle" @click="handle">
+		<a class="disc l5 toggle"  @mouseenter="handle">
 			{{menu}}
 		</a>
 	</nav>
@@ -31,9 +31,13 @@ export default {
 		}
 	},
 	methods: {
+		index() {
+			this.$router.push('/')
+		},
 		exit() {
+			sessionStorage.setItem('path', this.$router.history.current.fullPath)
 			this.$router.push('/login')
-			sessionStorage.clear()
+			sessionStorage.removeItem('userid')
 		},
 		search() {
 			this.$router.push('/search')
@@ -42,18 +46,24 @@ export default {
 			this.me = sessionStorage.getItem('userid')
 			if(this.me == null) {
 				this.$Message.error('您当前未登录')
+				//保存当前路由，登陆后跳回
+				let path = this.$router.history.current.fullPath
+				sessionStorage.setItem('path', path)
+				this.$router.push({path:'/login'})
+			} else {
+				this.$router.push({path:'/profile/' + this.me + '/mylike', key:this.me})
+				this.$router.go(0);
 			}
-			this.$router.push({path:'/profile/' + this.me + '/mylike', key:this.me})
-			this.$router.go(0);
 		},
 		handle() {
-			if(this.nav_class === 'top-right') {
-				this.nav_class = 'top-right open'
-				this.menu = '关闭'
-			} else {
-				this.nav_class = 'top-right'
-				this.menu = '菜单'
-			}
+			this.nav_class = 'top-right open'
+			this.menu = '关闭'
+				// this.nav_class = 'top-right'
+				// this.menu = '菜单'
+		},
+		leave() {
+			this.nav_class = 'top-right'
+			this.menu = '菜单'
 		}
 	}
 }
@@ -94,7 +104,7 @@ nav.open {
 nav.top-right {
 	top: -140px;
 	right: -140px;
-	z-index: 1000;
+	z-index: 901;
 }
 .disc {
 	position: absolute;
