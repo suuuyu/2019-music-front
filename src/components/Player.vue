@@ -181,18 +181,22 @@ import { setTimeout } from "timers";
 import { truncate } from "fs";
 import searchBtn from "../components/search/searchBtn";
 import { constants } from "crypto";
+import ls from '../util/ls'
 export default {
   data() {
     return {
       tempSong: null,
       isMax: true,
-      hasList: false,
-      musicList: [],
-      singerList: [],
-      currentMusicID: 0,
-      currentMusicIndex: -1,
-      currentSrc: "",
-      hasMusic: 1,
+      hasList: false,//+
+      musicList: [],//+
+      currentMusicID: 0,//+
+      currentMusicIndex: -1,//+
+      currentSrc: "",//+
+      hasMusic: 1,//+
+      lrcList: [],//+
+      playMode: 0,//+
+      randomList: [],//+
+      randomIndex: -1,//+
       player: NaN,
       playPause: NaN,
       volumeBtn: NaN,
@@ -201,8 +205,6 @@ export default {
       speaker: NaN,
       currentlyDragged: null,
       draggableClasses: ["pin"],
-      lrcList: [],
-      playMode: 0,
       playModeSrc: [
         "oneByOne.png",
         "oneByOneH.png",
@@ -212,8 +214,6 @@ export default {
         "onlyOneH.png"
       ],
       cancel: null,
-      randomList: [],
-      randomIndex: -1
     };
   },
   //props:['musicList'],
@@ -233,6 +233,18 @@ export default {
     this.speaker = this.$refs.speaker;
     window["rewind"] = this.rewind;
     window["changeVolume"] = this.changeVolume;
+    if(ls.getItem("musicList")!=null){
+      this.hasList=ls.getItem("hasList")
+      this.musicList=ls.getItem("musicList")
+      this.currentMusicID=ls.getItem("currentMusicID")
+      this.currentMusicIndex=ls.getItem("currentMusicIndex")
+      this.currentSrc=ls.getItem("currentSrc")
+      this.hasMusic=ls.getItem("hasMusic")
+      this.lrcList=ls.getItem("lrcList")
+      this.playMode=ls.getItem("playMode")
+      this.randomList=ls.getItem("randomList")
+      this.randomIndex=ls.getItem("randomIndex")
+    }
     //this.musicList=this.$route.query.musicList
     if (this.musicList.length > 0) {
       this.changeMusic(0);
@@ -242,6 +254,7 @@ export default {
     }
     this.changeMini();
     //this.changeMini();
+    window.onbeforeunload=this.addToSession 
   },
   watch: {
     musicList(newVal, oldVal) {
@@ -377,6 +390,18 @@ export default {
       } else {
         this.$Message.info("出问题了");
       }
+    },
+    addToSession() {
+      ls.setItem("hasList",this.hasList)
+      ls.setItem("musicList",this.musicList)
+      ls.setItem("currentMusicID",this.currentMusicID)
+      ls.setItem("currentMusicIndex",this.currentMusicIndex)
+      ls.setItem("currentSrc",this.currentSrc)
+      ls.setItem("hasMusic",this.hasMusic)
+      ls.setItem("lrcList",this.lrcList)
+      ls.setItem("playMode",this.playMode)
+      ls.setItem("randomList",this.randomList)
+      ls.setItem("randomIndex",this.randomIndex)
     },
     addMusic(arr) {
       if (this.musicList.length == 0) {
