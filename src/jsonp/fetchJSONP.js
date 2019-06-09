@@ -52,7 +52,7 @@ function fetchJsonp (_url, params = {}, options = {}) {
 function fetchSingers (singers, index = 0) {
   fetchJsonp('https://c.y.qq.com/soso/fcgi-bin/client_search_cp?aggr=1&cr=1&flag_qc=0&p=1&n=1&w=' + singers[index].name)
     .then(data => {
-      let singerMid = data.data.song.list[0].grp[0].singer[0].mid
+      let singerMid = data.data.song.list[0].singer[0].mid
       console.log(singers[index].name + ' ' + singerMid)
       singers[index].img = 'https://y.gtimg.cn/music/photo_new/T001R300x300M000' + singerMid + '.jpg?max_age=2592000'
       singers[index].singerimage = 'https://y.gtimg.cn/music/photo_new/T001R300x300M000' + singerMid + '.jpg?max_age=2592000'

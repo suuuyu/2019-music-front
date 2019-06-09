@@ -97,12 +97,13 @@ export default {
 				this.mySonglist = json
 			})
 		},
-        open(singer) {
-            this.singer = singer
-            console.log(singer)
-            this.singer.name = this.singer.singername
-            fetchSingers([this.singer])
-            getSingerDetail(this.singer.singerid, this.userid, json => {
+        open(singerID) {
+            console.log(singerID)
+            getSingerDetail(singerID, this.userid, json => {
+                this.singer = json.singer
+                console.log(this.singer)
+                this.singer.name = this.singer.singername
+                fetchSingers([this.singer])
                 this.songs = json.songs
                 this.songNum = json.songNum
                 this.albumNum = json.albumNum
