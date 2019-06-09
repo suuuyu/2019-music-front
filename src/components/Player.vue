@@ -276,8 +276,9 @@ export default {
               this.changeMusic(
                 this.musicList.indexOf(this.randomList[this.randomIndex])
               );
-              if(this.currentMusicIndex>-1)//防止传-1过去
-              this.$refs.songList.musicGo(this.currentMusicIndex);
+              if (this.currentMusicIndex > -1)
+                //防止传-1过去
+                this.$refs.songList.musicGo(this.currentMusicIndex);
               return;
             }
             //让下一首播放
@@ -514,16 +515,17 @@ export default {
       }
     },
     changeMusic(index) {
-      if(index==-1)
-      index=0
+      if (index == -1) index = 0;
       var _this = this;
       if (this.cancel) {
         this.cancel();
       }
       let CancelToken = $axios.CancelToken;
       _this.currentMusicIndex = index;
-      if(this.playMode==2||this.playMode==3){
-        this.randomIndex=this.randomList.indexOf(this.musicList[this.currentMusicIndex])
+      if (this.playMode == 2 || this.playMode == 3) {
+        this.randomIndex = this.randomList.indexOf(
+          this.musicList[this.currentMusicIndex]
+        );
       }
       if (
         index < _this.musicList.length &&
@@ -543,6 +545,7 @@ export default {
           .then(function(response) {
             var id = response.data.data[0].MP3RID;
             _this.player.src =
+              "http://111.230.63.192:3000/musicwebsite?base=" +
               "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
               id.slice(4, id.length);
             _this.currentMusicID = id.slice(4, id.length);
