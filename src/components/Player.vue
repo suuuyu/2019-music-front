@@ -218,6 +218,9 @@ export default {
   },
   //props:['musicList'],
   created() {},
+  beforeDestroy() {
+    this.addToSession();
+  },
   components: {
     songlist,
     "search-btn": searchBtn
@@ -242,7 +245,7 @@ export default {
       this.hasMusic = ls.getItem("hasMusic");
       this.lrcList = ls.getItem("lrcList");
       this.playMode = ls.getItem("playMode");
-      this.randomList=this.shuffer(this.musicList)
+      this.randomList = this.shuffer(this.musicList);
     }
     //this.musicList=this.$route.query.musicList
     if (this.musicList.length > 0 && this.currentMusicIndex > -1) {
@@ -257,98 +260,101 @@ export default {
   },
   watch: {
     musicList(newVal, oldVal) {
-        if ((this.playMode == 2 || this.playMode == 3)&&this.musicList.length!=this.randomList.length) {
-          if (newVal.length > oldVal.length) {
-            //新增操作
-            var newArr;
-            if (this.randomIndex + 1 < this.randomList.length) {
-              newArr = newVal
-                .concat(oldVal)
-                .filter(v => newVal.includes(v) && !oldVal.includes(v))
-                .concat(
-                  this.randomList.slice(
-                    this.randomIndex + 1,
-                    this.randomList.length
-                  )
-                );
-              this.randomList.splice(this.randomIndex + 1);
-            } else
-              newArr = newVal
-                .concat(oldVal)
-                .filter(v => newVal.includes(v) && !oldVal.includes(v));
-            this.randomList = this.randomList.concat(this.shuffer(newArr));
-            for (var i in this.randomList) console.log(this.randomList[i].name);
-          } else {
-            //随机列表移除操作
-            var removedSong = oldVal
-              .concat(newVal)
-              .filter(v => oldVal.includes(v) && !newVal.includes(v))[0];
-            var removedIndex = this.randomList.indexOf(removedSong);
-            //从随机列表中移除
-            this.randomList = this.randomList
-              .concat([removedSong])
-              .filter(
-                v => this.randomList.includes(v) && ![removedSong].includes(v)
+      if (
+        (this.playMode == 2 || this.playMode == 3) &&
+        this.musicList.length != this.randomList.length
+      ) {
+        if (newVal.length > oldVal.length) {
+          //新增操作
+          var newArr;
+          if (this.randomIndex + 1 < this.randomList.length) {
+            newArr = newVal
+              .concat(oldVal)
+              .filter(v => newVal.includes(v) && !oldVal.includes(v))
+              .concat(
+                this.randomList.slice(
+                  this.randomIndex + 1,
+                  this.randomList.length
+                )
               );
-            if (this.currentMusicIndex == oldVal.indexOf(removedSong)) {
-              if (this.randomIndex == this.randomList.length) {
-                //如果恰好是随机列表最后一首
-                this.randomIndex = 0;
-                this.changeMusic(
-                  this.musicList.indexOf(this.randomList[this.randomIndex])
-                );
-                if (this.currentMusicIndex > -1)
-                  //防止传-1过去
-                  this.$refs.songList.musicGo(this.currentMusicIndex);
-                return;
-              }
-              //让下一首播放
-              if (this.musicList.length != 0) {
-                this.changeMusic(
-                  this.musicList.indexOf(this.randomList[this.randomIndex])
-                );
-                this.$refs.songList.musicGo(this.currentMusicIndex);
-              } else {
-                this.playNext();
-              }
-            } else if (this.randomIndex > removedIndex) {
-              this.randomIndex -= 1;
-              if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
-                this.$refs.songList.flag = 1; //不许watch函数触发
-                this.currentMusicIndex -= 1;
-              }
-            } else if (this.randomIndex < removedIndex) {
-              if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
-                this.$refs.songList.flag = 1; //不许watch函数触发
-                this.currentMusicIndex -= 1;
-              }
-            }
-          }
+            this.randomList.splice(this.randomIndex + 1);
+          } else
+            newArr = newVal
+              .concat(oldVal)
+              .filter(v => newVal.includes(v) && !oldVal.includes(v));
+          this.randomList = this.randomList.concat(this.shuffer(newArr));
+          for (var i in this.randomList) console.log(this.randomList[i].name);
         } else {
-          //顺序列表移除操作
-          if (newVal.length < oldVal.length) {
-            var removedSong = oldVal
-              .concat(newVal)
-              .filter(v => oldVal.includes(v) && !newVal.includes(v))[0];
-            if (this.currentMusicIndex == oldVal.indexOf(removedSong)) {
-              if (this.currentMusicIndex == this.musicList.length) {
-                //如果恰好是顺序列表最后一首
-                this.changeMusic(0);
-                return;
-              }
-              //让下一首播放
-              if (this.musicList.length != 0) {
-                this.changeMusic(this.currentMusicIndex);
+          //随机列表移除操作
+          var removedSong = oldVal
+            .concat(newVal)
+            .filter(v => oldVal.includes(v) && !newVal.includes(v))[0];
+          var removedIndex = this.randomList.indexOf(removedSong);
+          //从随机列表中移除
+          this.randomList = this.randomList
+            .concat([removedSong])
+            .filter(
+              v => this.randomList.includes(v) && ![removedSong].includes(v)
+            );
+          if (this.currentMusicIndex == oldVal.indexOf(removedSong)) {
+            if (this.randomIndex == this.randomList.length) {
+              //如果恰好是随机列表最后一首
+              this.randomIndex = 0;
+              this.changeMusic(
+                this.musicList.indexOf(this.randomList[this.randomIndex])
+              );
+              if (this.currentMusicIndex > -1)
+                //防止传-1过去
                 this.$refs.songList.musicGo(this.currentMusicIndex);
-              } else {
-                this.playNext();
-              }
-            } else if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
+              return;
+            }
+            //让下一首播放
+            if (this.musicList.length != 0) {
+              this.changeMusic(
+                this.musicList.indexOf(this.randomList[this.randomIndex])
+              );
+              this.$refs.songList.musicGo(this.currentMusicIndex);
+            } else {
+              this.playNext();
+            }
+          } else if (this.randomIndex > removedIndex) {
+            this.randomIndex -= 1;
+            if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
+              this.$refs.songList.flag = 1; //不许watch函数触发
+              this.currentMusicIndex -= 1;
+            }
+          } else if (this.randomIndex < removedIndex) {
+            if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
               this.$refs.songList.flag = 1; //不许watch函数触发
               this.currentMusicIndex -= 1;
             }
           }
         }
+      } else {
+        //顺序列表移除操作
+        if (newVal.length < oldVal.length) {
+          var removedSong = oldVal
+            .concat(newVal)
+            .filter(v => oldVal.includes(v) && !newVal.includes(v))[0];
+          if (this.currentMusicIndex == oldVal.indexOf(removedSong)) {
+            if (this.currentMusicIndex == this.musicList.length) {
+              //如果恰好是顺序列表最后一首
+              this.changeMusic(0);
+              return;
+            }
+            //让下一首播放
+            if (this.musicList.length != 0) {
+              this.changeMusic(this.currentMusicIndex);
+              this.$refs.songList.musicGo(this.currentMusicIndex);
+            } else {
+              this.playNext();
+            }
+          } else if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
+            this.$refs.songList.flag = 1; //不许watch函数触发
+            this.currentMusicIndex -= 1;
+          }
+        }
+      }
     }
   },
   methods: {
