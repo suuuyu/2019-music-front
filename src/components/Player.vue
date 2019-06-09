@@ -608,6 +608,7 @@ export default {
         _this.musicList[index].id > 0
       ) {
         _this.player.src =
+          "http://111.230.63.192:3000/musicwebsite?base=" +
           "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
           _this.musicList[index].id;
         _this.currentMusicID = _this.musicList[index].id;

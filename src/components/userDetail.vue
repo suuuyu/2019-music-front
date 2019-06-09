@@ -176,8 +176,8 @@ export default {
 				})
 				.catch(error => {
 					this.$Notice.error({
-							title: '获取个人信息出错',
-							desc: error ? error : '未知错误'
+						title: '获取个人信息出错',
+						desc: error ? error : '未知错误'
 					})
 				})
 			},
