@@ -391,10 +391,12 @@ export default {
         this.isMax = false;
         this.$refs.main.style =
           "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:999;";
+        this.$refs.audioPlayer.style.bottom="4vh"
       } else {
         this.isMax = true;
         this.$refs.main.style =
           "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:999;";
+        this.$refs.audioPlayer.style.bottom="14vh"
       }
     },
     loadMusic() {
@@ -984,8 +986,9 @@ li {
 }
 .bg {
   position: relative;
+  top:-10vh;
   left: -5.8vw;
-  height: 100vh;
+  height: 110vh;
   width: 130%;
 }
 .miniBg {
