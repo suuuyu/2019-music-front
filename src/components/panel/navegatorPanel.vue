@@ -10,7 +10,7 @@
 			<div id="disc3" class="">个人主页</div>
 		</a>
 		<a class="disc l4" @click="exit">
-			<div id="disc4" class="">退出登录</div>
+			<div id="disc4" class="">{{me?'退出登录':'去登录'}}</div>
 		</a>
 		<a class="disc l5 toggle"  @mouseenter="handle">
 			{{menu}}
@@ -27,7 +27,7 @@ export default {
 		return {
 			nav_class: 'top-right',
 			menu: '菜单',
-			me: null
+			me: sessionStorage.getItem('userid')
 		}
 	},
 	methods: {

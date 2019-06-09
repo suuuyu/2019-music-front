@@ -50,21 +50,31 @@ function fetchJsonp (_url, params = {}, options = {}) {
 }
 
 function fetchSingers (singers, index = 0) {
-  fetchJsonp('https://c.y.qq.com/soso/fcgi-bin/client_search_cp?aggr=1&cr=1&flag_qc=0&p=1&n=1&w=' + singers[index].name)
-    .then(data => {
-      let singerMid = data.data.song.list[0].singer[0].mid
-      console.log(singers[index].name + ' ' + singerMid)
-      singers[index].img = 'https://y.gtimg.cn/music/photo_new/T001R300x300M000' + singerMid + '.jpg?max_age=2592000'
-      singers[index].singerimage = 'https://y.gtimg.cn/music/photo_new/T001R300x300M000' + singerMid + '.jpg?max_age=2592000'
-      index++
-      console.log(index)
-      if (index < singers.length) {
-        fetchSingers(singers, index)
-      }
-    })
-    .catch(error => {
-      console.error(error || '未知错误')
-    })
+  let img = singers[index].singerimage || singers[index].img
+  if (img) {
+    singers[index].singerimage = img
+    singers[index].img = singers[index].singerimage
+    index++
+    if (index < singers.length) {
+      fetchSingers(singers, index)
+    }
+  } else {
+    fetchJsonp('https://c.y.qq.com/soso/fcgi-bin/client_search_cp?aggr=1&cr=1&flag_qc=0&p=1&n=1&w=' + singers[index].name)
+      .then(data => {
+        let singerMid = data.data.song.list[0].singer[0].mid
+        console.log(singers[index].name + ' ' + singerMid)
+        singers[index].img = 'https://y.gtimg.cn/music/photo_new/T001R300x300M000' + singerMid + '.jpg?max_age=2592000'
+        singers[index].singerimage = 'https://y.gtimg.cn/music/photo_new/T001R300x300M000' + singerMid + '.jpg?max_age=2592000'
+        index++
+        console.error(singers[index].name + '没有头像，已自动补齐')
+        if (index < singers.length) {
+          fetchSingers(singers, index)
+        }
+      })
+      .catch(error => {
+        console.error(error || '未知错误')
+      })
+  }
 }
 
 function fetchAlbums (albums, index = 0) {

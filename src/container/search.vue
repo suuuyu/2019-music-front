@@ -56,7 +56,7 @@
                                 <h4 class="search_result__tit"><Icon type="md-musical-notes" size="18" class="search_result__tit_icon" />单曲</h4>
                                 <ul class="search_result__list">
                                     <li :key="index" v-for="(item,index) in searchSong">
-                                        <a class="search_result__link">
+                                        <a class="search_result__link" @click="switchTab(0)">
                                             <span class="search_result__name" v-html="item.songname"></span>
                                             <!-- -<span class="search_result__singer">{{item.singerName}}</span> -->
                                         </a>
@@ -67,9 +67,8 @@
                             <div class="search_result__sort">
                                 <h4 class="search_result__tit"><Icon type="ios-contact" size="18" class="search_result__tit_icon"/>歌手</h4>
                                 <ul class="search_result__list">
-
                                     <li :key="index" v-for="(item,index) in searchSinger">
-                                        <a class="search_result__link">
+                                        <a class="search_result__link" @click="switchTab(3)">
                                             <span class="search_result__name" v-html="item.singername"></span>
                                         </a>
                                     </li>
@@ -80,9 +79,8 @@
                             <div class="search_result__sort">
                                 <h4 class="search_result__tit"><Icon type="ios-albums" size="18" class="search_result__tit_icon"/>专辑</h4>
                                 <ul class="search_result__list">
-
                                     <li :key="index" v-for="(item,index) in searchAlbum">
-                                        <a class="search_result__link">
+                                        <a class="search_result__link" @click="switchTab(1)">
                                             <span class="search_result__name" v-html="item.albumname"></span>
                                         </a>
                                     </li>		
@@ -159,6 +157,7 @@ export default {
                 showTips: false,
                 showLoading: false,
                 btnShow: false,
+                canSearch: true,
 			}
         },
     components: {
@@ -211,19 +210,24 @@ export default {
             console.log(msg)
         },
         inputFun(e){
-            if(e.target.value == ""){
-                this.showHis = true
-                this.showRes = false
-                return
-            }
-            else{
+            if (this.canSearch) {
+                if(e.target.value == ""){
+                    this.showHis = true
+                    this.showRes = false
+                    return
+                }
+                this.canSearch = false
+                console.log(e.target.value)
+                this.getSongs(e.target.value)
+                this.getAlbums(e.target.value)
+                this.getSingers(e.target.value)
                 this.showHis = false
                 this.showRes = true
+                setTimeout(() => {
+                    this.canSearch = true
+                }, 100);
             }
-            // console.log(e.target.value)
-            this.getSongs(e.target.value)
-            this.getAlbums(e.target.value)
-            this.getSingers(e.target.value)
+            
         },
         switchTab(index){
             this.selectedTab = index;

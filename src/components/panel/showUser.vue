@@ -47,7 +47,9 @@ export default {
   props: ['type', 'user'],
   name: 'showUser',
   mounted() {
+    setTimeout(() => {
     this.refetch()
+     }, 500)
   },
   data() {
     return {
@@ -64,25 +66,23 @@ export default {
   },
   methods: {
     refetch() {
-      setTimeout(() => {
-        this.thisUser = []
-        this.user.forEach((u, index, input) => {
-          let idType = this.type == 1? 'userid':'singerid'
-          let nameType = this.type == 1? 'username':'singername'
-          let img = this.type == 1? 'userimage':'singerimage'
-          this.thisUser.push({
-            id: u[idType],
-            name: u[nameType],
-            img: u[img]
-          })
-          this.isFollow(this.me, u[idType])
-          this.loading.push(false)
+      this.thisUser = []
+      this.user.forEach((u, index, input) => {
+        let idType = this.type == 1? 'userid':'singerid'
+        let nameType = this.type == 1? 'username':'singername'
+        let img = this.type == 1? 'userimage':'singerimage'
+        this.thisUser.push({
+          id: u[idType],
+          name: u[nameType],
+          img: u[img]
         })
-        if(this.type != 1) {
-          //调用api请求歌手图片
-          fetchSingers(this.thisUser)
-        }
-      }, 500)
+        this.isFollow(this.me, u[idType])
+        this.loading.push(false)
+      })
+      if(this.type != 1 && this.thisUser.length != 0) {
+        //调用api请求歌手图片
+        fetchSingers(this.thisUser)
+      }
     },
     openSingerDetail(singer) {
 			this.$refs.singerDetail.open(singer)
