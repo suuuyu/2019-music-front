@@ -172,7 +172,11 @@ export default {
 			}else{
 			AXIOS.get('/isSongBought',{params:{songid:this.song.id,albumid:this.song.albumid,userid:sessionStorage.getItem("userid")}})
 			.then((response)=>{
+				if(response.data=='2'){
+					this.bought=true
+				}else{
 				this.bought= response.data=='1'?true:false
+				}
 			})
 			}
 		},

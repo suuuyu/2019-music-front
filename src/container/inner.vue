@@ -44,16 +44,28 @@ export default {
     addSong(songid) {
       getSong(songid, (json) => {
         this.isBought(json, isBought => {
-          if (isBought == 1) {
+          if (isBought == 1||isBought == 2) {
             console.log(json.songname)
+            let mes= isBought == 1?'您已购买过此歌曲':'您是VIP会员，可以无限畅听'
             this.$refs.player.addMusic({
               id: -1,
               name: json.songname
             })
             this.$Notice.success({
-              title: '歌曲成功添加到播放列表'
+              title: '歌曲成功添加到播放列表',
+              desc:mes
             })
-          } else {
+          }else if(isBought=='3'){
+            this.$refs.player.addMusic({
+              id: -1,
+              name: json.songname
+            })
+            this.$Notice.success({
+              title: '歌曲成功添加到播放列表',
+              desc:'免费歌曲'
+            })
+          } 
+          else {
             this.$Notice.error({
                 title: '播放失败',
                 desc: `歌曲 ${json.songname}为付费歌曲，您当前不是会员或未付费购买，暂无法播放，已自动跳过`
@@ -88,13 +100,12 @@ export default {
     },
     isBought(song, callback){
 			if(song.free=='1'){
-        callback(true)
+        callback('3')
 				return
 			} else {
         AXIOS.get('/isSongBought',{params:{songid: song.songid, albumid: song.albumid, userid:sessionStorage.getItem("userid")}})
         .then((response)=>{
-          const result =  response.data=='1' ? true : false
-          callback(result)
+          callback(response.data)
         })
         .catch(error => {
           this.$Notice.error({

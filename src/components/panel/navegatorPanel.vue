@@ -4,7 +4,7 @@
 			<div id="disc1" class="">发现音乐</div>
 		</a>
 		<a class="disc l2" @click="search">
-			<div id="disc2" class="">搜素音乐</div>
+			<div id="disc2" class="">搜索音乐</div>
 		</a>
 		<a  class="disc l3" @click="home">
 			<div id="disc3" class="">个人主页</div>
