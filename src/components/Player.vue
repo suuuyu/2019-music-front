@@ -1,7 +1,7 @@
 <template>
   <div
     ref="main"
-    style="position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:1099;"
+    style="position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:999;"
   >
     <div style="position:absolute;">
       <search-btn style="z-index:10;"></search-btn>
@@ -365,7 +365,10 @@ export default {
           }
         )
           .then(response => {
-            console.log(response);
+            if(response.data!=-1)
+            this.$Message.info("添加成功,新增"+response.data+"条记录");
+            else
+            this.$Message.info("不要重复添加嗷");
             }
           )
           .catch(error => {
@@ -387,11 +390,11 @@ export default {
       if (this.isMax) {
         this.isMax = false;
         this.$refs.main.style =
-          "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:1099;";
+          "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:999;";
       } else {
         this.isMax = true;
         this.$refs.main.style =
-          "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:1099;";
+          "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:999;";
       }
     },
     loadMusic() {
