@@ -181,22 +181,22 @@ import { setTimeout } from "timers";
 import { truncate } from "fs";
 import searchBtn from "../components/search/searchBtn";
 import { constants } from "crypto";
-import ls from '../util/ls'
+import ls from "../util/ls";
 export default {
   data() {
     return {
       tempSong: null,
       isMax: true,
-      hasList: false,//+
-      musicList: [],//+
-      currentMusicID: 0,//+
-      currentMusicIndex: -1,//+
-      currentSrc: "",//+
-      hasMusic: 1,//+
-      lrcList: [],//+
-      playMode: 0,//+
-      randomList: [],//+
-      randomIndex: -1,//+
+      hasList: false, //+
+      musicList: [], //+
+      currentMusicID: 0, //+
+      currentMusicIndex: -1, //+
+      currentSrc: "", //+
+      hasMusic: 1, //+
+      lrcList: [], //+
+      playMode: 0, //+
+      randomList: [], //+
+      randomIndex: -1, //+
       player: NaN,
       playPause: NaN,
       volumeBtn: NaN,
@@ -213,7 +213,7 @@ export default {
         "onlyOne.png",
         "onlyOneH.png"
       ],
-      cancel: null,
+      cancel: null
     };
   },
   //props:['musicList'],
@@ -233,123 +233,122 @@ export default {
     this.speaker = this.$refs.speaker;
     window["rewind"] = this.rewind;
     window["changeVolume"] = this.changeVolume;
-    if(ls.getItem("musicList")!=null){
-      this.hasList=ls.getItem("hasList")
-      this.musicList=ls.getItem("musicList")
-      this.currentMusicID=ls.getItem("currentMusicID")
-      this.currentMusicIndex=ls.getItem("currentMusicIndex")
-      this.currentSrc=ls.getItem("currentSrc")
-      this.hasMusic=ls.getItem("hasMusic")
-      this.lrcList=ls.getItem("lrcList")
-      this.playMode=ls.getItem("playMode")
-      this.randomList=ls.getItem("randomList")
-      this.randomIndex=ls.getItem("randomIndex")
+    if (ls.getItem("musicList") != null) {
+      this.hasList = ls.getItem("hasList");
+      this.musicList = ls.getItem("musicList");
+      this.currentMusicID = ls.getItem("currentMusicID");
+      this.currentMusicIndex = ls.getItem("currentMusicIndex");
+      this.currentSrc = ls.getItem("currentSrc");
+      this.hasMusic = ls.getItem("hasMusic");
+      this.lrcList = ls.getItem("lrcList");
+      this.playMode = ls.getItem("playMode");
+      this.randomList=this.shuffer(this.musicList)
     }
     //this.musicList=this.$route.query.musicList
-    if (this.musicList.length > 0) {
-      this.changeMusic(0);
+    if (this.musicList.length > 0 && this.currentMusicIndex > -1) {
+      this.changeMusic(this.currentMusicIndex);
     } else {
       this.$refs.bg.src = "logo.png";
       this.$refs.miniBg.src = "logo.png";
     }
     this.changeMini();
     //this.changeMini();
-    window.onbeforeunload=this.addToSession 
+    window.onbeforeunload = this.addToSession;
   },
   watch: {
     musicList(newVal, oldVal) {
-      if (this.playMode == 2 || this.playMode == 3) {
-        if (newVal.length > oldVal.length) {
-          //新增操作
-          var newArr;
-          if (this.randomIndex + 1 < this.randomList.length) {
-            newArr = newVal
-              .concat(oldVal)
-              .filter(v => newVal.includes(v) && !oldVal.includes(v))
-              .concat(
-                this.randomList.slice(
-                  this.randomIndex + 1,
-                  this.randomList.length
-                )
+        if ((this.playMode == 2 || this.playMode == 3)&&this.musicList.length!=this.randomList.length) {
+          if (newVal.length > oldVal.length) {
+            //新增操作
+            var newArr;
+            if (this.randomIndex + 1 < this.randomList.length) {
+              newArr = newVal
+                .concat(oldVal)
+                .filter(v => newVal.includes(v) && !oldVal.includes(v))
+                .concat(
+                  this.randomList.slice(
+                    this.randomIndex + 1,
+                    this.randomList.length
+                  )
+                );
+              this.randomList.splice(this.randomIndex + 1);
+            } else
+              newArr = newVal
+                .concat(oldVal)
+                .filter(v => newVal.includes(v) && !oldVal.includes(v));
+            this.randomList = this.randomList.concat(this.shuffer(newArr));
+            for (var i in this.randomList) console.log(this.randomList[i].name);
+          } else {
+            //随机列表移除操作
+            var removedSong = oldVal
+              .concat(newVal)
+              .filter(v => oldVal.includes(v) && !newVal.includes(v))[0];
+            var removedIndex = this.randomList.indexOf(removedSong);
+            //从随机列表中移除
+            this.randomList = this.randomList
+              .concat([removedSong])
+              .filter(
+                v => this.randomList.includes(v) && ![removedSong].includes(v)
               );
-            this.randomList.splice(this.randomIndex + 1);
-          } else
-            newArr = newVal
-              .concat(oldVal)
-              .filter(v => newVal.includes(v) && !oldVal.includes(v));
-          this.randomList = this.randomList.concat(this.shuffer(newArr));
-          for (var i in this.randomList) console.log(this.randomList[i].name);
-        } else {
-          //随机列表移除操作
-          var removedSong = oldVal
-            .concat(newVal)
-            .filter(v => oldVal.includes(v) && !newVal.includes(v))[0];
-          var removedIndex = this.randomList.indexOf(removedSong);
-          //从随机列表中移除
-          this.randomList = this.randomList
-            .concat([removedSong])
-            .filter(
-              v => this.randomList.includes(v) && ![removedSong].includes(v)
-            );
-          if (this.currentMusicIndex == oldVal.indexOf(removedSong)) {
-            if (this.randomIndex == this.randomList.length) {
-              //如果恰好是随机列表最后一首
-              this.randomIndex = 0;
-              this.changeMusic(
-                this.musicList.indexOf(this.randomList[this.randomIndex])
-              );
-              if (this.currentMusicIndex > -1)
-                //防止传-1过去
+            if (this.currentMusicIndex == oldVal.indexOf(removedSong)) {
+              if (this.randomIndex == this.randomList.length) {
+                //如果恰好是随机列表最后一首
+                this.randomIndex = 0;
+                this.changeMusic(
+                  this.musicList.indexOf(this.randomList[this.randomIndex])
+                );
+                if (this.currentMusicIndex > -1)
+                  //防止传-1过去
+                  this.$refs.songList.musicGo(this.currentMusicIndex);
+                return;
+              }
+              //让下一首播放
+              if (this.musicList.length != 0) {
+                this.changeMusic(
+                  this.musicList.indexOf(this.randomList[this.randomIndex])
+                );
                 this.$refs.songList.musicGo(this.currentMusicIndex);
-              return;
+              } else {
+                this.playNext();
+              }
+            } else if (this.randomIndex > removedIndex) {
+              this.randomIndex -= 1;
+              if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
+                this.$refs.songList.flag = 1; //不许watch函数触发
+                this.currentMusicIndex -= 1;
+              }
+            } else if (this.randomIndex < removedIndex) {
+              if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
+                this.$refs.songList.flag = 1; //不许watch函数触发
+                this.currentMusicIndex -= 1;
+              }
             }
-            //让下一首播放
-            if (this.musicList.length != 0) {
-              this.changeMusic(
-                this.musicList.indexOf(this.randomList[this.randomIndex])
-              );
-              this.$refs.songList.musicGo(this.currentMusicIndex);
-            } else {
-              this.playNext();
-            }
-          } else if (this.randomIndex > removedIndex) {
-            this.randomIndex -= 1;
-            if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
-              this.$refs.songList.flag = 1; //不许watch函数触发
-              this.currentMusicIndex -= 1;
-            }
-          } else if (this.randomIndex < removedIndex) {
-            if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
+          }
+        } else {
+          //顺序列表移除操作
+          if (newVal.length < oldVal.length) {
+            var removedSong = oldVal
+              .concat(newVal)
+              .filter(v => oldVal.includes(v) && !newVal.includes(v))[0];
+            if (this.currentMusicIndex == oldVal.indexOf(removedSong)) {
+              if (this.currentMusicIndex == this.musicList.length) {
+                //如果恰好是顺序列表最后一首
+                this.changeMusic(0);
+                return;
+              }
+              //让下一首播放
+              if (this.musicList.length != 0) {
+                this.changeMusic(this.currentMusicIndex);
+                this.$refs.songList.musicGo(this.currentMusicIndex);
+              } else {
+                this.playNext();
+              }
+            } else if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
               this.$refs.songList.flag = 1; //不许watch函数触发
               this.currentMusicIndex -= 1;
             }
           }
         }
-      } else {
-        //顺序列表移除操作
-        if (newVal.length < oldVal.length) {
-          var removedSong = oldVal
-            .concat(newVal)
-            .filter(v => oldVal.includes(v) && !newVal.includes(v))[0];
-          if (this.currentMusicIndex == oldVal.indexOf(removedSong)) {
-            if (this.currentMusicIndex == this.musicList.length) {
-              //如果恰好是顺序列表最后一首
-              this.changeMusic(0);
-              return;
-            }
-            //让下一首播放
-            if (this.musicList.length != 0) {
-              this.changeMusic(this.currentMusicIndex);
-              this.$refs.songList.musicGo(this.currentMusicIndex);
-            } else {
-              this.playNext();
-            }
-          } else if (this.currentMusicIndex > oldVal.indexOf(removedSong)) {
-            this.$refs.songList.flag = 1; //不许watch函数触发
-            this.currentMusicIndex -= 1;
-          }
-        }
-      }
     }
   },
   methods: {
@@ -358,18 +357,22 @@ export default {
         AXIOS.post(
           "/addSearchSong",
           this.$qs.stringify({
-            "songID":this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
-            "path":
+            songID: this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
+            path:
               "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
               this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
-            "name": this.tempSong.SONGNAME,
-            "image": "https://v1.itooi.cn/kuwo/pic?id="+this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
-            "length": this.tempSong.DURATION,
-            "albumID":this.tempSong.ALBUMID,
-            "albumName":this.tempSong.ALBUM,
-            "singer": this.tempSong.ARTIST,
-            "lrc":"https://v1.itooi.cn/kuwo/lrc?id="+this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
-            "singerID":this.tempSong.ARTISTID
+            name: this.tempSong.SONGNAME,
+            image:
+              "https://v1.itooi.cn/kuwo/pic?id=" +
+              this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
+            length: this.tempSong.DURATION,
+            albumID: this.tempSong.ALBUMID,
+            albumName: this.tempSong.ALBUM,
+            singer: this.tempSong.ARTIST,
+            lrc:
+              "https://v1.itooi.cn/kuwo/lrc?id=" +
+              this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
+            singerID: this.tempSong.ARTISTID
           }),
           {
             headers: {
@@ -378,12 +381,10 @@ export default {
           }
         )
           .then(response => {
-            if(response.data!=-1)
-            this.$Message.info("添加成功,新增"+response.data+"条记录");
-            else
-            this.$Message.info("不要重复添加嗷");
-            }
-          )
+            if (response.data != -1)
+              this.$Message.info("添加成功,新增" + response.data + "条记录");
+            else this.$Message.info("不要重复添加嗷");
+          })
           .catch(error => {
             console.log(error);
           });
@@ -392,16 +393,14 @@ export default {
       }
     },
     addToSession() {
-      ls.setItem("hasList",this.hasList)
-      ls.setItem("musicList",this.musicList)
-      ls.setItem("currentMusicID",this.currentMusicID)
-      ls.setItem("currentMusicIndex",this.currentMusicIndex)
-      ls.setItem("currentSrc",this.currentSrc)
-      ls.setItem("hasMusic",this.hasMusic)
-      ls.setItem("lrcList",this.lrcList)
-      ls.setItem("playMode",this.playMode)
-      ls.setItem("randomList",this.randomList)
-      ls.setItem("randomIndex",this.randomIndex)
+      ls.setItem("hasList", this.hasList);
+      ls.setItem("musicList", this.musicList);
+      ls.setItem("currentMusicID", this.currentMusicID);
+      ls.setItem("currentMusicIndex", this.currentMusicIndex);
+      ls.setItem("currentSrc", this.currentSrc);
+      ls.setItem("hasMusic", this.hasMusic);
+      ls.setItem("lrcList", this.lrcList);
+      ls.setItem("playMode", this.playMode);
     },
     addMusic(arr) {
       if (this.musicList.length == 0) {
@@ -416,12 +415,12 @@ export default {
         this.isMax = false;
         this.$refs.main.style =
           "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:999;";
-        this.$refs.audioPlayer.style.bottom="4vh"
+        this.$refs.audioPlayer.style.bottom = "4vh";
       } else {
         this.isMax = true;
         this.$refs.main.style =
           "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:999;";
-        this.$refs.audioPlayer.style.bottom="14vh"
+        this.$refs.audioPlayer.style.bottom = "14vh";
       }
     },
     loadMusic() {
@@ -481,7 +480,6 @@ export default {
         this.randomIndex = this.randomList.indexOf(
           this.musicList[this.currentMusicIndex]
         );
-        for (var i in this.randomList) console.log(this.randomList[i].name);
       }
     },
     highlightMode() {
@@ -1012,7 +1010,7 @@ li {
 }
 .bg {
   position: relative;
-  top:-10vh;
+  top: -10vh;
   left: -5.8vw;
   height: 110vh;
   width: 130%;
