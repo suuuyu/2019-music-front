@@ -15,10 +15,10 @@
         </FormItem>
 		<div class="btn-div">
         <FormItem>
-            <Button class="lg-reg-btn" type="primary" long @click="handleSubmit('formInline')" :loading="loading" :shape="circle">{{loading?'':'登录'}}</Button>
+            <Button class="lg-reg-btn" type="primary" long @click="handleSubmit('formInline')" :loading="loading" >{{loading?'':'登录'}}</Button>
         </FormItem>
 		<FormItem>
-            <Button class="lg-reg-btn" type="primary" ghost long @click="toRegister()" :shape="circle">注册</Button>
+            <Button class="lg-reg-btn" type="primary" ghost long @click="toRegister()" >注册</Button>
         </FormItem>
 		</div>
     </Form>

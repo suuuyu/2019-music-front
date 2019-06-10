@@ -23,7 +23,7 @@
             <Button class="lg-reg-btn" type="primary" long @click="handleSubmit('formInline')">注册</Button>
         </FormItem>
 		<FormItem>
-            <Button class="lg-reg-btn" type="primary" long ghost @click="toLogin()" :shape="circle">返回</Button>
+            <Button class="lg-reg-btn" type="primary" long ghost @click="toLogin()" >返回</Button>
         </FormItem>
 		</div>
     </Form>

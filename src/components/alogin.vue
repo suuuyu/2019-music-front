@@ -15,10 +15,10 @@
         </FormItem>
 		<div>
         <FormItem>
-            <Button class="lg-reg-btn" type="primary" long @click="adminLogin()" :loading="loading" :shape="circle">{{loading?'':'登录'}}</Button>
+            <Button class="lg-reg-btn" type="primary" long @click="adminLogin()" :loading="loading" >{{loading?'':'登录'}}</Button>
         </FormItem>
 		<FormItem>
-            <Button class="lg-reg-btn" type="primary" long ghost @click="toLogin()" :shape="circle">返回</Button>
+            <Button class="lg-reg-btn" type="primary" long ghost @click="toLogin()" >返回</Button>
         </FormItem>
 		</div>
     </Form>

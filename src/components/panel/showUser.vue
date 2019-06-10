@@ -14,7 +14,7 @@
                   :to="type == 1?'/profile/' + u.id + '/mylike':'#'" v-text="u.name" :key="$route.path" @click="type != 1?openSingerDetail(user[index]):''"></router-link>
                 </h3>
                 <p class="singer_list__info"></p>
-                  <Button :type="FollowArr[index] == 1? 'error':'primary'" :loading="loading[index]" @click="changeFollow(me, u.id, index)">
+                  <Button :type="FollowArr[index] == 1? 'error':'success'" :loading="loading[index]" @click="changeFollow(me, u.id, index)">
                     <Icon :type="FollowArr[index] == 1? 'md-close':'md-add'" :size=15 v-show="!loading[index]"/>
                     {{FollowArr[index] == 1? '取消关注':'添加关注'}}
                   </Button>
@@ -99,6 +99,12 @@ export default {
       }
     },
     changeFollow(userid, id, index) {
+      if (!userid) {
+        this.$Notice.error({
+							title: '请登陆后再进行此操作'
+					})
+        return
+      }
       this.$set(this.loading, index, true)
       if(this.type == 1) {
         changeFollowUser(userid, id, (json) => {

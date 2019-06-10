@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="margin-bottom: 100px;">
+    <div style="padding-bottom: 100px;height: 100%;">
       <router-view></router-view>
       <menu-panel></menu-panel>
       <search-btn></search-btn>
@@ -103,7 +103,7 @@ export default {
         callback('3')
 				return
 			} else {
-        AXIOS.get('/isSongBought',{params:{songid: song.songid, albumid: song.albumid, userid:sessionStorage.getItem("userid")}})
+        AXIOS.get('/isSongBought',{params:{songid: song.songid, albumid: song.albumid, userid: sessionStorage.getItem("userid")}})
         .then((response)=>{
           callback(response.data)
         })
@@ -119,8 +119,8 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
-  margin-bottom: 50px;
+  padding-bottom: 50px;
 }
 </style>
