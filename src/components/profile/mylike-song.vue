@@ -23,7 +23,7 @@
 					<strong><router-link class="panel-word" :to="'/album/' + row.albumid" :key="$route.path" v-text="albums[index] ? albums[index].albumname : '暂无'"></router-link></strong>
 				</template>
 				<template slot-scope="{ row }" slot="length">
-					<strong><span class="panel-word">{{ row.length }}</span></strong>
+					<strong><span class="panel-word">{{minuteTime(row.length)}}</span></strong>
 				</template>
 			</Table>
 			<div class="demo-spin-col" slot="skeleton">
@@ -139,6 +139,11 @@ export default {
 			}
     },
     methods: {
+		minuteTime(second) {
+			let minute = parseInt(second / 60)
+			second = String(second % 60 + 100)
+			return `${minute}:${second.substr(second.length - 2, 2)}`
+		},
 		openSingerDetail(singer) {
 			this.$refs.singerDetail.open(singer)
 		},
@@ -241,6 +246,7 @@ a {
     position: relative;
     width: 100%;
     min-width: 1200px;
+	padding-bottom: 100px;
 }
 .panel {
     margin-right: 50px;

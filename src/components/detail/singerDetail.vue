@@ -116,6 +116,7 @@ export default {
                 this.$Notice.error({
                     title: '请先登录后再进行此操作'
                 })
+                return
             }
             this.loading = true
             changeFollowSinger(userid, singerid, json => {

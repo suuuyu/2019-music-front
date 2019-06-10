@@ -2,10 +2,10 @@
 	<div @mouseenter="showPanel" align="center"  @mouseleave="disShow" style="height: 50px;width:400px;background-color:rgba(255, 255, 255, 0.5);">
     <div class="songlist__btn" v-if="show">
 		<!-- <router-link tag="a" target="_blank" :to="{path:'/player',query:{musicList:['等你下课','发如雪','夜曲']} }"><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></router-link> -->
-		<span><a href="javascript:;" @click="play" ><img src="Index_image/play.png" alt="play" height="35px" width="35px" class="songlist_btn"></a></span>
-		<span><a href="javascript:;" @click="like"><img src="Index_image/like.png" alt="like" height="35px" width="35px" class="songlist_btn"></a></span>
-        <span v-if="type==1"><a href="javascript:;" @click="choose"><img src="Index_image/add.png" alt="add" height="35px" width="35px" class="songlist_btn"></a></span>
-        <span v-if="type==1"><a href="javascript:;"><img src="Index_image/download.png" alt="download" height="35px" width="35px" class="songlist_btn"></a></span>
+		<Button type="primary" shape="circle" icon="ios-play" @click="play" class="songlist_btn"></Button>
+		<Button shape="circle" icon="md-heart-outline" @click="like" :disabled="!me" class="songlist_btn"></Button>
+		<Button shape="circle" icon="md-add" @click="choose" :disabled="!me" class="songlist_btn" v-if="type==1"></Button>
+		<Button shape="circle" icon="ios-cloud-download-outline" class="songlist_btn" v-if="type==1"></Button>
     </div>
 	</div>
 </template>
@@ -95,9 +95,10 @@ export default {
     position: relative;
     white-space: normal;
 	margin-bottom: auto;
+	font-size: 30px;
 }
 .songlist_btn {
-    margin-left: 10px;
+    margin-left: 20px;
 }
 </style>
 
