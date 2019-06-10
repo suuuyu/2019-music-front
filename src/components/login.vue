@@ -82,7 +82,7 @@ export default{
 			this.$parent.handleSelect('3')
 		},
 		handleSubmit(name) {
-			/*AXIOS.get('/isUserBanned',{params:{uid:this.formInline.user}})
+			AXIOS.get('/isUserBanned',{params:{uid:this.formInline.user}})
 			.then((res)=>{
 				if(res.data=='1'){
 					this.$Message.info({
@@ -90,7 +90,7 @@ export default{
                 		duration: 8
 					});
 				}
-			else{*/
+			else{
 			this.$refs[name].validate((valid) => {
 				if (valid) {
 					this.loading = true
@@ -135,8 +135,8 @@ export default{
 					this.$Message.error('Fail!')
 				}
 			})
-			/*}
-			})*/
+			}
+			})
 		}
 	}
 }
