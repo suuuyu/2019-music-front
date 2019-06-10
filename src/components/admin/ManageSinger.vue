@@ -1,14 +1,14 @@
 <template>
-    <div style="display:flex">
+    <div style="display:flex;flex-wrap:wrap">
         <div class="manage-singer">
-            <Card>
+            <Card style="margin-bottom:10px">
                 <p slot="title"><Icon style="font-size:18px" type="md-add-circle" />添加歌手</p>
                 <p style="margin-top:11px">如要为歌手添加专辑，请转至专辑管理</p>
                 <div>
                 <span class="title-span">歌手id</span>
                 <Input placeholder="自动填充" style="width: 350px" v-model='add.singerid' disabled/>
                 </div>
-                <div style="margin-top:34px">
+                <div style="margin-top:28px">
                 <span class="title-span">名字</span>
                 <Input placeholder="输入歌手名字" style="width: 100px" v-model='add.singername' />
                 <span class="title-span">性别</span>
@@ -20,18 +20,31 @@
                 <span class="title-span">简介</span>
                 <Input type="textarea" rows="3" placeholder="输入歌手简介" style="width: 405px" v-model='add.intro' />
                 </div>
+                <Upload
+                type="drag"
+                action="http://localhost:8081/uploadfile">
+                <div style="padding: 20px 0">
+                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                    <p>点击或拖拽上传文件</p>
+                </div>
+                </Upload>
                 <div>
                     <Button type="success" long style="width:300px" @click="addSinger()">提交</Button>
                 </div>
             </Card>
-        </div>
-        <div class="manage-singer">
             <Card>
                 <p slot="title"><Icon style="font-size:18px" type="md-trash" />删除歌手</p>
-                <p style="margin-top:11px">搜索想要进行操作的歌手</p>
+                <p style="margin-top:11px">搜索想要进行操作的歌手。<b style="color:red">警告：删除歌手后不可恢复!!</b></p>
                 <div>
                 <span class="title-span">歌手名</span>
-                <Input placeholder="输入歌手名" style="width: 300px" v-model='del.singername' />
+                <Select
+                v-model="searchKey"
+                filterable
+                remote
+                :remote-method="fuzzySearch"
+                :loading="sloading">
+                <Option v-for="(option, index) in result" :value="option.singername" :key="index">{{option.singername}}</Option>
+                </Select>
                 </div>
                 <div>
                     <Button type="primary" shape="circle" icon="md-search" @click="searchDelete()"></Button>
@@ -44,7 +57,7 @@
                     <Col span="8"><b>地区</b></Col>
                     <Col span="8"><b>性别</b></Col>
                 </Row>
-                <Row>
+                <Row style="margin-bottom:18px">
                     <Col span="8" v-model='del.singerid'>{{del.singerid}}</Col>
                     <Col span="8" v-model='del.region'>{{del.region}}</Col>
                     <Col span="8" v-model='del.sex'>{{del.sex}}</Col>
@@ -59,6 +72,29 @@
                     @on-cancel="cancel">
                     <Button type="error" long style="width:360px" :disabled='canDelete'>删除歌手</Button>
                     </Poptip>
+                </div>
+            </Card>
+        </div>
+        <div class="manage-singer">
+            <Card>
+                <p slot="title"><Icon style="font-size:18px" type="md-mic" />歌手库</p>
+                <p>越往前的歌手添加得越晚</p>
+                <Page :total="SingerCnt" :page-size="20" show-total  @on-change="changePage"></Page>
+                <div>
+                    <Row>
+                    <Col span="6"><b>歌手id</b></Col>
+                    <Col span="6"><b>歌手名</b></Col>
+                    <Col span="6"><b>性别</b></Col>
+                    <Col span="6"><b>地区</b></Col>
+                    </Row>
+                </div>
+                <div>
+                    <Row v-for="(s,i) in pageList" :class="i%2==0?'clg':'clw'" style="margin-bottom:14px">
+                    <Col span="6">{{s.singerid}}</Col>
+                    <Col span="6">{{s.singername}}</Col>
+                    <Col span="6">{{s.singersex}}</Col>
+                    <Col span="6">{{s.region}}</Col>
+                    </Row>
                 </div>
             </Card>
         </div>
@@ -83,7 +119,12 @@ export default {
                 sex:'',
                 region:''
             },
-            canDelete:true
+            canDelete:true,
+            pageList:[],
+            searchKey:'',
+            SingerCnt:0,
+            result:[],
+            sloading:false
         }
     },
     methods:{
@@ -125,15 +166,16 @@ export default {
 	    	})
         },
         searchDelete(){
-            if(this.del.singername===''){
+            if(this.searchKey===''){
                 this.$Message.error('有字段未填，请补充完整')
                 return
             }
+            this.del.singername=this.searchKey
             this.del.singerid=''
             this.del.sex=''
             this.del.region=''
             this.canDelete=true
-            AXIOS.get('/searchDeleteSinger',{params:{singername:this.del.singername}})
+            AXIOS.get('/searchDeleteSinger',{params:{singername:this.searchKey}})
             .then((response)=>{
                 if(response.data===''){
                     this.$Message.error('没有查询到，请重试')
@@ -164,19 +206,56 @@ export default {
                 this.del[d]=''
             }
             this.canDelete=true
-        }
+        },
+        getSingers(index){
+                    AXIOS.get('/getSingers',{params:{pgnum:index}})
+                    .then((response)=>{
+                        this.pageList=response.data
+                    })
+
+        },
+        changePage(index){
+            this.pageList = this.getSingers(index-1);
+        },
+        fuzzySearch (query) {
+                if (query !== '') {
+                    this.sloading = true;
+                    setTimeout(() => {
+                        this.sloading = false;
+                        AXIOS.get('/fuzzySingers?singername='+query).
+                        then(res=>{
+                            this.result=res.data
+                        })
+                    }, 200);
+                } else {
+                    this.result = [];
+                }
+            },
     },
     created(){
         AXIOS.get('/maxSingerid')
         .then((response)=>{
             this.add.singerid=response.data
         })
+        AXIOS.get('/getSingerTotal')
+        .then((response)=>{
+        
+        this.$nextTick(()=>{
+            this.SingerCnt=response.data
+            AXIOS.get('/getSingers',{params:{pgnum:0}})
+            .then((res)=>{
+                this.$nextTick(()=>{
+                this.pageList=res.data
+            })
+        })
+        })
+        })
     }
 }
 </script>
 <style scoped>
 .manage-singer{
-    width:50%;
+    width:49%;
     margin:5px
 }
 .title-span{
@@ -186,5 +265,11 @@ export default {
 }
 .ivu-card-body > div{
     margin-top:20px
+}
+.clg{
+    background-color: rgb(207, 207, 207)
+}
+.clw{
+    background-color:rgb(241, 241, 241)
 }
 </style>
