@@ -56,7 +56,7 @@
                                 <h4 class="search_result__tit"><Icon type="md-musical-notes" size="18" class="search_result__tit_icon" />单曲</h4>
                                 <ul class="search_result__list">
                                     <li :key="index" v-for="(item,index) in searchSong">
-                                        <a class="search_result__link">
+                                        <a class="search_result__link" @click="switchTab(0)">
                                             <span class="search_result__name" v-html="item.songname"></span>
                                             <!-- -<span class="search_result__singer">{{item.singerName}}</span> -->
                                         </a>
@@ -67,9 +67,8 @@
                             <div class="search_result__sort">
                                 <h4 class="search_result__tit"><Icon type="ios-contact" size="18" class="search_result__tit_icon"/>歌手</h4>
                                 <ul class="search_result__list">
-
                                     <li :key="index" v-for="(item,index) in searchSinger">
-                                        <a class="search_result__link">
+                                        <a class="search_result__link" @click="switchTab(3)">
                                             <span class="search_result__name" v-html="item.singername"></span>
                                         </a>
                                     </li>
@@ -80,9 +79,8 @@
                             <div class="search_result__sort">
                                 <h4 class="search_result__tit"><Icon type="ios-albums" size="18" class="search_result__tit_icon"/>专辑</h4>
                                 <ul class="search_result__list">
-
                                     <li :key="index" v-for="(item,index) in searchAlbum">
-                                        <a class="search_result__link">
+                                        <a class="search_result__link" @click="switchTab(1)">
                                             <span class="search_result__name" v-html="item.albumname"></span>
                                         </a>
                                     </li>		
@@ -104,6 +102,7 @@
             <Song :song=song v-if="selectedTab==0"></Song>
             <Album :albums=albums v-if="selectedTab==1"></Album>
             <Songlist :songlist=sl v-if="selectedTab==2"></Songlist>
+            <show-user :type='2' :user='singer' v-if="selectedTab==3"></show-user>
         </div>
         <!-- 搜索动态按钮 -->
         <transition name="draw" :duration="500">
@@ -116,6 +115,16 @@
         <div class='popContainer' v-if="showLoading" > 
             <loading @closeLoading="hideLoading"> </loading>
         </div>
+
+        <!-- 上传文件 -->
+        <!-- <div class="container">
+            <div class="large-12 medium-12 small-12 cell">
+            <label>File
+                <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+            </label>
+                <button v-on:click="submitFile()">Submit</button>
+            </div>
+        </div> -->
         
     </div>
 </template>
@@ -124,13 +133,14 @@
 import mylikesong from '../components/profile/mylike-song'
 import mylikealbum from '../components/profile/mylike-album'
 import mylikesonglist from '../components/profile/mylike-songlist'
+import showUser from '@/components/panel/showUser'
 import searchBtn from '../components/search/searchBtn'
 import loading from '../components/search/loading'
 import { AXIOS } from '../http/http';
 
 export default {
     mounted(){
-        this.getSongs('a')
+        // this.getSongs('')
         // 注册页面滚动事件监听器
         window.addEventListener('scroll', this.handleScroll)
     },
@@ -143,8 +153,9 @@ export default {
                 song: [],
                 album: [],
                 sl: [],
+                singer: [],
                 selectedTab: 0,
-                tabsDisplay: ["单曲","专辑","歌单"],
+                tabsDisplay: ["单曲","专辑","歌单", "歌手"],
                 searchSong: [{songName: "爱在西元前",singerName:"周杰伦"}],
                 searchAlbum: [{songName: "爱在西元前",singerName:"周杰伦"}],
                 searchSinger: [],
@@ -156,6 +167,8 @@ export default {
                 showTips: false,
                 showLoading: false,
                 btnShow: false,
+                canSearch: true,
+                
 			}
         },
     components: {
@@ -163,7 +176,8 @@ export default {
 			'Songlist': mylikesonglist,
             'Album': mylikealbum,
             'searchBtn': searchBtn,
-            'loading': loading
+            'loading': loading,
+            'show-user': showUser
     },
     methods: {
         clearAllHis(e){
@@ -207,19 +221,24 @@ export default {
             console.log(msg)
         },
         inputFun(e){
-            // console.log(e.target.value)
-            this.getSongs(e.target.value)
-            this.getSingers(e.target.value)
-            this.getAlbums(e.target.value)
-
-            if(e.target.value == ""){
-                this.showHis = true
-                this.showRes = false
-            }
-            else{
+            if (this.canSearch) {
+                if(e.target.value == ""){
+                    this.showHis = true
+                    this.showRes = false
+                    return
+                }
+                this.canSearch = false
+                console.log(e.target.value)
+                this.getSongs(e.target.value)
+                this.getAlbums(e.target.value)
+                this.getSingers(e.target.value)
                 this.showHis = false
                 this.showRes = true
+                setTimeout(() => {
+                    this.canSearch = true
+                }, 100);
             }
+            
         },
         switchTab(index){
             this.selectedTab = index;
@@ -271,11 +290,14 @@ export default {
         getSingers(words){
             AXIOS.get('/searchSinger?word=' + words)
 				.then(respond => {
+                    this.singer = respond.data
+                    console.log(this.singer)
                     if (respond.data.length == 0){
                         this.searchSinger = [{singername: "暂无匹配"}]
                     }
                     else{
-                        this.searchSinger = this.changeColor(respond.data.slice(0,3),"singer")
+                        this.searchSinger = this.changeColor(JSON.parse(JSON.stringify(respond.data.slice(0,3)))
+                        ,"singer")
                     }
 					
 				})
@@ -299,17 +321,20 @@ export default {
 					})
 				})
         },
-        search(words){
-            if(this.selectedTab == 0){
-                this.getSongs(words)
-            }
-            else if(this.selectedTab == 1){
-                this.getAlbums(words)
-            }
-            else if(this.selectedTab == 2){
-                this.getSongLists(words)
-            }
-        },
+        // search(words){
+        //     if(this.selectedTab == 0){
+        //         this.getSongs(words)
+        //     }
+        //     else if(this.selectedTab == 1){
+        //         this.getAlbums(words)
+        //     }
+        //     else if(this.selectedTab == 2){
+        //         this.getSongLists(words)
+        //     }
+        //     else if(this.selectedTab == 3){
+        //         this.getSingers(words)
+        //     }
+        // },
         // 高亮显示关键词
         changeColor (resultsList,type="song") {
             resultsList.map(

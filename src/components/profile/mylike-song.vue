@@ -16,14 +16,14 @@
 						<songPanel :songid="row.songid" :type="1" class="panel" @toChoose="toChoose"></songPanel>
 					</strong>
 				</template>
-				<template slot-scope="{ row, index }" slot="singer">
-					<strong><a class="panel-word" v-text="singers[index] ? singers[index].singername: '暂无'" @click="singers[index] ? openSingerDetail(singers[index]) : ''"></a></strong>
+				<template slot-scope="{ row }" slot="singer">
+					<strong><a class="panel-word" v-text="row.singer ? row.singer: '暂无'" @click="row.singer ? openSingerDetail(row.singerID) : ''"></a></strong>
 				</template>
 				<template slot-scope="{ row, index}" slot="album">
 					<strong><router-link class="panel-word" :to="'/album/' + row.albumid" :key="$route.path" v-text="albums[index] ? albums[index].albumname : '暂无'"></router-link></strong>
 				</template>
 				<template slot-scope="{ row }" slot="length">
-					<strong><span class="panel-word">{{ row.length }}</span></strong>
+					<strong><span class="panel-word">{{minuteTime(row.length)}}</span></strong>
 				</template>
 			</Table>
 			<div class="demo-spin-col" slot="skeleton">
@@ -63,7 +63,6 @@ export default {
 				// msg.albumid.push(this.song[i].albumid)
 				// msg.songid.push(this.song[i].songid)
 				this.buildAlbum(this.song[i].albumid, i)
-				this.buildSinger(this.song[i].songid, i)
 				// this.buildMsg(msg)
 			}
 		}
@@ -79,7 +78,6 @@ export default {
 					// msg.albumid.push(this.song[i].albumid)
 					// msg.songid.push(this.song[i].songid)
 					this.buildAlbum(this.song[i].albumid, i)
-					this.buildSinger(this.song[i].songid, i)
 					// this.buildMsg(msg)
 				}
 			}, 1000)
@@ -141,6 +139,11 @@ export default {
 			}
     },
     methods: {
+		minuteTime(second) {
+			let minute = parseInt(second / 60)
+			second = String(second % 60 + 100)
+			return `${minute}:${second.substr(second.length - 2, 2)}`
+		},
 		openSingerDetail(singer) {
 			this.$refs.singerDetail.open(singer)
 		},
@@ -168,11 +171,6 @@ export default {
 				this.$set(this.albums, i, json)
 			})
 		},
-		buildSinger(songid, i) {
-			this.getSinger(songid, (json) => {
-				this.$set(this.singers, i, json[0])
-			})
-		},
 		getAlbum(albumid, callback) {
 			AXIOS.get('/getAlbum?albumid=' + albumid)
 			.then(respond => {
@@ -182,19 +180,6 @@ export default {
 				this.$Loading.error();
 				this.$Notice.error({
 						title: '获取专辑出错',
-						desc: error ? error : '未知错误'
-				})
-			})
-		},
-		getSinger(songid, callback) {
-			AXIOS.get('/getSingerBySong?songid=' + songid)
-			.then(respond => {
-				callback(respond.data)
-			})
-			.catch(error => {
-				this.$Loading.error();
-				this.$Notice.error({
-						title: '获取歌曲出错',
 						desc: error ? error : '未知错误'
 				})
 			})
@@ -261,6 +246,7 @@ a {
     position: relative;
     width: 100%;
     min-width: 1200px;
+	padding-bottom: 100px;
 }
 .panel {
     margin-right: 50px;

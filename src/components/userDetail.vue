@@ -136,6 +136,11 @@ export default {
 				})
 			},
 			handleFollow() {
+				if (!this.me) {
+					this.$Notice.error({
+							title: '请登陆后再进行此操作'
+					})
+				}
 				changeFollowUser(this.me, this.user.userid, json => {
 					this.$Notice.success({
 							title: json
@@ -176,8 +181,8 @@ export default {
 				})
 				.catch(error => {
 					this.$Notice.error({
-							title: '获取个人信息出错',
-							desc: error ? error : '未知错误'
+						title: '获取个人信息出错',
+						desc: error ? error : '未知错误'
 					})
 				})
 			},

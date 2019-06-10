@@ -34,7 +34,7 @@
             <p :style="pStyle"><Icon type="md-flame" /> &nbsp; 热门歌曲</p>
             <div class="demo-drawer-profile">
                 <Row v-for="(song, index) in songs" :key="index">
-                    <Col span="3">
+                    <Col span="10">
                         <router-link :to="'/song/' + song.songid" :key="$route.path"><h5>{{song.songname}}</h5></router-link>
                     </Col>
                     <Col span="12">
@@ -97,12 +97,13 @@ export default {
 				this.mySonglist = json
 			})
 		},
-        open(singer) {
-            this.singer = singer
-            console.log(singer)
-            this.singer.name = this.singer.singername
-            fetchSingers([this.singer])
-            getSingerDetail(this.singer.singerid, this.userid, json => {
+        open(singerID) {
+            console.log(singerID)
+            getSingerDetail(singerID, this.userid, json => {
+                this.singer = json.singer
+                console.log(this.singer)
+                this.singer.name = this.singer.singername
+                fetchSingers([this.singer])
                 this.songs = json.songs
                 this.songNum = json.songNum
                 this.albumNum = json.albumNum
@@ -115,6 +116,7 @@ export default {
                 this.$Notice.error({
                     title: '请先登录后再进行此操作'
                 })
+                return
             }
             this.loading = true
             changeFollowSinger(userid, singerid, json => {

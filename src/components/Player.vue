@@ -1,7 +1,7 @@
 <template>
   <div
     ref="main"
-    style="position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:1099;"
+    style="position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:999;"
   >
     <div style="position:absolute;">
       <search-btn style="z-index:10;"></search-btn>
@@ -14,6 +14,13 @@
           @click="changeMini"
           @mouseenter="highlightArrDown"
           @mouseleave="noLightArrDown"
+        >
+        <img
+          ref="addMusicBtn"
+          src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYwMDEzMjA0NDg1IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjU1OTMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNTEwLjIxODI0IDBDMjI4LjkwNDk2IDAgMCAyMjkuMTA5NzYgMCA1MTAuNTc2NjQgMCA3OTIuMDY0IDIyOC45MDQ5NiAxMDIxLjA4MTYgNTEwLjIxODI0IDEwMjEuMDgxNmMyODEuMzAzMDQgMCA1MTAuMTU2OC0yMjkuMDE3NiA1MTAuMTU2OC01MTAuNTA0OTZDMTAyMC4zNzUwNCAyMjkuMTA5NzYgNzkxLjUyMTI4IDAgNTEwLjIxODI0IDB6IG0xOTIuMzk5MzYgNTQ1LjYxNzkySDU0Ni40ODgzMnYxNTcuNTkzNmMwIDE0Ljc0NTYtMjEuMDEyNDggMjYuOTAwNDgtMzUuODYwNDggMjYuOTAwNDgtMTQuODQ4IDAtMzUuODI5NzYtMTIuMTU0ODgtMzUuODI5NzYtMjYuOTAwNDh2LTE1Ny41OTM2aC0xNTcuMDgxNmMtMTQuNzk2OCAwLTI2Ljg2OTc2LTIxLjAzMjk2LTI2Ljg2OTc2LTM1Ljg3MDcyIDAtMTQuODM3NzYgMTIuMDYyNzItMzUuOTExNjggMjYuODY5NzYtMzUuOTExNjhoMTU3LjA4MTZWMzE4LjAxMzQ0YzAtMTQuOTI5OTIgMjAuOTgxNzYtMjYuOTUxNjggMzUuODI5NzYtMjYuOTUxNjggMTQuODQ4IDAgMzUuODYwNDggMTIuMDIxNzYgMzUuODYwNDggMjYuOTUxNjh2MTU1LjgzMjMyaDE1Ni4xMjkyOGMxNC45ODExMiAwIDI2LjkyMDk2IDIxLjA3MzkyIDI2LjkyMDk2IDM1LjkxMTY4IDAgMTQuODI3NTItMTIuMDIxNzYgMzUuODYwNDgtMjYuOTIwOTYgMzUuODYwNDh6IiBmaWxsPSIjZjY2ZjQ5IiBwLWlkPSI1NTk0Ij48L3BhdGg+PC9zdmc+"
+          width="50vw"
+          height="50vw"
+          @click="addsong"
         >
       </div>
       <div class="bg" v-show="isMax">
@@ -167,23 +174,29 @@
   </div>
 </template>
 <script>
+import { AXIOS } from "@/http/http";
 import $axios from "axios";
 import songlist from "./songList";
 import { setTimeout } from "timers";
 import { truncate } from "fs";
 import searchBtn from "../components/search/searchBtn";
 import { constants } from "crypto";
+import ls from "../util/ls";
 export default {
   data() {
     return {
+      tempSong: null,
       isMax: true,
-      hasList: false,
-      musicList: [],
-      singerList: [],
-      currentMusicID: 0,
-      currentMusicIndex: -1,
-      currentSrc: "",
-      hasMusic: 1,
+      hasList: false, //+
+      musicList: [], //+
+      currentMusicID: 0, //+
+      currentMusicIndex: -1, //+
+      currentSrc: "", //+
+      hasMusic: 1, //+
+      lrcList: [], //+
+      playMode: 0, //+
+      randomList: [], //+
+      randomIndex: -1, //+
       player: NaN,
       playPause: NaN,
       volumeBtn: NaN,
@@ -192,8 +205,6 @@ export default {
       speaker: NaN,
       currentlyDragged: null,
       draggableClasses: ["pin"],
-      lrcList: [],
-      playMode: 0,
       playModeSrc: [
         "oneByOne.png",
         "oneByOneH.png",
@@ -202,13 +213,14 @@ export default {
         "onlyOne.png",
         "onlyOneH.png"
       ],
-      cancel: null,
-      randomList: [],
-      randomIndex: -1
+      cancel: null
     };
   },
   //props:['musicList'],
   created() {},
+  beforeDestroy() {
+    this.addToSession();
+  },
   components: {
     songlist,
     "search-btn": searchBtn
@@ -224,19 +236,34 @@ export default {
     this.speaker = this.$refs.speaker;
     window["rewind"] = this.rewind;
     window["changeVolume"] = this.changeVolume;
+    if (ls.getItem("musicList") != null) {
+      this.hasList = ls.getItem("hasList");
+      this.musicList = ls.getItem("musicList");
+      this.currentMusicID = ls.getItem("currentMusicID");
+      this.currentMusicIndex = ls.getItem("currentMusicIndex");
+      this.currentSrc = ls.getItem("currentSrc");
+      this.hasMusic = ls.getItem("hasMusic");
+      this.lrcList = ls.getItem("lrcList");
+      this.playMode = ls.getItem("playMode");
+      this.randomList = this.shuffer(this.musicList);
+    }
     //this.musicList=this.$route.query.musicList
-    if (this.musicList.length > 0) {
-      this.changeMusic(0);
+    if (this.musicList.length > 0 && this.currentMusicIndex > -1) {
+      this.changeMusic(this.currentMusicIndex);
     } else {
       this.$refs.bg.src = "logo.png";
       this.$refs.miniBg.src = "logo.png";
     }
     this.changeMini();
     //this.changeMini();
+    window.onbeforeunload = this.addToSession;
   },
   watch: {
     musicList(newVal, oldVal) {
-      if (this.playMode == 2 || this.playMode == 3) {
+      if (
+        (this.playMode == 2 || this.playMode == 3) &&
+        this.musicList.length != this.randomList.length
+      ) {
         if (newVal.length > oldVal.length) {
           //新增操作
           var newArr;
@@ -276,8 +303,9 @@ export default {
               this.changeMusic(
                 this.musicList.indexOf(this.randomList[this.randomIndex])
               );
-              if(this.currentMusicIndex>-1)//防止传-1过去
-              this.$refs.songList.musicGo(this.currentMusicIndex);
+              if (this.currentMusicIndex > -1)
+                //防止传-1过去
+                this.$refs.songList.musicGo(this.currentMusicIndex);
               return;
             }
             //让下一首播放
@@ -330,6 +358,56 @@ export default {
     }
   },
   methods: {
+    addsong() {
+      if (this.tempSong != null) {
+        AXIOS.post(
+          "/addSearchSong",
+          this.$qs.stringify({
+            songID: this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
+            path:
+              "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
+              this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
+            name: this.tempSong.SONGNAME,
+            image:
+              "https://v1.itooi.cn/kuwo/pic?id=" +
+              this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
+            length: this.tempSong.DURATION,
+            albumID: this.tempSong.ALBUMID,
+            albumName: this.tempSong.ALBUM,
+            singer: this.tempSong.ARTIST,
+            lrc:
+              "https://v1.itooi.cn/kuwo/lrc?id=" +
+              this.tempSong.MP3RID.slice(4, this.tempSong.MP3RID.length),
+            singerID: this.tempSong.ARTISTID
+          }),
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          }
+        )
+          .then(response => {
+            if (response.data != -1)
+              this.$Message.info("添加成功,新增" + response.data + "条记录");
+            else this.$Message.info("不要重复添加嗷");
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      } else {
+        this.$Message.info("出问题了");
+      }
+    },
+    addToSession() {
+      ls.setItem("hasList", this.hasList);
+      ls.setItem("musicList", this.musicList);
+      ls.setItem("currentMusicID", this.currentMusicID);
+      ls.setItem("currentMusicIndex", this.currentMusicIndex);
+      ls.setItem("currentSrc", this.currentSrc);
+      ls.setItem("hasMusic", this.hasMusic);
+      ls.setItem("lrcList", this.lrcList);
+      ls.setItem("playMode", this.playMode);
+    },
     addMusic(arr) {
       if (this.musicList.length == 0) {
         this.musicList = this.musicList.concat(arr);
@@ -342,11 +420,13 @@ export default {
       if (this.isMax) {
         this.isMax = false;
         this.$refs.main.style =
-          "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:1099;";
+          "position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:999;";
+        this.$refs.audioPlayer.style.bottom = "4vh";
       } else {
         this.isMax = true;
         this.$refs.main.style =
-          "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:1099;";
+          "position:fixed; left:3vw; top:-5vh; width:100%; height:117vh; z-index:999;";
+        this.$refs.audioPlayer.style.bottom = "14vh";
       }
     },
     loadMusic() {
@@ -406,7 +486,6 @@ export default {
         this.randomIndex = this.randomList.indexOf(
           this.musicList[this.currentMusicIndex]
         );
-        for (var i in this.randomList) console.log(this.randomList[i].name);
       }
     },
     highlightMode() {
@@ -514,16 +593,17 @@ export default {
       }
     },
     changeMusic(index) {
-      if(index==-1)
-      index=0
+      if (index == -1) index = 0;
       var _this = this;
       if (this.cancel) {
         this.cancel();
       }
       let CancelToken = $axios.CancelToken;
       _this.currentMusicIndex = index;
-      if(this.playMode==2||this.playMode==3){
-        this.randomIndex=this.randomList.indexOf(this.musicList[this.currentMusicIndex])
+      if (this.playMode == 2 || this.playMode == 3) {
+        this.randomIndex = this.randomList.indexOf(
+          this.musicList[this.currentMusicIndex]
+        );
       }
       if (
         index < _this.musicList.length &&
@@ -543,6 +623,7 @@ export default {
           .then(function(response) {
             var id = response.data.data[0].MP3RID;
             _this.player.src =
+              "http://111.230.63.192:3000/musicwebsite?base=" +
               "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
               id.slice(4, id.length);
             _this.currentMusicID = id.slice(4, id.length);
@@ -556,6 +637,7 @@ export default {
         _this.musicList[index].id > 0
       ) {
         _this.player.src =
+          "http://111.230.63.192:3000/musicwebsite?base=" +
           "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
           _this.musicList[index].id;
         _this.currentMusicID = _this.musicList[index].id;
@@ -756,6 +838,9 @@ export default {
 };
 </script>
 <style>
+.ivu-message {
+  z-index: 1200;
+}
 li {
   list-style: none;
 }
@@ -931,8 +1016,9 @@ li {
 }
 .bg {
   position: relative;
+  top: -10vh;
   left: -5.8vw;
-  height: 100vh;
+  height: 110vh;
   width: 130%;
 }
 .miniBg {

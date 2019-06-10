@@ -47,56 +47,77 @@
                 </div>
             </Card>
         </div>
-        <div class="manage-song">
-            <Card>
-                <p slot="title"><Icon style="font-size:18px" type="md-trash" />下架歌曲</p>
-                <p style="margin-top:11px">搜索想要进行操作的歌曲</p>
-                <div>
-                <span class="title-span">歌手名</span>
-                <Input placeholder="输入歌手名" style="width: 300px" v-model='del.singername' />
-                </div>
-                <div>
-                <span class="title-span">专辑名</span>
-                <Input placeholder="输入专辑名" style="width: 300px" v-model='del.albumname' />
-                </div>
-                <div>
-                <span class="title-span">歌曲名</span>
-                <Input placeholder="输入歌曲名" style="width: 300px" v-model='del.songname' />
-                </div>
-                <div>
-                    <Button type="primary" shape="circle" icon="md-search" @click="searchDelete()"></Button>
-                </div>
-                <div>
-                    <p>您查询到的歌曲其他信息如下</p>
-                </div>
-                <Row>
-                    <Col span="4"><b>歌曲id</b></Col>
-                    <Col span="4"><b>时长</b></Col>
-                    <Col span="4"><b>语言</b></Col>
-                    <Col span="4"><b>流派</b></Col>
-                    <Col span="4"><b>年代</b></Col>
-                    <Col span="4"><b>发行公司</b></Col>
-                </Row>
-                <Row>
-                    <Col span="4" v-model='del.songid'>{{del.songid}}</Col>
-                    <Col span="4" v-model='del.length'>{{del.length}}</Col>
-                    <Col span="4" v-model='del.language'>{{del.language}}</Col>
-                    <Col span="4" v-model='del.school'>{{del.school}}</Col>
-                    <Col span="4" v-model='del.age'>{{del.age}}</Col>
-                    <Col span="4" v-model='del.company'>{{del.company}}</Col>
-                </Row>
-                <div>
-                    <Poptip
-	                class="admin-tip"
-		            confirm
-		            transfer
-                    title="确定下架歌曲吗？本操作不可恢复。"
-                    @on-ok="deleteSong()"
-                    @on-cancel="cancel">
-                    <Button type="error" long style="width:360px" :disabled='canDelete'>下架该歌曲</Button>
-                    </Poptip>
-                </div>
-            </Card>
+        <div class="right">
+            <div>
+                <Card>
+                    <p slot="title"><Icon style="font-size:18px" type="md-trash" />下架歌曲</p>
+                    <p style="margin-top:11px">搜索想要进行操作的歌曲</p>
+                    <div>
+                    <span class="title-span">歌手名</span>
+                    <Input placeholder="输入歌手名" style="width: 300px" v-model='del.singername' />
+                    </div>
+                    <div>
+                    <span class="title-span">专辑名</span>
+                    <Input placeholder="输入专辑名" style="width: 300px" v-model='del.albumname' />
+                    </div>
+                    <div>
+                    <span class="title-span">歌曲名</span>
+                    <Input placeholder="输入歌曲名" style="width: 300px" v-model='del.songname' />
+                    </div>
+                    <div>
+                        <Button type="primary" shape="circle" icon="md-search" @click="searchDelete()"></Button>
+                    </div>
+                    <div>
+                        <p>您查询到的歌曲其他信息如下</p>
+                    </div>
+                    <Row>
+                        <Col span="4"><b>歌曲id</b></Col>
+                        <Col span="4"><b>时长</b></Col>
+                        <Col span="4"><b>语言</b></Col>
+                        <Col span="4"><b>流派</b></Col>
+                        <Col span="4"><b>年代</b></Col>
+                        <Col span="4"><b>发行公司</b></Col>
+                    </Row>
+                    <Row>
+                        <Col span="4" v-model='del.songid'>{{del.songid}}</Col>
+                        <Col span="4" v-model='del.length'>{{del.length}}</Col>
+                        <Col span="4" v-model='del.language'>{{del.language}}</Col>
+                        <Col span="4" v-model='del.school'>{{del.school}}</Col>
+                        <Col span="4" v-model='del.age'>{{del.age}}</Col>
+                        <Col span="4" v-model='del.company'>{{del.company}}</Col>
+                    </Row>
+                    <div>
+                        <Poptip
+                        class="admin-tip"
+                        confirm
+                        transfer
+                        title="确定下架歌曲吗？本操作不可恢复。"
+                        @on-ok="deleteSong()"
+                        @on-cancel="cancel">
+                        <Button type="error" long style="width:360px" :disabled='canDelete'>下架该歌曲</Button>
+                        </Poptip>
+                    </div>
+                </Card>
+            </div>
+            <div class="upload">
+                <Card>
+                    <p slot="title">上传歌曲（听歌识曲）</p>
+                    <Upload
+                        type="drag"
+                        ref="upload"
+                        action="http://localhost:8081/upload"
+                        :format="['wav']"
+                        :on-success="handleSuccess"
+                        :on-format-error="handleFormatError"
+                        :before-upload="handleBeforeUpload"
+                        >
+                        <div style="padding: 20px 0">
+                            <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                            <p>Click or drag files here to upload</p>
+                        </div>
+                    </Upload>
+                </Card>
+            </div>
         </div>
     </div>
 </template>
@@ -139,6 +160,19 @@ export default {
         }
     },
     methods:{
+        handleSuccess(res,file){
+            console.log(res)
+            console.log(file)
+        },
+        handleFormatError (file) {
+            this.$Notice.warning({
+                title: '文件格式不正确',
+                desc: '文件' + file.name + '格式不正确，请上传wav格式'
+            });
+        },
+        handleBeforeUpload () {
+            console.log("before upload")
+        },
         addSong(){
             for(let a in this.add){
                 if (this.add[a]===''){
@@ -259,7 +293,8 @@ export default {
 <style scoped>
 .manage-song{
     width:50%;
-    margin:5px
+    margin:5px;
+    margin-top: 5%;
 }
 .title-span{
     font-weight: 600;
@@ -268,5 +303,14 @@ export default {
 }
 .ivu-card-body > div{
     margin-top:20px
+}
+
+.right{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+.upload{
+    margin-top:10px;
 }
 </style>

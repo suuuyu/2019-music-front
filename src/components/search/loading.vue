@@ -21,6 +21,7 @@
 
 <script>
 import Recorderx, { RECORDER_STATE, ENCODE_TYPE } from "recorderx";
+import axios from 'axios'
 
 export default {
     data() {
@@ -33,12 +34,34 @@ export default {
             rc: null,
             showLoading: false,
             msg: "正在录音，点击停止录音",
+            // uploadURL: "/upload",
+            file: "",
         };
     },
     mounted(){
         this.startRec()
     },
     methods: {
+        handleFileUpload(file){
+            this.file = file;
+        },
+        submitFile(){
+            let formData = new FormData();
+            formData.append('file', this.file);
+            axios.post( 'http://localhost:8081/upload',
+                formData,
+                {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+              }
+            ).then(function(){
+            console.log('SUCCESS!!');
+            })
+            .catch(function(e){
+            console.log(e);
+            });
+        },
         pushLog(log, error = "") {
             // const xlog = `<span style="margin-right:8px">
             //     ${new Date().toLocaleString()}:
@@ -83,11 +106,34 @@ export default {
                 // link.href = window.URL.createObjectURL(recordWav)
                 // link.download = "test"
                 // link.click()
-                this.showLoading = true
-                this.msg = "正在玩命匹配"
-                this.$emit('closeLoading',"msg")
-                this.pushLog("pause recording")
-                this.clearRec()
+                this.handleFileUpload(recordWav)
+                
+                // submit file
+                let formData = new FormData();
+                let that = this;
+                formData.append('file', this.file);
+                that.showLoading = true
+                that.msg = "正在玩命匹配"
+                axios.post('http://localhost:8081/upload',
+                    formData,
+                    {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+                ).then(function(){
+                    
+                    that.$emit('closeLoading',"msg")
+                    that.pushLog("pause recording")
+                    that.clearRec()
+                    console.log('SUCCESS!!');
+                    })
+                .catch(function(e){
+                    console.log(e)
+                    that.clearRec()
+                    console.log('FAILURE!!');
+                });
+                
                 
             }
         },
