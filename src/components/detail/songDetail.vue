@@ -72,13 +72,19 @@ export default {
 			});
 		},
 		commentSubmit:function(event){
-			//UserID获取，待完成
-			console.log("Attention!");
 			var userID = sessionStorage.getItem("userid");
 			var songID = this.song.id;
-			console.log(this.commentText);
 			var text = this.commentText;
 			this.commentText = "";
+			if(!userID){
+				alert("未登录！");
+				return;
+			}
+			if(text == ""){
+				alert("请输入评论内容！");
+				return;
+			}
+			
 			AXIOS.post("/commentSong",this.$qs.stringify({
 				'songID':songID,
 				'userID':userID,

@@ -96,7 +96,10 @@ export default{
       });
 		},
 	  keepSongList:function(){
-			console.log(this.isKeeped);
+			if(!this.userId){
+				alert("未登录！");
+				return;
+			}
 			if(!this.isKeeped){
 				AXIOS.post('/keepSongListPost',this.$qs.stringify({
 					'userId':this.userId,
