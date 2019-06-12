@@ -201,7 +201,7 @@ export default {
 			})
 		},
 		play(){
-			const inner = this.$root.$children[0].$children[0]
+			const inner = isNumber(this.$root.$children[0].$children[0].bottom) ? this.$root.$children[0].$children[1] : this.$root.$children[0].$children[0]
 			inner.addSong(this.song.id)
 		}
 	},
