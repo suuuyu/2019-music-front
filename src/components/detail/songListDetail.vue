@@ -26,7 +26,7 @@
 		<Layout>
 			<div>
         <Tabs value="name1" @on-click="handle">
-            <TabPane label="歌曲" name="name1" class="real-panel"><mylikesong :song="songs"></mylikesong></TabPane>
+            <TabPane label="歌曲" name="name1" class="real-panel"><mylikesong :song="songs" :songlist="songList"></mylikesong></TabPane>
         </Tabs>
     </div>
 		</Layout>
@@ -35,6 +35,7 @@
 <script>
 import { AXIOS } from '../../http/http';
 import mylikesong from '../profile/mylike-song';
+import {cancelKeepSongList, getSongList} from '@/request/song'
 import { isNumber } from 'util';
 export default{
   	name: 'songListDetail',
@@ -58,19 +59,26 @@ export default{
 				inner.addSonglist(this.songListId)
 			},
     getSongListInfo:function(){
-      AXIOS.get('/getSongListById',{
-        params:{
-          songListId:this.songListId,
-        }
-      }).then(response=>{
-        this.songList = response.data;
-        var createdTime = this.songList.createtime;
-        createdTime = createdTime.substring(0,10);
-        this.songList.createtime = createdTime;
-        this.getCreatedUserName();
-      }).catch(response=>{
-        console.log(response);
-			});
+		getSongList(this.songListId, json => {
+			this.songList = json;
+			var createdTime = this.songList.createtime;
+			createdTime = createdTime.substring(0,10);
+			this.songList.createtime = createdTime;
+			this.getCreatedUserName();
+		})
+    //   AXIOS.get('/getSongListById',{
+    //     params:{
+    //       id:this.songListId,
+    //     }
+    //   }).then(response=>{
+    //     this.songList = response.data;
+    //     var createdTime = this.songList.createtime;
+    //     createdTime = createdTime.substring(0,10);
+    //     this.songList.createtime = createdTime;
+    //     this.getCreatedUserName();
+    //   }).catch(response=>{
+    //     console.log(response);
+	// 		});
 		},
 		getSongsInList:function(){
 			AXIOS.get('/getSongsInList',{

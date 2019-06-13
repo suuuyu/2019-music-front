@@ -2,13 +2,13 @@
   <div>
     <div class="detail-contain">
     <vue-lazy-component :timeout="3000">
-      <Table stripe  :columns="columns" :data="songlist">
+      <Table stripe  :columns="columns" :data="toShow">
           <template slot-scope="{ row }" slot="songlistname">
               <strong><router-link class="panel-word" :to="'/songList/' + row.songlistid" :key="$route.path">{{ row.songlistname }}</router-link></strong>
           </template>
           <template slot-scope="{ row }" slot="menuBar">
               <strong>
-                  <songPanel :songid="row.songlistid" :type="2" class="panel"></songPanel>
+                  <songPanel :songid="row.songlistid" :type="2" class="panel" @toDelete="deleteSongList"></songPanel>
               </strong>
           </template>
           <template slot-scope="{ row, index }" slot="songnum">
@@ -37,6 +37,7 @@
 import {AXIOS} from '@/http/http'
 import songPanel from '../panel/songPanel'
 import { setTimeout } from 'timers';
+import {cancelKeepSongList, getSongList} from '@/request/song'
 export default {
   components: {
       'songPanel': songPanel
@@ -52,6 +53,7 @@ export default {
       this.buildSongnum(this.songlist[i], i)
       this.buildKeepnum(this.songlist[i], i)
       this.buildCreator(this.songlist[i], i)
+      this.toShow = this.songlist
     }
     }, 1000)
     setTimeout(() => {
@@ -59,6 +61,35 @@ export default {
     }, 1500)
   },
   methods: {
+    deleteSongList(songlistid) {
+      let me = sessionStorage.getItem('userid')
+      getSongList(songlistid, songlist=> {
+        let isDelete = false
+        // 删除创建的歌单
+        if (songlist.userid == me) {
+          
+        } else {
+          // 删除收藏的歌单
+          cancelKeepSongList(me, songlistid, (json) => {
+            isDelete = json
+            if(isDelete) {
+              let toShow = this.toShow
+              let index = -1
+              for(let i = 0;i<toShow.length;i++) {
+                if(toShow[i].songlistid === songlistid) {
+                  index = i
+                  break
+                }
+              }
+              this.toShow.splice(index, 1)
+              this.$Message.success('删除成功')
+            } else {
+              this.$Message.error('删除失败')
+            }
+          })
+        }
+      })
+    },
     buildSongnum(songlist, i) {
       this.getSongnum(songlist.songlistid, (json) => {
         this.$set(this.songnum,i,json)
@@ -123,6 +154,7 @@ export default {
   },
   data() {
     return {
+      toShow: [],
       songnum: [],
       keepnum: [],
       creater: [],

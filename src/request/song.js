@@ -49,6 +49,19 @@ function keepSonglist (userid, songlistid, callback) {
     })
 }
 
+function cancelKeepSongList (userid, songlistid, callback) {
+  AXIOS.get('/cancelKeepSongList?' + querystring.stringify({
+    'userid': userid,
+    'songlistid': songlistid
+  }))
+    .then(response => {
+      callback(response.data)
+    })
+    .catch(error => {
+      callback('取消收藏歌单失败' + error)
+    })
+}
+
 function showCreatedSongList (userid, callback) {
   AXIOS.get('/showCreatedSongList?id=' + userid)
     .then(response => {
@@ -72,6 +85,20 @@ function keepSong (songid, songlistid, callback) {
     })
 }
 
+function unkeepSong (songid, songlistid, callback) {
+  AXIOS.get('/unKeepSong?' + querystring.stringify({
+    'songlistid': songlistid,
+    'songid': songid
+  }))
+    .then(response => {
+      callback(response.data)
+    })
+    .catch(error => {
+      callback(error)
+      console.error('获取我的歌单出错：' + error)
+    })
+}
+
 function createSonglist (userid, name, callback) {
   AXIOS.get('/createNewSonglist?' + querystring.stringify({
     'userid': userid,
@@ -81,8 +108,21 @@ function createSonglist (userid, name, callback) {
       callback(response.data)
     })
     .catch(error => {
-      console.error('获取我的歌单出错：' + error)
+      console.error(error)
+      callback(false)
     })
 }
 
-export { likeSong, showCreatedSongList, keepSong, createSonglist, keepSonglist, getSong, getSongsInSonglist }
+function getSongList (songListId, callback) {
+  AXIOS.get('/getSongListById?' + querystring.stringify({
+    'id': songListId
+  }))
+    .then(response => {
+      callback(response.data)
+    })
+    .catch(error => {
+      console.error('获取歌单详细信息出错' + error)
+    })
+}
+
+export { cancelKeepSongList, unkeepSong, getSongList, likeSong, showCreatedSongList, keepSong, createSonglist, keepSonglist, getSong, getSongsInSonglist }

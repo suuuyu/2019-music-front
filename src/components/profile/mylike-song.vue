@@ -2,7 +2,7 @@
     <div>
 		<div class="detail-contain" >
 			<vue-lazy-component  :timeout="1000">
-			<Table stripe  :columns="columns" :data="song">
+			<Table stripe  :columns="columns" :data="toShow">
 				<template slot-scope="{ row }" slot="name">
 					<strong>
 					<router-link class="panel-word" :to="'/song/' + row.songid" :key="$route.path">{{ row.songname }}
@@ -13,7 +13,7 @@
 				</template>
 				<template slot-scope="{ row }" slot="menuBar">
 					<strong>
-						<songPanel :songid="row.songid" :type="1" class="panel" @toChoose="toChoose"></songPanel>
+						<songPanel :songid="row.songid" :type="1" class="panel" @toChoose="toChoose" :mySongList="isMySongList" @toDelete="deleteSong"></songPanel>
 					</strong>
 				</template>
 				<template slot-scope="{ row }" slot="singer">
@@ -44,7 +44,7 @@ import {AXIOS} from '@/http/http'
 import songPanel from '../panel/songPanel'
 import songlistChoose from '../panel/songlistChoose'
 import { setTimeout } from 'timers'
-import {showCreatedSongList, keepSong, createSonglist} from '@/request/song'
+import {showCreatedSongList, keepSong, createSonglist, unkeepSong} from '@/request/song'
 import singerDetail from '@/components/detail/singerDetail'
 export default {
     components: {
@@ -52,7 +52,7 @@ export default {
 		'songlist-choose': songlistChoose,
 		'singer-detail': singerDetail
     },
-    props:['song'],
+    props:['song', 'songlist'],
 	name: 'mylike-song',
 	watch: {
 		song() {
@@ -65,28 +65,35 @@ export default {
 				this.buildAlbum(this.song[i].albumid, i)
 				// this.buildMsg(msg)
 			}
+			this.toShow = this.song
 		}
 	},
     mounted () {
-			this.$Loading.start();
-			setTimeout(() => {
-				console.log('长度:' + this.song.length)
-				this.albums = new Array(this.song.length)
-				this.singers = new Array(this.song.length)
-				let msg = {'albumid': [], 'songid': []};
-				for(let i=0; i<this.song.length; i++){
-					// msg.albumid.push(this.song[i].albumid)
-					// msg.songid.push(this.song[i].songid)
-					this.buildAlbum(this.song[i].albumid, i)
-					// this.buildMsg(msg)
-				}
-			}, 1000)
-			setTimeout(() => {
-				this.$Loading.finish();
-			}, 1500)
+		this.$Loading.start();
+		setTimeout(() => {
+			console.log('长度:' + this.song.length)
+			this.albums = new Array(this.song.length)
+			this.singers = new Array(this.song.length)
+			let msg = {'albumid': [], 'songid': []};
+			for(let i=0; i<this.song.length; i++){
+				// msg.albumid.push(this.song[i].albumid)
+				// msg.songid.push(this.song[i].songid)
+				this.buildAlbum(this.song[i].albumid, i)
+				// this.buildMsg(msg)
+			}
+			if (this.songlist.userid && this.songlist.userid === sessionStorage.getItem('userid')) {
+				this.isMySongList = true
+			}
+			this.toShow = this.song
+		}, 1000)
+		setTimeout(() => {
+			this.$Loading.finish();
+		}, 1500)
     },
     data () {
 			return {
+				toShow: [],
+				isMySongList: false,
 				singerDetail: false,
 				songid: '',
 				toEdit: false,
@@ -139,6 +146,25 @@ export default {
 			}
     },
     methods: {
+		deleteSong(songid) {
+			console.log(songid)
+			unkeepSong(songid,this.songlist.songlistid, (json) => {
+				let toShow = this.toShow
+				if (json.success) {
+					let index = -1
+					for(let i = 0;i<toShow.length;i++) {
+						if(toShow[i].songid === songid) {
+							index = i
+							break
+						}
+					}
+					this.toShow.splice(index, 1)
+					this.$Message.success('删除成功')
+				} else {
+					this.$Message.error(json)
+				}
+			} )
+		},
 		minuteTime(second) {
 			let minute = parseInt(second / 60)
 			second = String(second % 60 + 100)

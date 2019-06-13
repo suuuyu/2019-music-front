@@ -82,6 +82,7 @@ export default{
 			this.$parent.handleSelect('3')
 		},
 		handleSubmit(name) {
+			this.loading = true
 			AXIOS.get('/isUserBanned',{params:{uid:this.formInline.user}})
 			.then((res)=>{
 				if(res.data=='1'){
@@ -91,52 +92,52 @@ export default{
 					});
 				}
 			else{
-			this.$refs[name].validate((valid) => {
-				if (valid) {
-					this.loading = true
-					this.circle = 'circle'
-					AXIOS.post('/Login', this.$qs.stringify({
-						'id': this.formInline.user,
-						'pwd': this.formInline.password
-					}), 
-					{
-						headers: {
-                         'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-					})
-					.then(response => {
-						console.log(response.data)
-						let data = response.data
-						if(data.success) {
-							this.$Message.success('Success!')
-							sessionStorage.setItem('userid', this.formInline.user)
-							let path = sessionStorage.getItem('path')
-							console.log(path)
-							if (path) {
-								this.$router.push(path)
-								sessionStorage.removeItem('path')
-							} else {
-								this.$router.push('/')
+				this.$refs[name].validate((valid) => {
+					if (valid) {
+						this.circle = 'circle'
+						AXIOS.post('/Login', this.$qs.stringify({
+							'id': this.formInline.user,
+							'pwd': this.formInline.password
+						}), 
+						{
+							headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
 							}
-							// this.$router.push('/profile/' + this.formInline.user + '/mylike')
-						} else {
-							this.$Message.error('密码错误或用户不存在')
-						}
-					})
-					.catch(error => {
-						this.$router.push('/')
+						})
+						.then(response => {
+							console.log(response.data)
+							let data = response.data
+							if(data.success) {
+								this.$Message.success('Success!')
+								sessionStorage.setItem('userid', this.formInline.user)
+								let path = sessionStorage.getItem('path')
+								console.log(path)
+								if (path) {
+									this.$router.push(path)
+									sessionStorage.removeItem('path')
+								} else {
+									this.$router.push('/')
+								}
+								// this.$router.push('/profile/' + this.formInline.user + '/mylike')
+							} else {
+								this.$Message.error('密码错误或用户不存在')
+							}
+						})
+						.catch(error => {
+							this.$router.push('/')
+							this.$Message.error('Fail!')
+						})
+						.finally(() => {
+							this.loading = false
+							this.circle = ''
+						})
+					} else {
 						this.$Message.error('Fail!')
-					})
-					.finally(() => {
-						this.loading = false
-						this.circle = ''
-					})
-				} else {
-					this.$Message.error('Fail!')
+					}
+				})
 				}
 			})
-			}
-			})
+			this.loading = false
 		}
 	}
 }
