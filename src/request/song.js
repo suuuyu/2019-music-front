@@ -140,4 +140,15 @@ export function isBought (song, userid, callback) {
   }
 }
 
+export function recommend (userid, callback) {
+  AXIOS.get('/recommend?userid=' + userid)
+    .then((response) => {
+      callback(response.data)
+    })
+    .catch(error => {
+      console.error(error)
+      callback(false)
+    })
+}
+
 export { cancelKeepSongList, unkeepSong, getSongList, likeSong, showCreatedSongList, keepSong, createSonglist, keepSonglist, getSong, getSongsInSonglist }

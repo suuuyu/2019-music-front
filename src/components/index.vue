@@ -32,20 +32,20 @@
                     <i-col span="5" class="playlist__item slide__item" 
                     onmouseover="this.className=(this.className+' playlist__item--hover')" 
                     onmouseout="this.className=this.className.replace(/ playlist__item--hover/, '')"
-                    v-for="index in 5" :key="index">
+                    v-for="(songlist, index) in songlists" :key="index">
                         <div class="playlist__item_box">
                             <div class="playlist__cover mod_cover">
                                 <a class="js_playlist">
-                                    <img src="//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
+                                    <img :src="songlist.songlistimage?songlist.songlistimage:'//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1'" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
                                     <i class="mod_cover__mask"></i>
                                     <i class="mod_cover__icon_play js_play" ></i>
                                 </a>
                             </div>
                             <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><a class="js_playlist">端午赏 · 轻柔温婉国风集</a></span>
+                                <span class="playlist__title_txt"><a class="js_playlist">{{songlist.songlistname}}</a></span>
                             </h4>
                             <div class="playlist__other">
-                                播放量：36.5万
+                                {{`播放量：36.5万`}}
                             </div>
                         </div>
                     </i-col>
@@ -63,17 +63,17 @@
                     <i-col span="5" class="playlist__item slide__item" 
                     onmouseover="this.className=(this.className+' playlist__item--hover')" 
                     onmouseout="this.className=this.className.replace(/ playlist__item--hover/, '')"
-                    v-for="index in 5" :key="index">
+                    v-for="(song, index) in songs" :key="index">
                         <div class="playlist__item_box">
                             <div class="playlist__cover mod_cover">
                                 <a class="js_playlist">
-                                    <img src="//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
+                                    <img :src="song.songimage?song.songimage:'//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1'" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
                                     <i class="mod_cover__mask"></i>
                                     <i class="mod_cover__icon_play js_play" ></i>
                                 </a>
                             </div>
                             <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><a class="js_playlist">端午赏 · 轻柔温婉国风集</a></span>
+                                <span class="playlist__title_txt"><a class="js_playlist">{{song.songname}}</a></span>
                             </h4>
                             <div class="playlist__other">
                                 播放量：36.5万
@@ -94,17 +94,17 @@
                     <i-col span="5" class="playlist__item slide__item" 
                     onmouseover="this.className=(this.className+' playlist__item--hover')" 
                     onmouseout="this.className=this.className.replace(/ playlist__item--hover/, '')"
-                    v-for="index in 5" :key="index">
+                    v-for="(album, index) in albums" :key="index">
                         <div class="playlist__item_box">
                             <div class="playlist__cover mod_cover">
                                 <a class="js_playlist">
-                                    <img src="//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
+                                    <img :src="album.albumimage?album.albumimage:'//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1'" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
                                     <i class="mod_cover__mask"></i>
                                     <i class="mod_cover__icon_play js_play" ></i>
                                 </a>
                             </div>
                             <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><a class="js_playlist">端午赏 · 轻柔温婉国风集</a></span>
+                                <span class="playlist__title_txt"><a class="js_playlist">{{album.albumname}}</a></span>
                             </h4>
                             <div class="playlist__other">
                                 播放量：36.5万
@@ -119,12 +119,23 @@
 </template>
 
 <script>
+import {recommend} from '@/request/song'
 export default {
     name: 'index',
     data() {
         return {
-            value2: 0
+            value2: 0,
+            albums: [],
+            songlists: [],
+            songs: []
         }
+    },
+    created() {
+        recommend(sessionStorage.getItem('userid'), json => {
+            this.songs = json.songs
+            this.albums = json.albums
+            this.songlists = json.songlists
+        })
     },
     methods: {
 
@@ -133,6 +144,9 @@ export default {
 </script>
 
 <style scoped>
+.js_playlist {
+    overflow: hidden;
+}
 a {
   color: #000000;
   text-decoration: none;
