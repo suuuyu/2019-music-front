@@ -125,4 +125,19 @@ function getSongList (songListId, callback) {
     })
 }
 
+export function isBought (song, userid, callback) {
+  if (song.free === '1') {
+    callback('3')
+  } else {
+    AXIOS.get('/isSongBought', { params: { songid: song.songid, albumid: song.albumid, userid: userid } })
+      .then((response) => {
+        callback(response.data)
+      })
+      .catch(error => {
+        console.error(error)
+        callback(false)
+      })
+  }
+}
+
 export { cancelKeepSongList, unkeepSong, getSongList, likeSong, showCreatedSongList, keepSong, createSonglist, keepSonglist, getSong, getSongsInSonglist }

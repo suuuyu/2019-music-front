@@ -2,7 +2,7 @@
   <div class="login-form">
     <h1><b>欢迎注册</b></h1>
 	<img src="../image/Login_image/shiny_music.png" height="90" width="90" />
-    <Form class="input-form" ref="formInline" :model="formInline" :rules="ruleInline" v-inline="inline">
+    <Form class="input-form" ref="formInline" :model="formInline" :rules="ruleInline">
         <FormItem prop="user">
             <Input type="text" class="input-label" v-model="formInline.user" placeholder="Username" size="large">
                 <Icon type="ios-person-outline" slot="prepend"></Icon>
@@ -31,11 +31,12 @@
 </template>
 
 <script>
+import {AXIOS} from '../http/http'
 export default{
 	name: 'register',
 	data() {
 		const checkPwdAgain = (ruleInline, value, callback) => {
-        if (value && value !== this.formInline.pwd) {
+        if (value && value !== this.formInline.password) {
           callback(new Error('两次输入密码不匹配'))
         } else {
           callback()
@@ -71,6 +72,33 @@ export default{
 		handleSubmit(name) {
 			this.$refs[name].validate((valid) => {
 				if (valid) {
+					AXIOS.post('/Register', this.$qs.stringify({
+						'name': this.formInline.user,
+						'pwd': this.formInline.password
+					}), 
+					{
+						headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+						}
+					})
+					.then(response => {
+						console.log(response.data)
+						let data = response.data
+						if(data.success) {
+							sessionStorage.setItem('userid', data.user.userid)
+							let path = sessionStorage.getItem('path')
+							console.log(path)
+							if (path) {
+								this.$router.push(path)
+								sessionStorage.removeItem('path')
+							} else {
+								this.$router.push('/')
+							}
+							// this.$router.push('/profile/' + this.formInline.user + '/mylike')
+						} else {
+							this.$Message.error('注册失败')
+						}
+					})
 					this.$Message.success('Success!');
 				} else {
 					this.$Message.error('Fail!');

@@ -15,7 +15,7 @@ import menuPanel from '../components/panel/navegatorPanel'
 import searchBtn from '../components/search/searchBtn'
 import { AXIOS } from '@/http/http'
 import player from "../components/Player"
-import { getSong, getSongsInSonglist } from '@/request/song'
+import { getSong, getSongsInSonglist, isBought } from '@/request/song'
 import { async } from 'q';
 export default {
   mounted() {
@@ -43,7 +43,7 @@ export default {
   methods: {
     addSong(songid) {
       getSong(songid, (json) => {
-        this.isBought(json, isBought => {
+        isBought(json,sessionStorage.getItem("userid"), isBought => {
           if (isBought == 1||isBought == 2) {
             console.log(json.songname)
             let mes= isBought == 1?'您已购买过此歌曲':'您是VIP会员，可以无限畅听'
@@ -78,7 +78,7 @@ export default {
       getSongsInSonglist(songlistid, (json) => {
         let arr = []
         json.forEach(s => {
-          this.isBought(s, (isBought) => {
+          isBought(s, sessionStorage.getItem("userid"), (isBought) => {
             if (isBought) {
               arr.push({
               id: -1,
@@ -97,24 +97,7 @@ export default {
             title: '歌单中歌曲添加完毕'
         });
       })
-    },
-    isBought(song, callback){
-			if(song.free=='1'){
-        callback('3')
-				return
-			} else {
-        AXIOS.get('/isSongBought',{params:{songid: song.songid, albumid: song.albumid, userid: sessionStorage.getItem("userid")}})
-        .then((response)=>{
-          callback(response.data)
-        })
-        .catch(error => {
-          this.$Notice.error({
-            title: error
-          });
-          callback(false)
-        })
-			}
-		}
+    }
   }
 };
 </script>

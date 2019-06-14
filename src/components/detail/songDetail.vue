@@ -16,7 +16,7 @@
 								<i class="icon_singer"><a class="js_singer data__singer_txt" @click="openSingerDetail(singer)">{{song.singerName}}</a></i>
 							</div>
 							<ul class="data__info">
-								<li class="data_info__item" >专辑：<router-link :to="'/album/' + song.albumid" :key="$route.path">{{song.albumname}}</router-link></li>
+								<li class="data_info__item" >专辑：<router-link :to="'/album/' + song.albumid" :key="$route.path" :disabled="song.albumid">{{song.albumname}}</router-link></li>
 								<li class="data_info__item data_info__item--even" >{{`语种：${song.language}`}}</li>
 								<li class="data_info__item" >{{`流派：${song.school}`}}</li>
 								<li class="data_info__item data_info__item--even" >{{`公司：${song.company}`}}</li>

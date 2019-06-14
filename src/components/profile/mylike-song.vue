@@ -7,13 +7,13 @@
 					<strong>
 					<router-link class="panel-word" :to="'/song/' + row.songid" :key="$route.path">{{ row.songname }}
 					<Icon type="logo-usd" v-show="row.free=='1'?false:true" 
-					style="color:rgb(255, 174, 0);font-size:18px" />
+						style="color:rgb(255, 174, 0);font-size:18px" />
 					</router-link>
 					</strong>
 				</template>
 				<template slot-scope="{ row }" slot="menuBar">
 					<strong>
-						<songPanel :songid="row.songid" :type="1" class="panel" @toChoose="toChoose" :mySongList="isMySongList" @toDelete="deleteSong"></songPanel>
+						<songPanel :songid="row.songid" :type="1" class="panel" @toChoose="toChoose" :mySongList="isMySongList" @toDelete="deleteSong" :song="row"></songPanel>
 					</strong>
 				</template>
 				<template slot-scope="{ row }" slot="singer">

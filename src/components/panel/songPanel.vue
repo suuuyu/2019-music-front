@@ -5,18 +5,20 @@
 		<Button type="primary" shape="circle" icon="ios-play" @click="play" class="songlist_btn"></Button>
 		<Button shape="circle" icon="md-heart-outline" @click="like" :disabled="!me" class="songlist_btn"></Button>
 		<Button shape="circle" icon="md-add" @click="choose" :disabled="!me" class="songlist_btn" v-if="type==1"></Button>
-		<Button shape="circle" icon="ios-cloud-download-outline" class="songlist_btn" v-if="type==1"></Button>
+		<Button v-if="type==1" shape="circle" icon="ios-cloud-download-outline" class="songlist_btn" @click="downloadThis"></Button>
 		<Button shape="circle" icon="md-trash" class="songlist_btn" v-if="type==2||type==1&&mySongList" type="warning" @click="toDelete"></Button>
     </div>
 	</div>
 </template>
 
 <script>
-import {likeSong, keepSonglist, getSongList} from '@/request/song'
+import {likeSong, keepSonglist, getSongList, isBought} from '@/request/song'
 import { isNumber } from 'util';
+import { saveAs } from 'file-saver';
+import {CORS, AXIOS} from '@/http/http'
 export default {
     name: 'songPanel',
-    props:['songid', 'type', 'mySongList'], //type: 1歌曲  2歌单 3专辑
+    props:['songid', 'type', 'mySongList', 'song'], //type: 1歌曲  2歌单 3专辑
     data () {
 			return {
 				show: false,
@@ -31,6 +33,18 @@ export default {
 		// }
 	},
     methods: {
+		downloadThis() {
+			isBought(this.songid, sessionStorage.getItem('userid'), (res) => {
+				if (res == 1||res == 2) {
+					console.log(res)
+					let mes= res == 1?'您已购买过此歌曲':'您是VIP会员，可以无限下载'
+					this.$Message.success('即将开始下载')
+					saveAs(CORS + this.song.songpath, this.song.songname)
+				} else {
+					this.$Message.error('您不是会员或未购买过歌曲，不能下载')
+				}
+			})
+		},
 		toDelete () {
 			this.$emit('toDelete', this.songid)
 		},

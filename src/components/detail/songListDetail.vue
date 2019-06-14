@@ -66,19 +66,6 @@ export default{
 			this.songList.createtime = createdTime;
 			this.getCreatedUserName();
 		})
-    //   AXIOS.get('/getSongListById',{
-    //     params:{
-    //       id:this.songListId,
-    //     }
-    //   }).then(response=>{
-    //     this.songList = response.data;
-    //     var createdTime = this.songList.createtime;
-    //     createdTime = createdTime.substring(0,10);
-    //     this.songList.createtime = createdTime;
-    //     this.getCreatedUserName();
-    //   }).catch(response=>{
-    //     console.log(response);
-	// 		});
 		},
 		getSongsInList:function(){
 			AXIOS.get('/getSongsInList',{

@@ -8,7 +8,7 @@
 							</div>
             <h1 class="profile__tit">
 						<Tooltip placement="left" :content="'id: ' + user.userid">
-							<span class="profile-name" v-text="user.username"></span>
+							<span :class="`profile-name ${user.isvip == 1? 'vip':''}`" v-text="user.username"></span>
 						</Tooltip>
 						<!-- <a href="https://y.qq.com/portal/vipportal/index.html">
 								<img src="//y.gtimg.cn/music/icon/v1/mac/svip_g@2x.png?max_age=2592000" alt="user_cover" class="lv_icon">
@@ -69,7 +69,6 @@ export default {
 		watch: {
 			userid: function () {
 				this.init()
-				console.log(this.userid + ' !!!!!!!!!!!')
 			}
 		},
 		beforeRouteUpdate(to, from, next){
@@ -82,45 +81,45 @@ export default {
 		},
     data () {
         return {
-					isFollow: -1,
-					me: sessionStorage.getItem('userid'),
-					userid: this.$route.params.userid,
-					balance:0,
-					user: {
-							// "userid": "100001",
-							// "username": "lemon",
-							// "userpassword": "123",
-							// "userimage": null,
-							// "usersex": "1",
-							// "isvip": "0",
-							// "userbalance": 0,
-							// "isbanned": "0"
-					},
-					fans: [], //关注我人
-					friends: [
-						// like this:
-						// {
-						// "userid": "100000",
-						// "username": "tongji",
-						// "userpassword": "123",
-						// "userimage": null,
-						// "usersex": "1",
-						// "isvip": "0",
-						// "userbalance": 0,
-						// "isbanned": null
-						// }
-					], //我关注的人
-					followSingers: [
-						// like this
-						// 	{
-						// 	"singerid": "200000",
-						// 	"singername": "周杰伦",
-						// 	"singerimage": null,
-						// 	"singersex": "男",
-						// 	"region": "中国台湾",
-						// 	"introduction": "中国台湾流行男歌手"
-						// }
-					] //我关注的歌手
+			isFollow: -1,
+			me: sessionStorage.getItem('userid'),
+			userid: this.$route.params.userid,
+			balance:0,
+			user: {
+					// "userid": "100001",
+					// "username": "lemon",
+					// "userpassword": "123",
+					// "userimage": null,
+					// "usersex": "1",
+					// "isvip": "0",
+					// "userbalance": 0,
+					// "isbanned": "0"
+			},
+			fans: [], //关注我人
+			friends: [
+				// like this:
+				// {
+				// "userid": "100000",
+				// "username": "tongji",
+				// "userpassword": "123",
+				// "userimage": null,
+				// "usersex": "1",
+				// "isvip": "0",
+				// "userbalance": 0,
+				// "isbanned": null
+				// }
+			], //我关注的人
+			followSingers: [
+				// like this
+				// 	{
+				// 	"singerid": "200000",
+				// 	"singername": "周杰伦",
+				// 	"singerimage": null,
+				// 	"singersex": "男",
+				// 	"region": "中国台湾",
+				// 	"introduction": "中国台湾流行男歌手"
+				// }
+			] //我关注的歌手
         }
     },
     methods: {
@@ -178,6 +177,7 @@ export default {
 				.then(response => {
 					this.user = response.data
 					this.balance=response.data.userbalance
+					console.log(this.user)
 				})
 				.catch(error => {
 					this.$Notice.error({
@@ -266,6 +266,9 @@ export default {
     font-weight: 100;
     line-height: 64px;
     margin-right: 4px;
+}
+.vip {
+	color: rgb(255, 0, 0);
 }
 .mod-user-statistic {
     height: 40px;
