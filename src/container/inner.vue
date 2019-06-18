@@ -48,7 +48,7 @@ export default {
             console.log(json.songname)
             let mes= isBought == 1?'您已购买过此歌曲':'您是VIP会员，可以无限畅听'
             this.$refs.player.addMusic({
-              id: -1,
+              id: songid,
               name: json.songname
             })
             this.$Notice.success({
