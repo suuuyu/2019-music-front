@@ -124,7 +124,6 @@ export default{
 							}
 						})
 						.catch(error => {
-							this.$router.push('/')
 							this.$Message.error('Fail!')
 						})
 						.finally(() => {

@@ -26,10 +26,15 @@
 					<strong><span class="panel-word">{{minuteTime(row.length)}}</span></strong>
 				</template>
 			</Table>
+			<div style="margin: 10px;overflow: hidden">
+				<div style="float: right;">
+					<Page :total="song.length" :page-size="8"	 :current="index" @on-change="changePage"></Page>
+				</div>
+			</div>
 			<div class="demo-spin-col" slot="skeleton">
 				<Spin fix>
-						<Icon type="ios-loading" size=25 class="demo-spin-icon-load"></Icon>
-						<div>Loading</div>
+					<Icon type="ios-loading" size=25 class="demo-spin-icon-load"></Icon>
+					<div>Loading</div>
 				</Spin>
 			</div>
 			</vue-lazy-component>
@@ -65,7 +70,7 @@ export default {
 				this.buildAlbum(this.song[i].albumid, i)
 				// this.buildMsg(msg)
 			}
-			this.toShow = this.song
+			this.changePage(this.index)
 		}
 	},
     mounted () {
@@ -84,7 +89,8 @@ export default {
 			if (this.songlist.userid && this.songlist.userid === sessionStorage.getItem('userid')) {
 				this.isMySongList = true
 			}
-			this.toShow = this.song
+			this.changePage(this.index)
+			// this.toShow = this.song
 		}, 1000)
 		setTimeout(() => {
 			this.$Loading.finish();
@@ -92,6 +98,7 @@ export default {
     },
     data () {
 			return {
+				index: 1,
 				toShow: [],
 				isMySongList: false,
 				singerDetail: false,
@@ -146,6 +153,17 @@ export default {
 			}
     },
     methods: {
+		changePage(index) {
+			this.index = index
+			this.toShow = []
+			for(let i = 0; i<8; i++) {
+				let pos = i +  (index - 1) * 8
+				if (this.song.length > pos) {
+					this.toShow.push(this.song[pos])
+				}
+				
+			}
+		},
 		deleteSong(songid) {
 			console.log(songid)
 			unkeepSong(songid,this.songlist.songlistid, (json) => {

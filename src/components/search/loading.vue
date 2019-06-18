@@ -121,15 +121,14 @@ export default {
                         'Content-Type': 'multipart/form-data'
                     }
                 }
-                ).then(function(){
-                    
-                    that.$emit('closeLoading',"msg")
+                ).then(response => {
+                    that.$emit('closeLoading',response.data)
                     that.pushLog("pause recording")
                     that.clearRec()
                     console.log('SUCCESS!!');
                     })
                 .catch(function(e){
-                    console.log(e)
+                    that.$emit('closeLoading',null)
                     that.clearRec()
                     console.log('FAILURE!!');
                 });

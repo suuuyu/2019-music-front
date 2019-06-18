@@ -36,17 +36,22 @@
                         <div class="playlist__item_box">
                             <div class="playlist__cover mod_cover">
                                 <router-link :to="'/songList/' + songlist.songlistid" :key="$route.path" class="js_playlist">
-                                    <img :src="songlist.songlistimage?songlist.songlistimage:'//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1'" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
+                                    <img :src="songlist.songlistimage &&songlist.songlistimage !=0  ? songlist.songlistimage : errorSongList[index]"  class="playlist__pic">
                                     <i class="mod_cover__mask"></i>
                                     <i class="mod_cover__icon_play js_play" ></i>
                                 </router-link>
                             </div>
-                            <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><router-link :to="'/songList/' + songlist.songlistid" :key="$route.path" class="js_playlist">{{songlist.songlistname}}</router-link></span>
-                            </h4>
-                            <div class="playlist__other">
+                            <Tooltip :content="songlist.songlistname">
+                                <h4 class="playlist__title">
+                                    <span class="playlist__title_txt">
+                                        <router-link :to="'/songList/' + songlist.songlistid" :key="$route.path"><p class="js_playlist">{{songlist.songlistname}}</p>
+                                        </router-link>
+                                    </span>
+                                </h4>
+                            </Tooltip> 
+                            <!-- <div class="playlist__other">
                                 {{`播放量：36.5万`}}
-                            </div>
+                            </div> -->
                         </div>
                     </i-col>
                 </Row>
@@ -72,12 +77,14 @@
                                     <i class="mod_cover__icon_play js_play" ></i>
                                 </router-link>
                             </div>
-                            <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><router-link :to="'/song/' + song.songid" :key="$route.path" class="js_playlist">{{song.songname}}</router-link></span>
-                            </h4>
-                            <div class="playlist__other">
+                            <Tooltip :content="song.songname">
+                                <h4 class="playlist__title">
+                                    <span class="playlist__title_txt"><router-link :to="'/song/' + song.songid" :key="$route.path" class="js_playlist"><p class="js_playlist">{{song.songname}}</p></router-link></span>
+                                </h4>
+                            </Tooltip> 
+                            <!-- <div class="playlist__other">
                                 播放量：36.5万
-                            </div>
+                            </div> -->
                         </div>
                     </i-col>
                 </Row>
@@ -103,12 +110,12 @@
                                     <i class="mod_cover__icon_play js_play" ></i>
                                  </router-link>
                             </div>
-                            <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><router-link :to="'/album/' + album.albumid" :key="$route.path" class="js_playlist">{{album.albumname}} </router-link></span>
-                            </h4>
-                            <div class="playlist__other">
-                                播放量：36.5万
-                            </div>
+                            <Tooltip :content="album.albumname">
+                                <h4 class="playlist__title">
+                                    <span class="playlist__title_txt"><router-link :to="'/album/' + album.albumid" :key="$route.path" class="js_playlist"><p class="js_playlist">{{album.albumname}}</p> </router-link></span>
+                                </h4>
+                            </Tooltip> 
+                            
                         </div>
                     </i-col>
                 </Row>
@@ -119,11 +126,16 @@
 </template>
 
 <script>
-import {recommend} from '@/request/song'
+import {recommend, singerRecommend} from '@/request/song'
 export default {
     name: 'index',
     data() {
         return {
+            errorSongList:['https://p.qpic.cn/music_cover/fPn0iapLleUFx4kZhMPupPlCbqJ9JcevXhr0suia5vI4ZiatY2Fr8ou8A/300?n=1', 
+            'https://p.qpic.cn/music_cover/ibJJngZRP5m8ksRvDkGZxdfp4I182hH8FEphWtKfrh6zJQ9lxapp7tQ/300?n=1', 
+            'https://p.qpic.cn/music_cover/sv5U6cpoN0dCLVrs9ibkz75fPLICuJNYVGmCkod92vkvbyDKugELsnQ/300?n=1',
+            'https://p.qpic.cn/music_cover/A3K6WU7EtiaOWXPWe0T7icHibNjfZMyticGDbxOHj1Pg8pvoEL7mYsJeaw/300?n=1',
+            'https://p.qpic.cn/music_cover/AhbCa0vazSRDjEJhYwthgsSbN5oKI78QXeGD1toy3dv0tCVNGicyXIA/300?n=1'],
             value2: 0,
             albums: [],
             songlists: [],
@@ -137,8 +149,18 @@ export default {
             this.songlists = json.songlists
         })
     },
+    mounted() {
+        let id = sessionStorage.getItem('userid')
+        if (id) {
+            singerRecommend(id, response => {
+                console.log(response.data)
+            })
+        }
+    },
     methods: {
+        getRecommend() {
 
+        }
     }
 }
 </script>
@@ -146,6 +168,8 @@ export default {
 <style scoped>
 .js_playlist {
     overflow: hidden;
+    max-height: 20px;
+    max-width: 200px;
 }
 a {
   color: #000000;

@@ -115,7 +115,7 @@
         <div class='popContainer' v-if="showLoading" > 
             <loading @closeLoading="hideLoading"> </loading>
         </div>
-
+        <searchSong :recognize="recognize" ref="searchSong" @recognizeSong="recognizeSong"></searchSong>
         <!-- 上传文件 -->
         <!-- <div class="container">
             <div class="large-12 medium-12 small-12 cell">
@@ -136,7 +136,9 @@ import mylikesonglist from '../components/profile/mylike-songlist'
 import showUser from '@/components/panel/showUser'
 import searchBtn from '../components/search/searchBtn'
 import loading from '../components/search/loading'
+import searchSong from '../components/search/searchSong'
 import { AXIOS } from '../http/http';
+import { isArray } from 'util';
 
 export default {
     mounted(){
@@ -168,16 +170,17 @@ export default {
                 showLoading: false,
                 btnShow: false,
                 canSearch: true,
-                
+                recognize:[]
 			}
         },
     components: {
-			'Song': mylikesong,
-			'Songlist': mylikesonglist,
-            'Album': mylikealbum,
-            'searchBtn': searchBtn,
-            'loading': loading,
-            'show-user': showUser
+        'Song': mylikesong,
+        'Songlist': mylikesonglist,
+        'Album': mylikealbum,
+        'searchBtn': searchBtn,
+        'loading': loading,
+        'show-user': showUser,
+        'searchSong': searchSong
     },
     methods: {
         clearAllHis(e){
@@ -218,7 +221,15 @@ export default {
         },
         hideLoading(msg){
             this.showLoading = false
-            console.log(msg)
+            if(msg && msg.length!=0 && isArray(msg)) {
+                this.recognize = msg
+                this.$refs.searchSong.show()
+            } else {
+                this.$Notice.error({
+                    title: '错误',
+                    desc: '未获取到数据'
+                })
+            }
         },
         inputFun(e){
             if (this.canSearch) {
@@ -243,6 +254,11 @@ export default {
         switchTab(index){
             this.selectedTab = index;
             console.log(this.tabsDisplay[index])
+        },
+        recognizeSong(word) {
+            this.getSongs(word)
+            this.switchTab(0)
+            this.$refs.searchSong.close()
         },
         getSongs(words) {
 				AXIOS.get('/Search/Song?words=' + words)

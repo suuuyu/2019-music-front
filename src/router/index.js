@@ -10,8 +10,6 @@ import mylike from '../components/profile/mylike'
 import search from '../container/search'
 import searchAlbum from '../components/search/searchAlbum'
 import searchSong from '../components/search/searchSong'
-import searchSongList from '../components/search/searchSongList'
-import searchUser from '../components/search/searchUser'
 import follow from '../components/profile/follow'
 import friend from '../components/profile/friend'
 import balance from '../components/profile/balance'
@@ -124,14 +122,6 @@ export default new Router({
             {
               path: 'Song',
               component: searchSong
-            },
-            {
-              path: 'SongList',
-              component: searchSongList
-            },
-            {
-              path: 'User',
-              component: searchUser
             },
             {
               path: 'Album',

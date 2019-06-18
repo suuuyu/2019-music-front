@@ -123,16 +123,10 @@ export default{
         	});
 				});
 			}else{
-				AXIOS.post('/cancelKeepSongList',this.$qs.stringify({
-					'userId':this.userId,
-					'songListId':this.songListId,
-				}),
-				{
-					headers:{
-						'Content-Type':'application/x-www-form-urlencoded',
-						'Access-Control-Allow-Origin':'http://localhost:8081',
-					}
-				}).then(response=>{
+				AXIOS.get('/cancelKeepSongList?' + this.$qs.stringify({
+					'userid':this.userId,
+					'songlistid':this.songListId,
+				})).then(response=>{
 					if(response.data){
 						this.isKeeped = false;
 						this.$Notice.success({
