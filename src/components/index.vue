@@ -126,9 +126,12 @@
 <script>
 import {recommend, singerRecommend, getSingerByID} from '@/request/song'
 import { isArray } from 'util';
-import showUser from '../panel/showUser'
+import showUser from './panel/showUser'
 export default {
     name: 'index',
+    components: {
+    'show-user': showUser,
+  },
     data() {
         return {
             errorSongList:['https://p.qpic.cn/music_cover/fPn0iapLleUFx4kZhMPupPlCbqJ9JcevXhr0suia5vI4ZiatY2Fr8ou8A/300?n=1', 
