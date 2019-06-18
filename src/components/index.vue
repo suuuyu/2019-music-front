@@ -153,7 +153,7 @@ export default {
         let id = sessionStorage.getItem('userid')
         if (id) {
             singerRecommend(id, response => {
-                console.log(response.data)
+                console.log(response.recommend)
             })
         }
     },
