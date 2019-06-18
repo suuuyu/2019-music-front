@@ -57,7 +57,7 @@ export default {
             })
           }else if(isBought=='3'){
             this.$refs.player.addMusic({
-              id: -1,
+              id: songid,
               name: json.songname
             })
             this.$Notice.success({
@@ -81,7 +81,7 @@ export default {
           isBought(s, sessionStorage.getItem("userid"), (isBought) => {
             if (isBought) {
               arr.push({
-              id: -1,
+              id: s.songid,
               name: s.songname
               })
             } else {
