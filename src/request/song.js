@@ -162,7 +162,7 @@ export function singerRecommend (userid, callback) {
         callback(false)
       })
   } else {
-    callback([61144, 117586, 493864])
+    callback([61144, 117586, 493864, 493864, 493864])
   }
 }
 

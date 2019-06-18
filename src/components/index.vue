@@ -140,7 +140,7 @@ export default {
             albums: [],
             songlists: [],
             songs: [],
-            singers: [{}, {}, {}]
+            singers: [{}, {}, {}, {}, {}]
         }
     },
     created() {
