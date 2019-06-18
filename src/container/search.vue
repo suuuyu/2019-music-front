@@ -37,8 +37,11 @@
                                     <Icon type="md-trash" size="18" />
                                     <span class="icon_txt" >清空</span></a>
                                 </dt>
-                                <dd class="search_history__item" :key="index" v-for="(item,index) in searchHis" @mouseover="hoverIndex=index" @mouseout="hoverIndex=-1" :class="{ 'hoverBg':index==hoverIndex}">
-                                    <div  class="search_history__link">{{item}}</div>
+                                <dd class="search_history__item" :key="index" v-for="(item,index) in searchHis" 
+                                    @mouseover="hoverIndex=index" 
+                                    @mouseout="hoverIndex=-1" 
+                                    :class="{ 'hoverBg':index==hoverIndex}">
+                                    <div  class="search_history__link" @click.stop="clickHis(index)">{{item}}</div>
                                     <a class="search_history__delete" title="删除" @click.stop="clearItem(index)">
                                         <Icon type="md-close" size="18" class="search_history__icon_delete"/>
                                         <span class="icon_txt">删除</span>
@@ -159,7 +162,7 @@ export default {
                 searchSong: [{songName: "爱在西元前",singerName:"周杰伦"}],
                 searchAlbum: [{songName: "爱在西元前",singerName:"周杰伦"}],
                 searchSinger: [],
-                searchHis: ["爱","我相信","周杰伦"],
+                searchHis: ["爱","太美","周杰伦"],
                 hoverIndex: -1, //表示当前hover的是第几个li 初始为 -1 或 null 不能为0 0表示第一个li
                 inputValue: "",
                 showHis: false,
@@ -188,6 +191,11 @@ export default {
         clearItem(index){
             console.log(index)
             this.searchHis.splice(index,1)
+        },
+        clickHis(index){
+            console.log(index)
+            this.inputValue = this.searchHis[index]
+            this.inputFun()
         },
         handleScroll(){
             var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
@@ -220,18 +228,18 @@ export default {
             this.showLoading = false
             console.log(msg)
         },
-        inputFun(e){
+        inputFun(){
             if (this.canSearch) {
-                if(e.target.value == ""){
+                if(this.inputValue == ""){
                     this.showHis = true
                     this.showRes = false
                     return
                 }
                 this.canSearch = false
-                console.log(e.target.value)
-                this.getSongs(e.target.value)
-                this.getAlbums(e.target.value)
-                this.getSingers(e.target.value)
+                console.log(this.inputValue)
+                this.getSongs(this.inputValue)
+                this.getAlbums(this.inputValue)
+                this.getSingers(this.inputValue)
                 this.showHis = false
                 this.showRes = true
                 setTimeout(() => {
