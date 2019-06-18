@@ -635,6 +635,20 @@ export default {
             _this.player.src =
               "http://111.230.63.192:3000/musicwebsite?base=" +
               _this.currentMusic.songpath;
+              console.log(_this.player.src)
+
+              AXIOS.post(
+          "/addUserHistory",
+          this.$qs.stringify({
+            userID:sessionStorage.getItem("userid"),
+            singerID:_this.currentMusic.singerID
+          }),
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          }
+        )
           })
           .catch(error => {
             console.log(error);
