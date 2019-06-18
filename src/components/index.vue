@@ -29,7 +29,7 @@
                     <h2 class="index__tit"><i class="icon_txt">歌单推荐</i></h2>
                 </div>
                 <Row class="mod_playlist">
-                    <i-col span="5" class="playlist__item slide__item" 
+                    <!-- <i-col span="5" class="playlist__item slide__item" 
                     onmouseover="this.className=(this.className+' playlist__item--hover')" 
                     onmouseout="this.className=this.className.replace(/ playlist__item--hover/, '')"
                     v-for="(songlist, index) in songlists" :key="index">
@@ -49,11 +49,9 @@
                                     </span>
                                 </h4>
                             </Tooltip> 
-                            <!-- <div class="playlist__other">
-                                {{`播放量：36.5万`}}
-                            </div> -->
                         </div>
-                    </i-col>
+                    </i-col> -->
+                    <show-user :type='2' :user='singers'></show-user>
                 </Row>
             </div>
 
@@ -126,7 +124,9 @@
 </template>
 
 <script>
-import {recommend, singerRecommend} from '@/request/song'
+import {recommend, singerRecommend, getSingerByID} from '@/request/song'
+import { isArray } from 'util';
+import showUser from '../panel/showUser'
 export default {
     name: 'index',
     data() {
@@ -139,7 +139,8 @@ export default {
             value2: 0,
             albums: [],
             songlists: [],
-            songs: []
+            songs: [],
+            singers: [{}, {}, {}]
         }
     },
     created() {
@@ -151,11 +152,16 @@ export default {
     },
     mounted() {
         let id = sessionStorage.getItem('userid')
-        if (id) {
-            singerRecommend(id, response => {
-                console.log(response.recommend)
-            })
-        }
+        singerRecommend(id, singerids => {
+            console.log(singerids)
+            if (isArray(singerids)) {
+                singerids.forEach((singerid, index) => {
+                    getSingerByID(singerid, singer => {
+                        this.$set(this.singers, index, singer)
+                    })
+                });
+            }
+        })
     },
     methods: {
         getRecommend() {

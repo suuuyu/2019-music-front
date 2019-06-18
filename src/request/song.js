@@ -152,26 +152,29 @@ export function recommend (userid, callback) {
 }
 
 export function singerRecommend (userid, callback) {
-  AXIOS.get('/getUserRecommend?userID=' + userid)
-    .then((response) => {
-      callback(response.data)
-    })
-    .catch(error => {
-      console.error(error)
-      callback(false)
-    })
+  if (userid) {
+    AXIOS.get('/getUserRecommend?userID=' + userid)
+      .then((response) => {
+        callback(response.data.recommend)
+      })
+      .catch(error => {
+        console.error(error)
+        callback(false)
+      })
+  } else {
+    callback([61144, 117586, 493864])
+  }
 }
 
 export function getSingerByID (singerid, callback) {
   AXIOS.get('/getSinger', {
     params: {
-      singerid: this.album.singerid
+      singerid: singerid
     }
   }).then(response => {
-    console.log(response.data)
-    this.singer = response.data
+    callback(response.data)
   }).catch(response => {
-    console.log(response)
+    console.error(response)
   })
 }
 
