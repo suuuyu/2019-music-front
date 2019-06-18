@@ -21,7 +21,7 @@
           width="50vw"
           height="50vw"
           @click="addsong"
-          hidden=true
+          hidden="true"
         >
       </div>
       <div class="bg" v-show="isMax">
@@ -190,7 +190,7 @@ export default {
       isMax: true,
       hasList: false, //+
       musicList: [], //+
-      currentMusic:null,
+      currentMusic: null,
       currentMusicID: 0, //+
       currentMusicIndex: -1, //+
       currentSrc: "", //+
@@ -411,12 +411,25 @@ export default {
       ls.setItem("playMode", this.playMode);
     },
     addMusic(arr) {
-      if (this.musicList.length == 0) {
-        this.musicList = this.musicList.concat(arr);
-        if (this.musicList.length > 0) this.changeMusic(0);
-      } else {
-        this.musicList = this.musicList.concat(arr);
-      }
+      if (arr != null)
+        if (this.musicList.length == 0) {
+          this.musicList = this.musicList.concat(arr);
+          if (this.musicList.length > 0) this.changeMusic(0);
+        } else {
+          var tempArr = [];
+          var idArr = [];
+          for (var i = 0; i < this.musicList.length; i++) {
+            idArr.push(this.musicList[i].id);
+          }
+          if (arr.length != null && arr.length > 0)
+            for (var i = 0; i < arr.length; i++) {
+              if (!idArr.includes(arr[i].id)) tempArr.push(arr[i]);
+            }
+          else if (arr.length == null) {
+            if (!idArr.includes(arr.id)) tempArr.push(arr);
+          }
+          this.musicList = this.musicList.concat(tempArr);
+        }
     },
     changeMini() {
       if (this.isMax) {
@@ -437,10 +450,8 @@ export default {
       this.$refs.totalTime.textContent = this.formatTime(this.player.duration);
       this.togglePlay();
       this.$refs.playPause.src = "pause.png";
-      this.$refs.bg.src =
-        this.currentMusic.songimage
-      this.$refs.miniBg.src =
-        this.currentMusic.songimage
+      this.$refs.bg.src = this.currentMusic.songimage;
+      this.$refs.miniBg.src = this.currentMusic.songimage;
       $axios({
         method: "get",
         url: this.currentMusic.lyric,
@@ -607,14 +618,11 @@ export default {
           this.musicList[this.currentMusicIndex]
         );
       }
-      if (
-        index < _this.musicList.length &&
-        _this.musicList[index].id > 0
-      ) {
+      if (index < _this.musicList.length && _this.musicList[index].id > 0) {
         AXIOS.post(
           "/getSongByID",
           this.$qs.stringify({
-            songID: _this.musicList[index].id,
+            songID: _this.musicList[index].id
           }),
           {
             headers: {
@@ -623,9 +631,10 @@ export default {
           }
         )
           .then(response => {
-            _this.currentMusic=response.data
+            _this.currentMusic = response.data;
             _this.player.src =
-          "http://111.230.63.192:3000/musicwebsite?base=" +_this.currentMusic.songpath
+              "http://111.230.63.192:3000/musicwebsite?base=" +
+              _this.currentMusic.songpath;
           })
           .catch(error => {
             console.log(error);

@@ -34,7 +34,7 @@
             <p :style="pStyle"><Icon type="md-flame" /> &nbsp; 热门歌曲</p>
             <div class="demo-drawer-profile">
                 <Row v-for="(song, index) in songs" :key="index">
-                    <Col span="10">
+                    <Col span="10" style="margin-top:15px;">
                         <router-link :to="'/song/' + song.songid" :key="$route.path"><h5>{{song.songname}}</h5></router-link>
                     </Col>
                     <Col span="12">

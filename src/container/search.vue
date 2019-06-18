@@ -18,14 +18,14 @@
                     <span class="icon_txt">搜索</span>
                 </button>
             </div>
-            <div class="mod_search_tips">
+            <!-- <div class="mod_search_tips">
                 热门搜索：
                 <a  class="search_tips__item " data-name="流浪">流浪</a>
                 <a  class="search_tips__item " data-name="去年夏天">去年夏天</a>
                 <a  class="search_tips__item " data-name="周杰伦">周杰伦</a>
                 <a  class="search_tips__item " data-name="年少有为">年少有为</a>
                 <a  class="search_tips__item " data-name="不染">不染</a>
-            </div>
+            </div> -->
             <div class="js_smartbox" id="smartBox">
                 <!-- 搜索历史 -->
                 <transition name="draw">

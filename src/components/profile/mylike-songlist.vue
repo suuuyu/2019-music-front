@@ -66,8 +66,8 @@ export default {
       getSongList(songlistid, songlist=> {
         let isDelete = false
         // 删除创建的歌单
-        if (songlist.userid == me) {
-          
+        if (songlist.userid == me && songlist.name == '我喜欢') {
+          this.$Message.error('删除失败')
         } else {
           // 删除收藏的歌单
           cancelKeepSongList(me, songlistid, (json) => {
