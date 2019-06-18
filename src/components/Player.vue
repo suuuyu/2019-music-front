@@ -21,6 +21,7 @@
           width="50vw"
           height="50vw"
           @click="addsong"
+          hidden=true
         >
       </div>
       <div class="bg" v-show="isMax">
@@ -189,6 +190,7 @@ export default {
       isMax: true,
       hasList: false, //+
       musicList: [], //+
+      currentMusic:null,
       currentMusicID: 0, //+
       currentMusicIndex: -1, //+
       currentSrc: "", //+
@@ -436,12 +438,12 @@ export default {
       this.togglePlay();
       this.$refs.playPause.src = "pause.png";
       this.$refs.bg.src =
-        "https://v1.itooi.cn/kuwo/pic?id=" + this.currentMusicID;
+        this.currentMusic.songimage
       this.$refs.miniBg.src =
-        "https://v1.itooi.cn/kuwo/pic?id=" + this.currentMusicID;
+        this.currentMusic.songimage
       $axios({
         method: "get",
-        url: "https://v1.itooi.cn/kuwo/lrc?id=" + this.currentMusicID,
+        url: this.currentMusic.lyric,
         data: {}
       })
         .then(function(response) {
@@ -607,40 +609,27 @@ export default {
       }
       if (
         index < _this.musicList.length &&
-        _this.musicList[index].id < 0 &&
-        _this.musicList[index].name.length > 0
-      ) {
-        $axios({
-          method: "get",
-          url:
-            "https://v1.itooi.cn/kuwo/search?type=song&pageSize=100&page=0&keyword=" +
-            _this.musicList[index].name,
-          data: {},
-          cancelToken: new CancelToken(c => {
-            this.cancel = c;
-          })
-        })
-          .then(function(response) {
-            var id = response.data.data[0].MP3RID;
-            _this.player.src =
-              "http://111.230.63.192:3000/musicwebsite?base=" +
-              "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
-              id.slice(4, id.length);
-            _this.currentMusicID = id.slice(4, id.length);
-            _this.musicList[index].id = _this.currentMusicID;
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
-      } else if (
-        index < _this.musicList.length &&
         _this.musicList[index].id > 0
       ) {
-        _this.player.src =
-          "http://111.230.63.192:3000/musicwebsite?base=" +
-          "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
-          _this.musicList[index].id;
-        _this.currentMusicID = _this.musicList[index].id;
+        AXIOS.post(
+          "/getSongByID",
+          this.$qs.stringify({
+            songID: _this.musicList[index].id,
+          }),
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          }
+        )
+          .then(response => {
+            _this.currentMusic=response.data
+            _this.player.src =
+          "http://111.230.63.192:3000/musicwebsite?base=" +_this.currentMusic.songpath
+          })
+          .catch(error => {
+            console.log(error);
+          });
       } else {
         _this.player.src = "";
         _this.hasMusic = 1;
