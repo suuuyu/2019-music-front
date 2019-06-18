@@ -35,14 +35,14 @@
                     v-for="(songlist, index) in songlists" :key="index">
                         <div class="playlist__item_box">
                             <div class="playlist__cover mod_cover">
-                                <a class="js_playlist">
+                                <router-link :to="'/songList/' + songlist.songlistid" :key="$route.path" class="js_playlist">
                                     <img :src="songlist.songlistimage?songlist.songlistimage:'//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1'" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
                                     <i class="mod_cover__mask"></i>
                                     <i class="mod_cover__icon_play js_play" ></i>
-                                </a>
+                                </router-link>
                             </div>
                             <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><a class="js_playlist">{{songlist.songlistname}}</a></span>
+                                <span class="playlist__title_txt"><router-link :to="'/songList/' + songlist.songlistid" :key="$route.path" class="js_playlist">{{songlist.songlistname}}</router-link></span>
                             </h4>
                             <div class="playlist__other">
                                 {{`播放量：36.5万`}}
@@ -66,14 +66,14 @@
                     v-for="(song, index) in songs" :key="index">
                         <div class="playlist__item_box">
                             <div class="playlist__cover mod_cover">
-                                <a class="js_playlist">
+                                <router-link :to="'/song/' + song.songid" :key="$route.path" class="js_playlist">
                                     <img :src="song.songimage?song.songimage:'//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1'" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
                                     <i class="mod_cover__mask"></i>
                                     <i class="mod_cover__icon_play js_play" ></i>
-                                </a>
+                                </router-link>
                             </div>
                             <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><a class="js_playlist">{{song.songname}}</a></span>
+                                <span class="playlist__title_txt"><router-link :to="'/song/' + song.songid" :key="$route.path" class="js_playlist">{{song.songname}}</router-link></span>
                             </h4>
                             <div class="playlist__other">
                                 播放量：36.5万
@@ -97,14 +97,14 @@
                     v-for="(album, index) in albums" :key="index">
                         <div class="playlist__item_box">
                             <div class="playlist__cover mod_cover">
-                                <a class="js_playlist">
+                                 <router-link :to="'/album/' + album.albumid" :key="$route.path" class="js_playlist">
                                     <img :src="album.albumimage?album.albumimage:'//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1'" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
                                     <i class="mod_cover__mask"></i>
                                     <i class="mod_cover__icon_play js_play" ></i>
-                                </a>
+                                 </router-link>
                             </div>
                             <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><a class="js_playlist">{{album.albumname}}</a></span>
+                                <span class="playlist__title_txt"><router-link :to="'/album/' + album.albumid" :key="$route.path" class="js_playlist">{{album.albumname}} </router-link></span>
                             </h4>
                             <div class="playlist__other">
                                 播放量：36.5万
