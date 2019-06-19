@@ -26,7 +26,7 @@
 
             <div class="inner mod_index--hot">
                 <div class="index__hd">
-                    <h2 class="index__tit"><i class="icon_txt">歌单推荐</i></h2>
+                    <h2 class="index__tit"><i >歌&nbsp;手&nbsp;推&nbsp;荐</i></h2>
                 </div>
                 <Row class="mod_playlist">
                     <!-- <i-col span="5" class="playlist__item slide__item" 
@@ -319,12 +319,22 @@ a:hover {
     margin: 0 auto;
     width: 196px;
     height: 40px;
-    background-image: -webkit-image-set(url(/index/index_tit.png) 1x,url(/index/index_tit@2x.png) 2x);
+}
+i {
+    font-style:normal ;
+}
+.songList .index__tit {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: '';
+    font-size: 30px;
+    font-weight: 550
 }
 .song .index__tit {
+    background-image: -webkit-image-set(url(/index/index_tit.png) 1x,url(/index/index_tit@2x.png) 2x);
     background-position: 0 -50px;
 }
 .album .index__tit {
+    background-image: -webkit-image-set(url(/index/index_tit.png) 1x,url(/index/index_tit@2x.png) 2x);
     background-position: 0 -150px;
 }
 .icon_txt {
