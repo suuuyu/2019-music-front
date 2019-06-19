@@ -158,6 +158,7 @@ export default {
         singerRecommend(id, singerids => {
             console.log(singerids)
             if (isArray(singerids)) {
+                console.log(singerids)
                 singerids.forEach((singerid, index) => {
                     getSingerByID(singerid, singer => {
                         this.$set(this.singers, index, singer)
