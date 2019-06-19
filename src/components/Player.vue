@@ -254,7 +254,7 @@ export default {
     if (this.musicList.length > 0 && this.currentMusicIndex > -1) {
       this.changeMusic(this.currentMusicIndex);
     } else {
-      this.$refs.bg.src = "logo.png";
+      this.$refs.bg.src = "biglogo.png";
       this.$refs.miniBg.src = "logo.png";
     }
     this.changeMini();
@@ -659,7 +659,7 @@ export default {
       } else {
         _this.player.src = "";
         _this.hasMusic = 1;
-        this.$refs.bg.src = "logo.png";
+        this.$refs.bg.src = "biglogo.png";
         this.$refs.miniBg.src = "logo.png";
         _this.lrcList = [""];
         _this.currentMusicIndex = -1;
