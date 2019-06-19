@@ -159,10 +159,10 @@ export function singerRecommend (userid, callback) {
       })
       .catch(error => {
         console.error(error)
-        callback(false)
+        callback([61144, 117586, 493864, 1887, 1416])
       })
   } else {
-    callback([61144, 117586, 493864, 493864, 493864])
+    callback([61144, 117586, 493864, 1887, 1416])
   }
 }
 
