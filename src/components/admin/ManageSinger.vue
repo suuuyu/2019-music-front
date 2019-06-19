@@ -1,7 +1,7 @@
 <template>
-    <div style="display:flex;flex-wrap:wrap">
-        <div class="manage-singer">
-            <Card style="margin-bottom:10px">
+    <div ref="div1" style="display:flex;flex-wrap:wrap">
+        <div ref="div2" class="manage-singer">
+            <Card ref="card1" style="margin-bottom:10px">
                 <p slot="title"><Icon style="font-size:18px" type="md-add-circle" />添加歌手</p>
                 <p style="margin-top:11px">如要为歌手添加专辑，请转至专辑管理</p>
                 <div>
@@ -22,10 +22,12 @@
                 </div>
                 <Upload
                 type="drag"
-                action="http://localhost:8081/uploadfile">
+                id="uploadFile"
+                :before-upload="clearFile()"
+                action="http://localhost:8081/uploadSingerImg">
                 <div style="padding: 20px 0">
                     <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                    <p>点击或拖拽上传文件</p>
+                    <p>点击或拖拽上传歌手封面</p>
                 </div>
                 </Upload>
                 <div>
@@ -38,7 +40,7 @@
                 <div>
                 <span class="title-span">歌手名</span>
                 <Select
-                v-model="searchKey"
+                v-model="del.singername"
                 filterable
                 remote
                 :remote-method="fuzzySearch"
@@ -142,7 +144,8 @@ export default {
                 'sex':this.add.sex,
                 'region':this.add.region,
                 'intro':this.add.intro,
-                'adminid':sessionStorage.getItem('adminid')
+                'adminid':sessionStorage.getItem('adminid'),
+                'singerimg':'https://2019-music-1258503590.cos.ap-shanghai.myqcloud.com/images/singers/'+this.add.singername+'.jpg'
 		    }),
 		    {
 				headers: {
@@ -152,6 +155,7 @@ export default {
 		    .then((response)=>{
 			    if(1===response.data){
                     this.$Message.success('添加成功')
+                    this.changePage(1)
                     for (let a in this.add){
                         this.add[a]=''
                     }
@@ -166,16 +170,15 @@ export default {
 	    	})
         },
         searchDelete(){
-            if(this.searchKey===''){
+            if(this.del.singername===''){
                 this.$Message.error('有字段未填，请补充完整')
                 return
             }
-            this.del.singername=this.searchKey
             this.del.singerid=''
             this.del.sex=''
             this.del.region=''
             this.canDelete=true
-            AXIOS.get('/searchDeleteSinger',{params:{singername:this.searchKey}})
+            AXIOS.get('/searchDeleteSinger',{params:{singername:this.del.singername}})
             .then((response)=>{
                 if(response.data===''){
                     this.$Message.error('没有查询到，请重试')
@@ -197,6 +200,7 @@ export default {
                     .then((response)=>{
                         this.add.singerid=response.data
                     })
+                    this.changePage(1)
                 }
                 else{
                     this.$Message.error('删除失败，请重试')
@@ -231,6 +235,12 @@ export default {
                     this.result = [];
                 }
             },
+        clearFile(){
+            let _this=this
+            setTimeout(()=>{
+                _this.$refs.uploadFile.clearFiles()
+            },3000)
+        }
     },
     created(){
         AXIOS.get('/maxSingerid')
