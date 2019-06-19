@@ -108,11 +108,11 @@
             <show-user :type='2' :user='singer' v-if="selectedTab==3"></show-user>
         </div>
         <!-- 搜索动态按钮 -->
-        <transition name="draw" :duration="500">
+        <!-- <transition name="draw" :duration="500">
             <div class="search_btn" v-if="btnShow">
                 <searchBtn></searchBtn>
             </div>
-        </transition>
+        </transition> -->
 
         <!-- 遮罩层 -->
         <div class='popContainer' v-if="showLoading" > 
