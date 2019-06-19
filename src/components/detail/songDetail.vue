@@ -138,11 +138,11 @@ export default {
 				this.song.issueTime = songInfo.songage;
 				this.song.albumid = songInfo.albumid;
 				this.song.free = songInfo.free;
-
+				this.song.songimage = songInfo.songimage;
 				//歌曲图片获取代码暂未写定，留待进一步工作
 				//this.song.image = 
-				if(this.song.albumimage) {
-					this.img = this.song.albumimage
+				if(this.song.songimage) {
+					this.img = this.song.songimage
 				} else {
 					fetchAlbums([this.song])
 					setTimeout(() => {
