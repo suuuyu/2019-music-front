@@ -141,10 +141,15 @@ export default {
 
 				//歌曲图片获取代码暂未写定，留待进一步工作
 				//this.song.image = 
-				fetchAlbums([this.song])
-				setTimeout(() => {
+				if(this.song.albumimage) {
 					this.img = this.song.albumimage
-				}, 500);
+				} else {
+					fetchAlbums([this.song])
+					setTimeout(() => {
+						this.img = this.song.albumimage
+					}, 500);
+				}
+				
 
 				//获取评论信息
 				var List = response.data["commentsList"];

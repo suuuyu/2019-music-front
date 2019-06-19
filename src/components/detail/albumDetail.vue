@@ -56,9 +56,12 @@ export default{
           albumid:this.albumId,
         }
       }).then(response=>{
-				this.album = response.data;
-				fetchAlbums([this.album])
-        console.log(this.album);
+		this.album = response.data;
+		if(!this.album.albumimage) {
+			fetchAlbums([this.album])
+			console.log(this.album);
+		}
+		
         this.getSinger();
       }).catch(response=>{
         console.log(response);
