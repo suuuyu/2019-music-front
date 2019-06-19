@@ -24,7 +24,7 @@
                 type="drag"
                 id="uploadFile"
                 :before-upload="clearFile()"
-                action="http://localhost:8081/uploadSingerImg">
+                action="http://111.230.63.192:8081/uploadSingerImg">
                 <div style="padding: 20px 0">
                     <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                     <p>点击或拖拽上传歌手封面</p>

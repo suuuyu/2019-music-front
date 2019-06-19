@@ -48,7 +48,7 @@ export default {
         submitFile(){
             let formData = new FormData();
             formData.append('file', this.file);
-            axios.post( 'http://localhost:8081/searchSong',
+            axios.post( 'http://111.230.63.192:8081/searchSong',
                 formData,
                 {
                 headers: {
@@ -114,7 +114,7 @@ export default {
                 formData.append('file', this.file);
                 that.showLoading = true
                 that.msg = "正在玩命匹配"
-                axios.post('http://localhost:8081/searchSong',
+                axios.post('http://111.230.63.192:8081/searchSong',
                     formData,
                     {
                     headers: {

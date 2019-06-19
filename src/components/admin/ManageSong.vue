@@ -74,7 +74,7 @@
                 type="drag"
                 id="uploadFile1"
                 :before-upload="clearFile1()"
-                action="http://localhost:8081/uploadSongImg">
+                action="http://111.230.63.192:8081/uploadSongImg">
                 <div style="padding: 20px 0">
                     <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                     <p>点击或拖拽上传歌曲封面</p>
@@ -84,7 +84,7 @@
                 type="drag"
                 id="uploadFile2"
                 :before-upload="clearFile2()"
-                action="http://localhost:8081/uploadSong">
+                action="http://111.230.63.192:8081/uploadSong">
                 <div style="padding: 20px 0">
                     <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                     <p>点击或拖拽上传歌曲文件</p>
@@ -102,7 +102,7 @@
                     <Upload
                         type="drag"
                         ref="upload"
-                        action="http://localhost:8081/upload"
+                        action="http://111.230.63.192:8081/upload"
                         :format="['wav']"
                         :on-success="handleSuccess"
                         :on-format-error="handleFormatError"

@@ -150,16 +150,21 @@ export function recommend (userid, callback) {
       callback(false)
     })
 }
-
+import axios from 'axios'
 export function singerRecommend (userid, callback) {
   if (userid) {
-    AXIOS.get('/getUserRecommend?userID=' + userid)
+    axios.get('http://localhost:8081/api/getUserRecommend?userID=' + userid)
       .then((response) => {
-        callback(response.data.recommend)
+        if (response.data.recommend.length == 0) {
+          callback([61144, 117586, 493864, 1887, 1416])
+        } else {
+          callback(response.data.recommend)
+        }
+        
       })
       .catch(error => {
         console.error(error)
-        callback([61144, 117586, 493864, 1887, 1416])
+        
       })
   } else {
     callback([61144, 117586, 493864, 1887, 1416])

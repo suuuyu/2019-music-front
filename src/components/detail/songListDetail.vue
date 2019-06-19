@@ -103,7 +103,7 @@ export default{
 				{
 					headers:{
 						'Content-Type':'application/x-www-form-urlencoded',
-						'Access-Control-Allow-Origin':'http://localhost:8081',
+						'Access-Control-Allow-Origin':'http://111.230.63.192:8081',
 					}
 				}).then(response=>{
 					if(response.data){
