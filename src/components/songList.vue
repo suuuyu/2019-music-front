@@ -3,7 +3,7 @@
     <div class="song-list">
       <li style="border-bottom: solid 1px rgba(101, 116, 130,0.3)">歌曲列表</li>
       <li
-        v-for="(song,index) in this.$parent.musicList"
+        v-for="(song,index) in this.$parent.musicList" :key="song.name"
         @mouseenter="highlight"
         @mouseleave="noHighlight"
         class="songInfo"
