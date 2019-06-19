@@ -634,7 +634,7 @@ export default {
             _this.currentMusic = response.data;
             let tail = _this.currentMusic.songpath.substring(_this.currentMusic.songpath.length - 3, _this.currentMusic.songpath.length)
             console.log(tail)
-            _this.player.src = tail == 'mp3'?_this.currentMusic.songpath:
+            _this.player.src = tail == 'mp3'?_this.currentMusic.songpath:  
               "http://111.230.63.192:3000/musicwebsite?base=" +
               _this.currentMusic.songpath;
               console.log(_this.player.src)
