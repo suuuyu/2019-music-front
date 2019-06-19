@@ -4,7 +4,7 @@
     style="position:fixed; left:3vw; bottom:0vh; width:100%; height:6vh; z-index:999;"
   >
     <div style="position:absolute;">
-      <search-btn style="z-index:10;"></search-btn>
+      <!--<search-btn style="z-index:10;"></search-btn>-->
       <div v-if="isMax" class="arrowDown">
         <img
           ref="arrowDown"
@@ -15,6 +15,7 @@
           @mouseenter="highlightArrDown"
           @mouseleave="noLightArrDown"
         >
+        <img src="qqlogo.png" width="160px" height="50px" style="position:relative;right:77vw;bottom:7vh;">
         <img
           ref="addMusicBtn"
           src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTYwMDEzMjA0NDg1IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjU1OTMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNTEwLjIxODI0IDBDMjI4LjkwNDk2IDAgMCAyMjkuMTA5NzYgMCA1MTAuNTc2NjQgMCA3OTIuMDY0IDIyOC45MDQ5NiAxMDIxLjA4MTYgNTEwLjIxODI0IDEwMjEuMDgxNmMyODEuMzAzMDQgMCA1MTAuMTU2OC0yMjkuMDE3NiA1MTAuMTU2OC01MTAuNTA0OTZDMTAyMC4zNzUwNCAyMjkuMTA5NzYgNzkxLjUyMTI4IDAgNTEwLjIxODI0IDB6IG0xOTIuMzk5MzYgNTQ1LjYxNzkySDU0Ni40ODgzMnYxNTcuNTkzNmMwIDE0Ljc0NTYtMjEuMDEyNDggMjYuOTAwNDgtMzUuODYwNDggMjYuOTAwNDgtMTQuODQ4IDAtMzUuODI5NzYtMTIuMTU0ODgtMzUuODI5NzYtMjYuOTAwNDh2LTE1Ny41OTM2aC0xNTcuMDgxNmMtMTQuNzk2OCAwLTI2Ljg2OTc2LTIxLjAzMjk2LTI2Ljg2OTc2LTM1Ljg3MDcyIDAtMTQuODM3NzYgMTIuMDYyNzItMzUuOTExNjggMjYuODY5NzYtMzUuOTExNjhoMTU3LjA4MTZWMzE4LjAxMzQ0YzAtMTQuOTI5OTIgMjAuOTgxNzYtMjYuOTUxNjggMzUuODI5NzYtMjYuOTUxNjggMTQuODQ4IDAgMzUuODYwNDggMTIuMDIxNzYgMzUuODYwNDggMjYuOTUxNjh2MTU1LjgzMjMyaDE1Ni4xMjkyOGMxNC45ODExMiAwIDI2LjkyMDk2IDIxLjA3MzkyIDI2LjkyMDk2IDM1LjkxMTY4IDAgMTQuODI3NTItMTIuMDIxNzYgMzUuODYwNDgtMjYuOTIwOTYgMzUuODYwNDh6IiBmaWxsPSIjZjY2ZjQ5IiBwLWlkPSI1NTk0Ij48L3BhdGg+PC9zdmc+"
