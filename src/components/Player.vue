@@ -21,6 +21,7 @@
           width="50vw"
           height="50vw"
           @click="addsong"
+          hidden="true"
         >
       </div>
       <div class="bg" v-show="isMax">
@@ -189,6 +190,7 @@ export default {
       isMax: true,
       hasList: false, //+
       musicList: [], //+
+      currentMusic: null,
       currentMusicID: 0, //+
       currentMusicIndex: -1, //+
       currentSrc: "", //+
@@ -409,12 +411,25 @@ export default {
       ls.setItem("playMode", this.playMode);
     },
     addMusic(arr) {
-      if (this.musicList.length == 0) {
-        this.musicList = this.musicList.concat(arr);
-        if (this.musicList.length > 0) this.changeMusic(0);
-      } else {
-        this.musicList = this.musicList.concat(arr);
-      }
+      if (arr != null)
+        if (this.musicList.length == 0) {
+          this.musicList = this.musicList.concat(arr);
+          if (this.musicList.length > 0) this.changeMusic(0);
+        } else {
+          var tempArr = [];
+          var idArr = [];
+          for (var i = 0; i < this.musicList.length; i++) {
+            idArr.push(this.musicList[i].id);
+          }
+          if (arr.length != null && arr.length > 0)
+            for (var i = 0; i < arr.length; i++) {
+              if (!idArr.includes(arr[i].id)) tempArr.push(arr[i]);
+            }
+          else if (arr.length == null) {
+            if (!idArr.includes(arr.id)) tempArr.push(arr);
+          }
+          this.musicList = this.musicList.concat(tempArr);
+        }
     },
     changeMini() {
       if (this.isMax) {
@@ -435,13 +450,11 @@ export default {
       this.$refs.totalTime.textContent = this.formatTime(this.player.duration);
       this.togglePlay();
       this.$refs.playPause.src = "pause.png";
-      this.$refs.bg.src =
-        "https://v1.itooi.cn/kuwo/pic?id=" + this.currentMusicID;
-      this.$refs.miniBg.src =
-        "https://v1.itooi.cn/kuwo/pic?id=" + this.currentMusicID;
+      this.$refs.bg.src = this.currentMusic.songimage;
+      this.$refs.miniBg.src = this.currentMusic.songimage;
       $axios({
         method: "get",
-        url: "https://v1.itooi.cn/kuwo/lrc?id=" + this.currentMusicID,
+        url: this.currentMusic.lyric,
         data: {}
       })
         .then(function(response) {
@@ -605,42 +618,43 @@ export default {
           this.musicList[this.currentMusicIndex]
         );
       }
-      if (
-        index < _this.musicList.length &&
-        _this.musicList[index].id < 0 &&
-        _this.musicList[index].name.length > 0
-      ) {
-        $axios({
-          method: "get",
-          url:
-            "https://v1.itooi.cn/kuwo/search?type=song&pageSize=100&page=0&keyword=" +
-            _this.musicList[index].name,
-          data: {},
-          cancelToken: new CancelToken(c => {
-            this.cancel = c;
-          })
-        })
-          .then(function(response) {
-            var id = response.data.data[0].MP3RID;
-            _this.player.src =
+      if (index < _this.musicList.length && _this.musicList[index].id > 0) {
+        AXIOS.post(
+          "/getSongByID",
+          this.$qs.stringify({
+            songID: _this.musicList[index].id
+          }),
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          }
+        )
+          .then(response => {
+            _this.currentMusic = response.data;
+            let tail = _this.currentMusic.songpath.substring(_this.currentMusic.songpath.length - 3, _this.currentMusic.songpath.length)
+            console.log(tail)
+            _this.player.src = tail == 'mp3'?_this.currentMusic.songpath:
               "http://111.230.63.192:3000/musicwebsite?base=" +
-              "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
-              id.slice(4, id.length);
-            _this.currentMusicID = id.slice(4, id.length);
-            _this.musicList[index].id = _this.currentMusicID;
+              _this.currentMusic.songpath;
+              console.log(_this.player.src)
+
+              AXIOS.post(
+          "/addUserHistory",
+          this.$qs.stringify({
+            userID:sessionStorage.getItem("userid"),
+            singerID:_this.currentMusic.singerID
+          }),
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          }
+        )
           })
-          .catch(function(error) {
+          .catch(error => {
             console.log(error);
           });
-      } else if (
-        index < _this.musicList.length &&
-        _this.musicList[index].id > 0
-      ) {
-        _this.player.src =
-          "http://111.230.63.192:3000/musicwebsite?base=" +
-          "https://v1.itooi.cn/kuwo/url?quality=128&id=" +
-          _this.musicList[index].id;
-        _this.currentMusicID = _this.musicList[index].id;
       } else {
         _this.player.src = "";
         _this.hasMusic = 1;

@@ -14,9 +14,9 @@
 					   <i-col span="12">语种：{{album.language}}</i-col>
              <i-col span="12">发行公司：{{album.company}}</i-col>
 					  </Row>
-						<Row class="buttonGroup">
+						<!-- <Row class="buttonGroup">
 							<i-col span="8"><button class="btn btn-default-large myButton" type="button">播放全部</button></i-col>							
-						</Row>
+						</Row> -->
 					</div> 
 				</i-col>
 			</Row>
@@ -56,9 +56,12 @@ export default{
           albumid:this.albumId,
         }
       }).then(response=>{
-				this.album = response.data;
-				fetchAlbums([this.album])
-        console.log(this.album);
+		this.album = response.data;
+		if(!this.album.albumimage) {
+			fetchAlbums([this.album])
+			console.log(this.album);
+		}
+		
         this.getSinger();
       }).catch(response=>{
         console.log(response);
@@ -88,7 +91,7 @@ export default{
       }).catch(response=>{
         console.log(response);
       });
-		},
+	},
 	},
   mounted(){
 		this.albumId = this.$route.params.albumId;

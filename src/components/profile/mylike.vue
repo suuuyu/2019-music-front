@@ -3,7 +3,7 @@
         <Tabs value="name1" @on-click="handle">
             <TabPane label="歌曲" name="name1" class="real-panel"><Song :song=song></Song></TabPane>
             <TabPane label="歌单" name="name2"><Songlist :songlist=sl></Songlist></TabPane>
-            <TabPane label="专辑" name="name3"><Album :albums=albums></Album></TabPane>
+            <!-- <TabPane label="专辑" name="name3"><Album :albums=albums></Album></TabPane> -->
         </Tabs>
     </div>
 </template>

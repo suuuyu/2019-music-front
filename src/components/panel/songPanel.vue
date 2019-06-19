@@ -58,8 +58,11 @@ export default {
 				if (res == 1||res == 2) {
 					let mes= res == 1?'您已购买过此歌曲':'您是VIP会员，可以无限下载'
 					this.$Message.success('即将开始下载')
-					console.log(`${CORS}https://v1.itooi.cn/kuwo/url?quality=${this.musicType}&id=${this.songid}`)
-					saveAs(`${CORS}https://v1.itooi.cn/kuwo/url?quality=${this.musicType}&id=${this.songid}`, this.song.songname)
+					// console.log(`${CORS}https://v1.itooi.cn/kuwo/url?quality=${this.musicType}&id=${this.songid}`)
+					setTimeout(() => {
+						saveAs(`${CORS}https://v1.itooi.cn/kuwo/url?quality=${this.musicType}&id=${this.songid}`, this.song.songname)
+					}, 1000);
+					
 				} else {
 					this.$Message.error('您不是会员或未购买过歌曲，不能下载')
 				}

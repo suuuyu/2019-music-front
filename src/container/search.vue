@@ -18,14 +18,14 @@
                     <span class="icon_txt">搜索</span>
                 </button>
             </div>
-            <div class="mod_search_tips">
+            <!-- <div class="mod_search_tips">
                 热门搜索：
                 <a  class="search_tips__item " data-name="流浪">流浪</a>
                 <a  class="search_tips__item " data-name="去年夏天">去年夏天</a>
                 <a  class="search_tips__item " data-name="周杰伦">周杰伦</a>
                 <a  class="search_tips__item " data-name="年少有为">年少有为</a>
                 <a  class="search_tips__item " data-name="不染">不染</a>
-            </div>
+            </div> -->
             <div class="js_smartbox" id="smartBox">
                 <!-- 搜索历史 -->
                 <transition name="draw">
@@ -37,8 +37,11 @@
                                     <Icon type="md-trash" size="18" />
                                     <span class="icon_txt" >清空</span></a>
                                 </dt>
-                                <dd class="search_history__item" :key="index" v-for="(item,index) in searchHis" @mouseover="hoverIndex=index" @mouseout="hoverIndex=-1" :class="{ 'hoverBg':index==hoverIndex}">
-                                    <div  class="search_history__link">{{item}}</div>
+                                <dd class="search_history__item" :key="index" v-for="(item,index) in searchHis" 
+                                    @mouseover="hoverIndex=index" 
+                                    @mouseout="hoverIndex=-1" 
+                                    :class="{ 'hoverBg':index==hoverIndex}">
+                                    <div  class="search_history__link" @click.stop="clickHis(index)">{{item}}</div>
                                     <a class="search_history__delete" title="删除" @click.stop="clearItem(index)">
                                         <Icon type="md-close" size="18" class="search_history__icon_delete"/>
                                         <span class="icon_txt">删除</span>
@@ -115,7 +118,7 @@
         <div class='popContainer' v-if="showLoading" > 
             <loading @closeLoading="hideLoading"> </loading>
         </div>
-
+        <searchSong :recognize="recognize" ref="searchSong" @recognizeSong="recognizeSong"></searchSong>
         <!-- 上传文件 -->
         <!-- <div class="container">
             <div class="large-12 medium-12 small-12 cell">
@@ -136,7 +139,9 @@ import mylikesonglist from '../components/profile/mylike-songlist'
 import showUser from '@/components/panel/showUser'
 import searchBtn from '../components/search/searchBtn'
 import loading from '../components/search/loading'
+import searchSong from '../components/search/searchSong'
 import { AXIOS } from '../http/http';
+import { isArray } from 'util';
 
 export default {
     mounted(){
@@ -159,7 +164,7 @@ export default {
                 searchSong: [{songName: "爱在西元前",singerName:"周杰伦"}],
                 searchAlbum: [{songName: "爱在西元前",singerName:"周杰伦"}],
                 searchSinger: [],
-                searchHis: ["爱","我相信","周杰伦"],
+                searchHis: ["爱","太美","周杰伦"],
                 hoverIndex: -1, //表示当前hover的是第几个li 初始为 -1 或 null 不能为0 0表示第一个li
                 inputValue: "",
                 showHis: false,
@@ -168,16 +173,17 @@ export default {
                 showLoading: false,
                 btnShow: false,
                 canSearch: true,
-                
+                recognize:[]
 			}
         },
     components: {
-			'Song': mylikesong,
-			'Songlist': mylikesonglist,
-            'Album': mylikealbum,
-            'searchBtn': searchBtn,
-            'loading': loading,
-            'show-user': showUser
+        'Song': mylikesong,
+        'Songlist': mylikesonglist,
+        'Album': mylikealbum,
+        'searchBtn': searchBtn,
+        'loading': loading,
+        'show-user': showUser,
+        'searchSong': searchSong
     },
     methods: {
         clearAllHis(e){
@@ -188,6 +194,11 @@ export default {
         clearItem(index){
             console.log(index)
             this.searchHis.splice(index,1)
+        },
+        clickHis(index){
+            console.log(index)
+            this.inputValue = this.searchHis[index]
+            this.inputFun()
         },
         handleScroll(){
             var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
@@ -218,20 +229,28 @@ export default {
         },
         hideLoading(msg){
             this.showLoading = false
-            console.log(msg)
+            if(msg && msg.length!=0 && isArray(msg)) {
+                this.recognize = msg
+                this.$refs.searchSong.show()
+            } else {
+                this.$Notice.error({
+                    title: '错误',
+                    desc: '未获取到数据'
+                })
+            }
         },
-        inputFun(e){
+        inputFun(){
             if (this.canSearch) {
-                if(e.target.value == ""){
+                if(this.inputValue == ""){
                     this.showHis = true
                     this.showRes = false
                     return
                 }
                 this.canSearch = false
-                console.log(e.target.value)
-                this.getSongs(e.target.value)
-                this.getAlbums(e.target.value)
-                this.getSingers(e.target.value)
+                console.log(this.inputValue)
+                this.getSongs(this.inputValue)
+                this.getAlbums(this.inputValue)
+                this.getSingers(this.inputValue)
                 this.showHis = false
                 this.showRes = true
                 setTimeout(() => {
@@ -243,6 +262,11 @@ export default {
         switchTab(index){
             this.selectedTab = index;
             console.log(this.tabsDisplay[index])
+        },
+        recognizeSong(word) {
+            this.getSongs(word)
+            this.switchTab(0)
+            this.$refs.searchSong.close()
         },
         getSongs(words) {
 				AXIOS.get('/Search/Song?words=' + words)

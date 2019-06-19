@@ -52,7 +52,6 @@ export default {
 				this.$router.push({path:'/login'})
 			} else {
 				this.$router.push({path:'/profile/' + this.me + '/mylike', key:this.me})
-				this.$router.go(0);
 			}
 		},
 		handle() {

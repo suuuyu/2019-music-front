@@ -29,26 +29,29 @@
                     <h2 class="index__tit"><i class="icon_txt">歌单推荐</i></h2>
                 </div>
                 <Row class="mod_playlist">
-                    <i-col span="5" class="playlist__item slide__item" 
+                    <!-- <i-col span="5" class="playlist__item slide__item" 
                     onmouseover="this.className=(this.className+' playlist__item--hover')" 
                     onmouseout="this.className=this.className.replace(/ playlist__item--hover/, '')"
                     v-for="(songlist, index) in songlists" :key="index">
                         <div class="playlist__item_box">
                             <div class="playlist__cover mod_cover">
-                                <a class="js_playlist">
-                                    <img :src="songlist.songlistimage?songlist.songlistimage:'//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1'" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
+                                <router-link :to="'/songList/' + songlist.songlistid" :key="$route.path" class="js_playlist">
+                                    <img :src="songlist.songlistimage &&songlist.songlistimage !=0  ? songlist.songlistimage : errorSongList[index]"  class="playlist__pic">
                                     <i class="mod_cover__mask"></i>
                                     <i class="mod_cover__icon_play js_play" ></i>
-                                </a>
+                                </router-link>
                             </div>
-                            <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><a class="js_playlist">{{songlist.songlistname}}</a></span>
-                            </h4>
-                            <div class="playlist__other">
-                                {{`播放量：36.5万`}}
-                            </div>
+                            <Tooltip :content="songlist.songlistname">
+                                <h4 class="playlist__title">
+                                    <span class="playlist__title_txt">
+                                        <router-link :to="'/songList/' + songlist.songlistid" :key="$route.path"><p class="js_playlist">{{songlist.songlistname}}</p>
+                                        </router-link>
+                                    </span>
+                                </h4>
+                            </Tooltip> 
                         </div>
-                    </i-col>
+                    </i-col> -->
+                    <show-user :type='2' :user='singers'></show-user>
                 </Row>
             </div>
 
@@ -66,18 +69,20 @@
                     v-for="(song, index) in songs" :key="index">
                         <div class="playlist__item_box">
                             <div class="playlist__cover mod_cover">
-                                <a class="js_playlist">
+                                <router-link :to="'/song/' + song.songid" :key="$route.path" class="js_playlist">
                                     <img :src="song.songimage?song.songimage:'//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1'" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
                                     <i class="mod_cover__mask"></i>
                                     <i class="mod_cover__icon_play js_play" ></i>
-                                </a>
+                                </router-link>
                             </div>
-                            <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><a class="js_playlist">{{song.songname}}</a></span>
-                            </h4>
-                            <div class="playlist__other">
+                            <Tooltip :content="song.songname">
+                                <h4 class="playlist__title">
+                                    <span class="playlist__title_txt"><router-link :to="'/song/' + song.songid" :key="$route.path" class="js_playlist"><p class="js_playlist">{{song.songname}}</p></router-link></span>
+                                </h4>
+                            </Tooltip> 
+                            <!-- <div class="playlist__other">
                                 播放量：36.5万
-                            </div>
+                            </div> -->
                         </div>
                     </i-col>
                 </Row>
@@ -97,18 +102,18 @@
                     v-for="(album, index) in albums" :key="index">
                         <div class="playlist__item_box">
                             <div class="playlist__cover mod_cover">
-                                <a class="js_playlist">
+                                 <router-link :to="'/album/' + album.albumid" :key="$route.path" class="js_playlist">
                                     <img :src="album.albumimage?album.albumimage:'//p.qpic.cn/music_cover/KaFn5hQACzzVeLFOc4hamAyIL8gMZzaVJdBu6uwyOABMLUz8ICc7wg/300?n=1'" onerror="this.src='//y.gtimg.cn/mediastyle/global/img/playlist_300.png?max_age=31536000';this.onerror=null;"  class="playlist__pic">
                                     <i class="mod_cover__mask"></i>
                                     <i class="mod_cover__icon_play js_play" ></i>
-                                </a>
+                                 </router-link>
                             </div>
-                            <h4 class="playlist__title">
-                                <span class="playlist__title_txt"><a class="js_playlist">{{album.albumname}}</a></span>
-                            </h4>
-                            <div class="playlist__other">
-                                播放量：36.5万
-                            </div>
+                            <Tooltip :content="album.albumname">
+                                <h4 class="playlist__title">
+                                    <span class="playlist__title_txt"><router-link :to="'/album/' + album.albumid" :key="$route.path" class="js_playlist"><p class="js_playlist">{{album.albumname}}</p> </router-link></span>
+                                </h4>
+                            </Tooltip> 
+                            
                         </div>
                     </i-col>
                 </Row>
@@ -119,15 +124,26 @@
 </template>
 
 <script>
-import {recommend} from '@/request/song'
+import {recommend, singerRecommend, getSingerByID} from '@/request/song'
+import { isArray } from 'util';
+import showUser from './panel/showUser'
 export default {
     name: 'index',
+    components: {
+    'show-user': showUser,
+  },
     data() {
         return {
+            errorSongList:['https://p.qpic.cn/music_cover/fPn0iapLleUFx4kZhMPupPlCbqJ9JcevXhr0suia5vI4ZiatY2Fr8ou8A/300?n=1', 
+            'https://p.qpic.cn/music_cover/ibJJngZRP5m8ksRvDkGZxdfp4I182hH8FEphWtKfrh6zJQ9lxapp7tQ/300?n=1', 
+            'https://p.qpic.cn/music_cover/sv5U6cpoN0dCLVrs9ibkz75fPLICuJNYVGmCkod92vkvbyDKugELsnQ/300?n=1',
+            'https://p.qpic.cn/music_cover/A3K6WU7EtiaOWXPWe0T7icHibNjfZMyticGDbxOHj1Pg8pvoEL7mYsJeaw/300?n=1',
+            'https://p.qpic.cn/music_cover/AhbCa0vazSRDjEJhYwthgsSbN5oKI78QXeGD1toy3dv0tCVNGicyXIA/300?n=1'],
             value2: 0,
             albums: [],
             songlists: [],
-            songs: []
+            songs: [],
+            singers: [{}, {}, {}, {}, {}]
         }
     },
     created() {
@@ -137,8 +153,23 @@ export default {
             this.songlists = json.songlists
         })
     },
+    mounted() {
+        let id = sessionStorage.getItem('userid')
+        singerRecommend(id, singerids => {
+            console.log(singerids)
+            if (isArray(singerids)) {
+                singerids.forEach((singerid, index) => {
+                    getSingerByID(singerid, singer => {
+                        this.$set(this.singers, index, singer)
+                    })
+                });
+            }
+        })
+    },
     methods: {
+        getRecommend() {
 
+        }
     }
 }
 </script>
@@ -146,6 +177,8 @@ export default {
 <style scoped>
 .js_playlist {
     overflow: hidden;
+    max-height: 20px;
+    max-width: 200px;
 }
 a {
   color: #000000;

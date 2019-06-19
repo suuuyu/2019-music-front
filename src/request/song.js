@@ -151,4 +151,31 @@ export function recommend (userid, callback) {
     })
 }
 
+export function singerRecommend (userid, callback) {
+  if (userid) {
+    AXIOS.get('/getUserRecommend?userID=' + userid)
+      .then((response) => {
+        callback(response.data.recommend)
+      })
+      .catch(error => {
+        console.error(error)
+        callback(false)
+      })
+  } else {
+    callback([61144, 117586, 493864, 493864, 493864])
+  }
+}
+
+export function getSingerByID (singerid, callback) {
+  AXIOS.get('/getSinger', {
+    params: {
+      singerid: singerid
+    }
+  }).then(response => {
+    callback(response.data)
+  }).catch(response => {
+    console.error(response)
+  })
+}
+
 export { cancelKeepSongList, unkeepSong, getSongList, likeSong, showCreatedSongList, keepSong, createSonglist, keepSonglist, getSong, getSongsInSonglist }
