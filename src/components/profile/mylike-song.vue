@@ -99,6 +99,7 @@ export default {
     data () {
 			return {
 				index: 1,
+				me: sessionStorage.getItem('userid'),
 				toShow: [],
 				isMySongList: false,
 				singerDetail: false,
