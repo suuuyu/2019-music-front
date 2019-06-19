@@ -25,7 +25,7 @@
 							</ul>
 							<div class="data__actions" role="toolbar">
 								<Button class="mod_btn_green js_all_play" type="primary" :disabled="!bought" @click="play()" icon="md-play">播放</Button>
-								<Button class="mod_btn js_fav_album" @click="displaySongList()" icon="md-add">添加到</Button>
+								<Button class="mod_btn js_fav_album" @click="displaySongList()" icon="md-add" :disabled="!me">添加到</Button>
 								<Button class="mod_btn js_into_comment" :disabled="bought" @click="buy()" icon="ios-card">购买</Button>
 							</div>
 						</div>
@@ -78,7 +78,7 @@ export default {
 			var text = this.commentText;
 			this.commentText = "";
 			if(!userID){
-				alert("未登录！");
+				this.$Message.error('请登陆后进行操作')
 				return;
 			}
 			if(text == ""){
@@ -242,6 +242,7 @@ export default {
 	},
   data(){
 		return {
+			me:sessionStorage.getItem('userid'),
 			chooseList:false,
 			singer: {},
 			img: '',

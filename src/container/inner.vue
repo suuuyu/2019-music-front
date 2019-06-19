@@ -3,7 +3,7 @@
     <div style="padding-bottom: 100px;height: 100%;">
       <router-view></router-view>
       <menu-panel></menu-panel>
-      <search-btn></search-btn>
+      <!-- <search-btn></search-btn> -->
     </div>
     <player ref="player"></player>
   </div>
